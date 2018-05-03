@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta charset="charset=UTF-8"/>
+	<title>ViUR control</title>
+	<link rel="icon" type="image/x-icon" href="../img/favicon.ico">
+	<link rel="stylesheet" type="text/css" media="screen" href="../css/styles.css"/>
+	<script>window.$ = window.jQuery = require('jquery');</script>
+	<script type="application/javascript">require("../js/mainWindowRenderer.js")</script>
+</head>
+<body>
+<div class="window">
+	<header class="toolbar toolbar-header">
+		<a href="javascript:undefined;" class="js-home" title="Welcome Page">
+			<img class="logo-viur-control" src="../img/logo_viur_control.svg">
+		</a>
+		<div class="shorticonswrap">
+			<a href="javascript:undefined;" class="js-console-log-open-button hidden" title="Open the console log window of a running project.">
+				<img src="../img/log.svg">
+				<span>Logs</span>
+			</a>
+			<a href="javascript:undefined;" class="js-console-dashboard-open-button hidden"
+			   title="Connect to the deployed dashboard for the current project in a browser.">
+				<img src="../img/appengine.svg">
+				<span>Dashboard</span>
+			</a>
+		</div>
+	</header>
+	<div class="window-content">
+		<div class="pane-group">
+			<div class="pane-sm sidebar">
+				<div class="js-loading-spinner project-loading hidden"><strong class="js-spinner-text project-loading-text">Loading Projects...</strong></div>
+				<div class="sidebarheader">
+					<div class="list-group-header">
+						<input class="js-project-search form-control" type="text" placeholder="Search for Project">
+					</div>
+
+				</div>
+				<ul class="list-group sidebarlist">
+
+				</ul>
+				<div class="sidebarfooter">
+					<div class="list-group-add">
+						<input class="js-project-add list-group-add-input form-control" type="text"
+							   placeholder="New Project Name">
+						<button class="js-add-project btn btn-large btn-positive list-group-add-btn"
+								title="Add project"><span
+								class="icon icon-right-bold"></span>Add Project
+						</button>
+					</div>
+				</div>
+
+			</div>
+			<div class="js-project-pane pane hidden">
+				<div class="tab-group">
+					<div class="js-project-config-tab tab-item active" title="Alt+1">
+						Configuration
+					</div>
+					<div class="js-project-local-tab tab-item" title="Alt+2">
+						Development
+					</div>
+					<div class="js-project-remote-tab tab-item" title="Alt+3">
+						Deployment
+					</div>
+				</div>
+				<div class="js-project-config-content content active">
+				</div>
+				<div class="js-project-local-content content">
+				</div>
+				<div class="js-project-remote-content content">
+				</div>
+			</div>
+			<div class="js-welcome-pane pane">
+				<div class="nice-section scrollable welcomepage">
+					<h1>Welcome to ViUR control</h1>
+
+
+					<h2>Tool for the Google App Engine™</h2>
+					Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt
+					ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo
+					dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor
+					sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor
+					invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et
+					justo duo dolores et ea rebum.
+
+
+					<div class="startboxengrid">
+
+						<a href="javascript:undefined" class="js-open-settings startbox">
+							<div class="starbox-icon icon-setting"></div>
+							<h5>Settings</h5>
+						</a>
+
+						<a href="javascript:undefined" class="js-open-documentation startbox">
+							<div class="starbox-icon icon-documentation"></div>
+							<h5>Documentation</h5>
+						</a>
+
+						<!--
+						<a href="#" class="startbox">
+							<div class="starbox-icon icon-three"></div>
+							<h5>Three - ???</h5>
+						</a>
+						-->
+
+
+						<a href="javascript:undefined" class="js-open-viur-documentation startbox" style="width: 100%">
+							<div class="starbox-icon icon-viur" style="width: 140px"></div>
+							<h5>Information System for the Google App Engine™</h5>
+						</a>
+
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,14 @@
+{
+    "compilerOptions": {
+        "outDir": "./assets/js",
+        "target": "es2015",
+        "module": "commonjs",
+        "noImplicitAny": false,
+        "noImplicitReturns": true,
+        "noFallthroughCasesInSwitch": true,
+        "sourceMap": true
+    },
+    "include": [
+        "./src/ts/*"
+    ]
+}

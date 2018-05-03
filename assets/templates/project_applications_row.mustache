@@ -1,0 +1,18 @@
+{{#applicationIds}}
+	<tr class="js-applicationid-row">
+		<td>{{value}}</td>
+		<td class="js-labels" data-application-id="{{value}}">
+			{{#labels}}
+				<image class="icon" src="{{path}}" style="width: 24px; height: 24px;" title="{{title}}"></image>
+			{{/labels}}
+		</td>
+		<td class="js-domain-mappings" data-application-id="{{value}}">
+		</td>
+		<td><input type="checkbox" class="js-selectable-application-id"
+		           {{#checked}}checked{{/checked}} data-value="{{value}}"></td>
+		<td>
+			<button class="js-remove-application-id btn btn-mini btn-negative icon icon-cancel"
+			        data-value="{{value}}" title="remove that applicationId from this project"></button>
+		</td>
+	</tr>
+{{/applicationIds}}

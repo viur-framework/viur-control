@@ -1,0 +1,44 @@
+{
+  "name": "viur-control",
+  "version": "0.10.0",
+  "description": "Management of mulitple viur instances",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "dev": "electron . --debug",
+    "package": "npm-run-all package:*",
+    "package:mac": "electron-packager . --overwrite --platform=darwin --arch=x64 --out=out --icon=assets/img/viur.icns --osx-sign.identity='Developer ID Application: Mausbrand' --extend-info=assets/mac/info.plist",
+    "package:win": "electron-packager . --overwrite --platform=win32 --arch=x64 --out=out",
+    "package:linux": "electron-packager . --overwrite --platform=linux --arch=x64 --out=out"
+  },
+  "keywords": [],
+  "author": "Stefan Kögl <sk@mausbrand.de>",
+  "license": "GPL-3.0",
+  "devDependencies": {
+    "electron": "^2.0.0"
+  },
+  "dependencies": {
+    "@types/electron-store": "^1.3.0",
+    "ajv": "^6.4.0",
+    "async": "^2.6.0",
+    "electron-localshortcut": "^2.0.2",
+    "electron-packager": "^10.1.2",
+    "electron-positioner": "^3.0.0",
+    "electron-store": "^1.3.0",
+    "fs-extra": "^4.0.3",
+    "globby": "^7.1.1",
+    "jquery": "^3.3.1",
+    "less": "^2.7.3",
+    "moment": "^2.22.1",
+    "mustache": "^2.3.0",
+    "node-glob": "^1.2.0",
+    "npm": "^6.0.0",
+    "ps-node": "^0.1.6",
+    "request": "^2.85.0",
+    "request-progress": "^3.0.0",
+    "underscore": "^1.9.0",
+    "uuid": "^3.2.1",
+    "var": "^0.3.2",
+    "yauzl": "^2.9.1"
+  }
+}

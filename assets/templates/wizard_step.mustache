@@ -1,0 +1,31 @@
+{{#steps}}
+	<li class="list-group-item" data-step-id="{{step}}" title="{{name}}">
+		<strong class="dependwizzardhead">{{step}} - {{name}}</strong><span class="icon icon-single icon-good"></span>
+		<ul class="dependwizzard">
+			{{#checking}}
+				<li class="list-group-sub-item">
+					<strong>Check</strong>&nbsp;<span class="js-check-step icon icon-single icon-good"></span>
+				</li>
+			{{/checking}}
+			{{#download}}
+				<li class="list-group-sub-item">
+					<strong>Download</strong>&nbsp;<span class="js-download-step icon icon-single icon-good"></span>
+				</li>
+			{{/download}}
+			{{#unpack}}
+				<li class="list-group-sub-item">
+					<strong>Unpack</strong>&nbsp;<span class="js-unpack-step icon icon-single icon-good"></span>
+				</li>
+			{{/unpack}}
+			{{#install}}
+				<li class="list-group-sub-item">
+					<strong>Install</strong>&nbsp;<span class="js-install-step icon icon-single icon-good"></span>
+				</li>
+			{{/install}}
+			{{#configuration}}
+				<li class="list-group-sub-item">
+					<strong>Configuration</strong>&nbsp;<span class="js-config-step icon icon-single icon-good"></span>
+				</li>
+			{{/configuration}}
+		</ul>
+{{/steps}}

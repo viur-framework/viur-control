@@ -1,0 +1,130 @@
+{
+	"steps": [
+		{
+			"name": "Python 2.7",
+			"step": 1,
+			"checking": {
+				"cmd": "python --version",
+				"stderrRegex": "Python\\s+(\\d)\\.(\\d)\\.(\\d+)"
+			},
+			"download": {
+				"url": "https://www.python.org/ftp/python/2.7.14/python-2.7.14.msi",
+				"dest": "dependencyCache\\python-2.7.14.msi"
+			},
+			"install": {
+				"cmd": "msiexec /i dependencyCache\\python-2.7.14.msi /quiet /passive /norestart AllUsers=1 ADDLOCAL=ALL",
+				"addEnv": [
+					"C:\\Python27\\",
+					"C:\\Python27\\Scripts"
+				]
+			}
+		},
+		{
+			"name": "node.js",
+			"step": 2,
+			"checking": {
+				"title": "Checking if node.js is installed",
+				"cmd": "node --version",
+				"stdoutRegex": "v(\\d+)\\.(\\d+)\\.(\\d+)"
+			},
+			"download": {
+				"url": "https://nodejs.org/dist/v9.2.0/node-v9.2.0-x64.msi",
+				"dest": "dependencyCache\\node-v9.2.0-x64.msi"
+			},
+			"install": {
+				"cmd": "msiexec /quiet /passive /i node-v9.2.0-x64.msi"
+			}
+		},
+		{
+			"name": "git",
+			"step": 3,
+			"checking": {
+				"cmd": "git --version",
+				"stdoutRegex": "git\\sversion\\s(\\d+)\\.(\\d+)\\.(\\d+)"
+			},
+			"download": {
+				"url": "https://github.com/git-for-windows/git/releases/download/v2.15.0.windows.1/Git-2.15.0-64-bit.exe",
+				"dest": "dependencyCache\\Git-2.15.0-64-bit.exe"
+			},
+			"install": {
+				"cmd": "dependencyCache\\Git-2.15.0-64-bit.exe /SILENT /LOADINF=\"assets\\dependency-installer\\git-install-args.ini\"",
+				"addEnv": [
+					"C:\\Program Files\\Git\\cmd"
+				]
+			}
+		},
+		{
+			"name": "Python for Windows Extensions",
+			"step": 4,
+			"checking": {
+				"cmd": "pip show pypiwin32",
+				"stdoutRegex": "Name:\\spypiwin32"
+			},
+			"install": {
+				"cmd": "pip install pypiwin32"
+			}
+		},
+		{
+			"name": "Google cloud SDK",
+			"step": 5,
+			"checking": {
+				"cmd": "gcloud --version",
+				"stdoutRegex": "Google\\sCloud\\sSDK\\s.*"
+			},
+			"download": {
+				"url": "https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-170.0.1-windows-x86_64.zip?hl=de",
+				"dest": "dependencyCache\\GoogleCloudSDKInstaller.zip"
+			},
+			"unpack": {
+				"format": "zip",
+				"directory": "%HOMEDIR%\\AppData\\Local\\Google"
+			},
+			"install": {
+				"cmd": "dependencyCache\\install.bat --quiet --usage-reporting true --path-update true --additional-components beta app-engine-python app-engine-python-extras",
+				"directory": "%HOMEDIR%\\AppData\\Local\\Google\\google-cloud-sdk",
+				"inputNeeded": {
+					"output": "Press any key to continue",
+					"stdinFeed": "y\n"
+				},
+				"addEnv": [
+					"%HOMEDIR%\\AppData\\Local\\Google\\google-cloud-sdk\\bin"
+				]
+			},
+			"postInstall": "gcloud config configurations create viur-control-default; gcloud config set app/promote_by_default false"
+		},
+		{
+			"name": "lessc",
+			"step": 6,
+			"checking": {
+				"cmd": "lessc --version",
+				"stdoutRegex": ".*Less Compiler.*"
+			},
+			"install": {
+				"cmd": "npm install -g less"
+			}
+		},
+		{
+			"name": "pyjs",
+			"step": 7,
+			"checking": {
+				"cmd": "pyjsbuild --help",
+				"stdoutRegex": "Usage:\\spyjsbuild.*"
+			},
+			"install": {
+				"cmd": "pip install \"git+https://github.com/pyjs/pyjs.git#egg=pyjs\""
+			}
+		},
+		{
+			"name": "native admin for windows",
+			"step": 8,
+			"optional": true,
+			"checking": {
+				"cmd": "pyjsbuild --help",
+				"stdoutRegex": "Usage:\\spyjsbuild.*"
+			},
+			"install": {
+				"cmd": "pip install \"git+https://github.com/pyjs/pyjs.git#egg=pyjs\""
+			}
+		}
+	]
+}

@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta charset="charset=UTF-8"/>
+	<title>ViUR control - About</title>
+	<link rel="icon" type="image/x-icon" href="../img/favicon.ico">
+	<link rel="stylesheet" type="text/css" media="screen" href="../css/styles.css"/>
+	<script>window.$ = window.jQuery = require('jquery');</script>
+</head>
+<body>
+<div class="window frameless">
+	<header class="toolbar toolbar-header">
+		<img class="logo-viur-control" src="../img/logo_viur_control.svg">
+		<span class="logo-title">About</span>
+		<button class="js-close btn-action" title="Close Window">&times;</button>
+	</header>
+	<div class="window-content">
+		<div class="pane-group">
+			<div class="pane">
+				<div class="content active">
+					<div class="nice-section">
+						<h2>2017 © Mausbrand Informationssysteme GmbH</h2>
+						<h3>Version: <span class="js-viur-control-version"></span></h3>
+						<ul>
+							<li>Electron Version: <span class="js-electron-version"></span></li>
+							<li>Node Version: <span class="js-node-version"></span></li>
+							<li>Chromium Version: <span class="js-chromium-version"></span></li>
+						</ul>
+						<h3>Authors</h3>
+						<ul>
+							<li>Main Development - Stefan Kögl</li>
+							<li>Development - Roland Brose</li>
+							<li>Design / Styling - Felix Frank</li>
+						</ul>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<script>
+  $(".js-close").on("click", window.close);
+  let versions = process.versions;
+  $(".js-viur-control-version").text(process.env.npm_package_version);
+  $(".js-electron-version").text(versions.electron);
+  $(".js-chromium-version").text(versions.chrome);
+  $(".js-node-version").text(versions.node);
+</script>
+</body>
+</html>

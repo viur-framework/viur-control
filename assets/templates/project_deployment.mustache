@@ -1,0 +1,189 @@
+<div class="headline-section">
+<h1>{{directoryName}}</h1>
+</div>
+<div class="js-appengine-created-section nice-section">
+	<h3>Deployment Actions</h3>
+	<div>
+		<ul class="settings-ul">
+			<li class="settings-li">
+				<label for="new-version">Used Version</label>
+				<input id="new-version" value="{{newVersion}}">&nbsp;
+				<span class="js-version-warning icon icon-single icon-alert warning hidden">Version is already used</span>
+			</li>
+		</ul>
+	</div>
+	<div class="btn-group">
+		<button class="js-deploy-selected-app btn btn-large btn-default btn-positive"
+		        title="Deploy this Application">
+			<span class="icon icon-upload-cloud"></span>
+			Deploy this application
+		</button>
+		<button class="js-migrate-version btn btn-large btn-reload"
+		        title="Make selected Application-Id default">
+			<span class="icon icon-check"></span>
+			Make version default
+		</button>
+
+	</div>
+</div>
+<div class="js-appengine-created-section nice-section">
+	<button class="js-open-documentation pull-right btn btn-hint icon icon-help" title="Explain this"
+	        data-view="#project-indexes"></button>
+	<h3>Indexes</h3>
+
+	<p><strong>Status from git:</strong><span style="color: #5bd46d"
+	                                          class="js-index-yaml-check icon icon-single"></span>
+	</p>
+
+	<div class="btn-group">
+		<button class="js-update-indexes btn btn-large btn-positive"
+		        title="Deploy the index.yaml to the selected application/project">
+			<span class="icon icon-upload-cloud"></span>
+			Deploy index.yaml
+		</button>
+	</div>
+</div>
+<div class="nice-section">
+	<button class="js-open-documentation pull-right btn btn-hint icon icon-help" title="Explain this"
+	        data-view="#project-application-ids"></button>
+	<h3>Assigned Application-Id's</h3>
+	<table class="table-striped">
+		<thead>
+		<tr>
+			<th>Name</th>
+			<th>Labels</th>
+			<th>Active</th>
+			<th class="removecol">Remove</th>
+		</tr>
+		</thead>
+		<tbody class="js-application-ids">
+		{{#applicationIds}}
+			<tr class="js-applicationid-row">
+				<td>{{value}}</td>
+				<td class="js-labels" data-application-id="{{value}}">
+					{{#labels}}
+						<image class="icon labelicon" src="{{^path}}../img/fallback.svg{{/path}}{{#path}}{{path}}{{/path}}" title="{{title}}"></image>
+					{{/labels}}
+				</td>
+				<td><input type="checkbox" class="js-selectable-application-id" data-value="{{value}}"
+				           {{#checked}}checked{{/checked}}></td>
+				<td class="removecol">
+					<button class="js-remove-application-id btn btn-negative icon icon-cancel"
+					        data-value="{{value}}" title="remove that applicationId from this project"></button>
+				</td>
+			</tr>
+		{{/applicationIds}}
+		</tbody>
+	</table>
+</div>
+
+<div class="js-appengine-created-section nice-section">
+	<button class="js-open-documentation pull-right btn btn-hint icon icon-help" title="Explain this"
+	        data-view="#project-versions"></button>
+	<h3>Deployed Versions for Application-Id &raquo;<span class="js-selected-application-id"></span>&laquo;</h3>
+
+	<table class="table-striped">
+		<thead>
+		<tr>
+			<th>Version</th>
+			<th>Deployed Time</th>
+			<th>Uploaded by User</th>
+			<th>Traffic Split</th>
+		</tr>
+		</thead>
+		<tbody class="js-project-versions">
+		{{#versions.versions}}
+			<tr class="version-row">
+				<td class="js-version-id"><a class="js-version-link"
+				                             href="https://{{id}}-dot-{{applicationId}}.appspot.com"
+				                             title="https://{{id}}-dot-{{applicationId}}.appspot.com">{{id}}</a></td>
+				<td>{{last_deployed_time.datetime}}</td>
+				<td>{{version.createdBy}}</td>
+				<td>{{traffic_split}}</td>
+			</tr>
+		{{/versions.versions}}
+		</tbody>
+	</table>
+
+	<div class="btn-group">
+		<button class="js-get-versions btn btn-positive"
+		        title="Get Versions for selected Application-Id">
+			<span class="icon icon-download"></span>
+			Refresh Versions
+		</button>
+	</div>
+
+	<div class="last-fetch">
+		<span>Last fetched:</span> <strong class="js-versions-last-fetched">{{versions.lastFetched}}</strong>
+	</div>
+</div>
+
+<div class="js-appengine-uncreated-section nice-section hidden">
+	<button class="js-open-documentation pull-right btn btn-hint icon icon-help" title="Explain this"
+	        data-view="#appengine-creation"></button>
+	<h3>Create Appengine Instance</h3>
+
+	<p><strong>Status from gcloud:</strong><span style="color: #5bd46d"
+	                                          class="js-appengine-creation-check icon icon-single"></span>
+	</p>
+
+	<ul class="label-ul">
+		<li class="label-li">
+			<label for="regions-list-id">Region selection</label>
+			<select id="regions-list-id" class="js-regions-selector wizzardselect">
+				{{#regions.regions}}
+					<option value="{{region}}">{{region}}</option>
+				{{/regions.regions}}
+			</select>
+		</li>
+	</ul>
+	<div class="btn-group">
+		<button class="js-check-appengine-status btn btn-large btn-positive"
+		        title="Create appengine instance with selected Application-id">
+			<span class="icon icon-right-bold"></span>
+			Check Status
+		</button>
+		<button class="js-create-appengine btn btn-large btn-positive"
+		        title="Check appengine instance for selected Application-id">
+			<span class="icon icon-right-bold"></span>
+			Create appengine
+		</button>
+		<button class="js-get-appengine-regions btn btn-large btn-reload"
+		        title="Create appengine instance with selected Application-id">
+			<span class="icon icon-arrows-ccw"></span>
+			Refresh Regions
+		</button>
+	</div>
+
+	<div class="last-fetch">
+		<span>Regions last fetched:</span> <strong class="js-regions-last-fetched">{{regions.lastFetched}}</strong>
+	</div>
+</div>
+
+<div class="js-appengine-created-section nice-section">
+	<button class="js-open-documentation pull-right btn btn-hint icon icon-help" title="Explain this"
+	        data-view="#project-subdirectories"></button>
+	<h3>Usable subdirectories</h3>
+	<table class="table-striped">
+		<thead>
+		<tr>
+			<th>Name</th>
+			<th>Active</th>
+			<th class="removecol">Remove</th>
+		</tr>
+		</thead>
+		<tbody class="js-subdirectory-ids">
+		{{#appengineDirectories}}
+			<tr>
+				<td>{{value}}</td>
+				<td><input type="checkbox" class="js-selectable-subdirectory-id"
+				           {{#checked}}checked{{/checked}} data-value="{{value}}"></td>
+				<td class="removecol">
+					<button class="js-remove-subdirectory btn btn-negative icon icon-cancel"
+					        data-value="{{value}}" title="remove that subdirectory from this project"></button>
+				</td>
+			</tr>
+		{{/appengineDirectories}}
+		</tbody>
+	</table>
+</div>

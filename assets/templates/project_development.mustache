@@ -1,0 +1,158 @@
+<div class="headline-section">
+<h1>{{directoryName}}</h1>
+</div>
+<div class="nice-section">
+	<div class="btn-group">
+		{{^running}}
+			<button
+					class="btn ctl-button ctl-server-toggle"
+					title="Start/Stop this application locally">&#9658;
+			</button>
+		{{/running}}
+		{{#running}}
+			<button
+					class="btn ctl-button ctl-server-toggle active"
+					title="Start/Stop this application locally">&#9724;
+			</button>
+		{{/running}}
+		<!--<button class="btn ctl-button ctl-button-buildvi" title="Build the Vi tool locally">Build Vi</button>-->
+		<button href="http://localhost:{{ serverPort }}/"
+		        class="js-devserver-running btn ctl-button server-open-toggle {{^running}}hidden{{/running}}">Open
+		</button>
+		<button href="http://localhost:{{ serverPort }}/vi"
+		        class="js-devserver-running btn ctl-button startvi-toggle {{^running}}hidden{{/running}}">Start Vi
+		</button>
+		<button href="http://localhost:{{ adminPort }}"
+		        class="js-devserver-running btn ctl-button ctl-button-openadmin {{^running}}hidden{{/running}}">Server
+			Console
+		</button>
+	</div>
+</div>
+<div class="nice-section">
+	<button class="js-open-documentation pull-right btn btn-hint icon icon-help" title="Explain this"
+	        data-view="#project-application-ids"></button>
+	<h3>Assigned Application-Id's</h3>
+	<table class="table-striped">
+		<thead>
+		<tr>
+			<th>Name</th>
+			<th>Labels</th>
+			<th>Active</th>
+			<th class="removecol">Remove</th>
+		</tr>
+		</thead>
+		<tbody class="js-application-ids">
+		{{#applicationIds}}
+			<tr class="js-applicationid-row">
+				<td>{{value}}</td>
+				<td class="js-labels" data-application-id="{{value}}">
+					{{#labels}}
+						<image class="icon labelicon" src="{{^path}}../img/fallback.svg{{/path}}{{#path}}{{path}}{{/path}}" title="{{title}}"></image>
+					{{/labels}}
+				</td>
+				<td><input type="checkbox" class="js-selectable-application-id"
+				           {{#checked}}checked{{/checked}} data-value="{{value}}"></td>
+				<td class="removecol">
+					<button class="js-remove-application-id btn btn-negative icon icon-cancel"
+					        data-value="{{value}}" title="remove that applicationId from this project"></button>
+				</td>
+			</tr>
+		{{/applicationIds}}
+		</tbody>
+	</table>
+</div>
+
+<div class="nice-section">
+	<button class="js-open-documentation pull-right btn btn-hint icon icon-help" title="Explain this"
+	        data-view="#project-credentials"></button>
+	<h3>Credentials</h3>
+	<table class="table-striped">
+		<thead>
+		<tr>
+			<th>Application-Id</th>
+			<th>Username</th>
+			<th>Password</th>
+		</tr>
+		</thead>
+		<tbody class="js-credentials">
+		{{#credentials}}
+			<tr class="js-credentials-row">
+				<td><input value="{{applicationId}}"></td>
+				<td><input value="{{username}}"></td>
+				<td><input value="{{password}}"></td>
+			</tr>
+		{{/credentials}}
+		</tbody>
+	</table>
+</div>
+<div class="nice-section">
+	<h3>Tasks</h3>
+	<table class="table-striped">
+		<thead>
+		<tr>
+			<th width="30"><input type="checkbox" class="js-select-all-tasks"></th>
+			<th>Taskname</th>
+			<th width="30">Status</th>
+			<th width="30">Required</th>
+			<th>Options</th>
+		</tr>
+		</thead>
+		<tbody class="">
+		{{#tasks}}
+			<tr class="js-task" data-id="{{id}}">
+				<td><input class="js-task-selection" type="checkbox" data-id="{{id}}"></td>
+				<td><span>{{name}}{{#longRunning}} (longRunning){{/longRunning}}</span></td>
+				<td class="js-task-check-status"></td>
+				<td>{{#requiredForDeployment}}&times;{{/requiredForDeployment}}</td>
+				<td>
+					{{#taskArguments}}
+						<span>{{label}}{{#longRunning}} (longRunning){{/longRunning}}</span>
+						{{#selectType}}
+							<select class="table-select js-task-select pull-right" name="{{name}}">
+								{{#argumentOptions}}
+									<option value="{{value}}" {{#checked}}checked{{/checked}}>{{title}}{{#longRunning}} (longRunning){{/longRunning}}</option>
+								{{/argumentOptions}}
+							</select>
+						{{/selectType}}
+						{{#argType}}
+							<input type="checkbox" value="{{value}}" name="{{label}}">
+						{{/argType}}
+					{{/taskArguments}}
+				</td>
+
+			</tr>
+		{{/tasks}}
+		</tbody>
+	</table>
+	<div class="btn-group">
+		<button class="btn ctl-button js-check-tasks">Check Tasks</button>
+		<button class="btn ctl-button js-start-tasks">Start Tasks</button>
+	</div>
+</div>
+<div class="nice-section">
+	<button class="js-open-documentation pull-right btn btn-hint icon icon-help" title="Explain this"
+	        data-view="#project-subdirectories"></button>
+	<h3>Usable subdirectories</h3>
+	<table class="table-striped">
+		<thead>
+		<tr>
+			<th>Name</th>
+			<th>Active</th>
+			<th class="removecol">Remove</th>
+		</tr>
+		</thead>
+		<tbody class="js-subdirectory-ids">
+		{{#appengineDirectories}}
+			<tr>
+				<td>{{value}}</td>
+				<td><input type="checkbox" class="js-selectable-subdirectory-id"
+				           {{#checked}}checked{{/checked}} data-value="{{value}}"></td>
+				<td class="removecol">
+					<button class="js-remove-subdirectory btn btn-negative icon icon-cancel"
+					        data-value="{{value}}" title="remove that subdirectory from this project"></button>
+				</td>
+			</tr>
+		{{/appengineDirectories}}
+		</tbody>
+	</table>
+</div>

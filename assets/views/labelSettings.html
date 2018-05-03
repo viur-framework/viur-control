@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta charset="charset=UTF-8"/>
+	<title>ViUR control - Label Settings</title>
+	<link rel="icon" type="image/x-icon" href="../img/favicon.ico">
+	<link rel="stylesheet" type="text/css" media="screen" href="../css/styles.css"/>
+	<script>window.$ = window.jQuery = require('jquery');</script>
+	<script type="application/javascript">require("../js/labelSettings.js")</script>
+</head>
+
+<body>
+<div class="window frameless">
+	<header class="toolbar toolbar-header">
+		<img class="logo-viur-control" src="../img/logo_viur_control.svg">
+		<span class="logo-title">Label Settings</span>
+		<button class="js-close btn-action" title="Close Window">&times;</button>
+	</header>
+	<div class="window-content">
+		<div class="pane-group">
+			<div class="pane">
+				<div class="content active">
+
+					<div class="nice-section">
+						<p>Your current label icon repository was set to: <span class="js-label-repository"></span></p>
+						<p>You can change it in the global settings</p>
+						<p>Labels will be displayed with absolute path here, but saved as relative to your label icon repository</p>
+						<p>Choose your icons here and press save when done. The icons will be copied over to your repository when selected from another path. Before close it will be saved when you changed something</p>
+						<button class="js-save btn btn-positive btn-large pull-right">Save</button>
+						<button class="js-open-documentation pull-right btn btn-hint icon icon-help"
+						        title="Explain this"
+						        data-view="#labels"></button>
+						<h4>Label configurator</h4>
+						<ul class="label-settings-ul">
+						</ul>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+</body>
+</html>

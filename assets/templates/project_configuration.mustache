@@ -1,0 +1,131 @@
+<div class="headline-section">
+<h1>{{directoryName}}</h1>
+</div>
+
+<div class="nice-section">
+	<button class="js-open-documentation pull-right btn btn-hint icon icon-help" title="Explain this"
+	        data-view="#project-application-ids"></button>
+	<h3>Assigned Application-Id's</h3>
+	<table class="table-striped">
+		<thead>
+		<tr>
+			<th>Name</th>
+			<th>Labels</th>
+			<th>Domain Mappings</th>
+			<th>Active</th>
+			<th class="removecol">Remove</th>
+		</tr>
+		</thead>
+		<tbody class="js-application-ids">
+		{{#applicationIds}}
+			<tr class="js-applicationid-row">
+				<td>{{value}}</td>
+				<td class="js-labels" data-application-id="{{value}}">
+					{{#labels}}
+						<span><image class="icon labelicon" src="{{^path}}../img/fallback.svg{{/path}}{{#path}}{{path}}{{/path}}" title="{{title}}"></image> {{title}}</span><br/>
+					{{/labels}}
+				</td>
+				<td class="js-domain-mappings" data-application-id="{{value}}">
+
+				</td>
+				<td><input type="checkbox" class="js-selectable-application-id"
+				           {{#checked}}checked{{/checked}} data-value="{{value}}"></td>
+				<td class="removecol">
+					<button class="js-remove-application-id btn btn-negative icon icon-cancel"
+					        data-value="{{value}}" title="remove that applicationId from this project"></button>
+				</td>
+			</tr>
+		{{/applicationIds}}
+		</tbody>
+	</table>
+	<ul class="label-ul">
+		<li class="label-li">
+			<label for="new-application-id">Add Project App-Id</label>
+			<select id="new-application-id" class="js-project-config-all-application-ids wizzardselect">
+			</select>
+		</li>
+	</ul>
+
+	<div class="btn-group">
+		<button class="js-add-application-id btn btn-large btn-positive" title="Add App-Id"><span
+				class="icon icon-right-bold"></span>Add App-Id
+		</button>
+		<button class="js-reload-applications-ids btn btn-large btn-reload"
+		        title="Reload available Application-Id's"><span class="icon icon-arrows-ccw"></span>
+			Reload
+		</button>
+	</div>
+
+</div>
+<div class="nice-section">
+	<h3>Settings for Local Development</h3>
+	<ul class="label-ul">
+		<button class="js-open-documentation pull-right btn btn-hint-bg icon icon-help" title="Explain this"
+		        data-view="#project-server-port"></button>
+		<li class="label-li">
+			<label for="real-server-port"
+			       title="This is the port whe are starting the project dev server">Local Server Port </label>
+			<input id="real-server-port" type="number" name="serverPort" maxlength="5"
+			       value="{{ serverPort }}"
+			       max="65535" class="settings-port-field">
+		</li>
+		<button class="js-open-documentation pull-right btn btn-hint-bg icon icon-help" title="Explain this"
+		        data-view="#project-admin-port"></button>
+		<li class="label-li">
+			<label for="real-admin-port"
+			       title="This is the port for the project admin console">
+				Project Admin
+				Port</label>
+			<input id="real-admin-port" type="number" name="adminPort" maxlength="5"
+			       value="{{ adminPort }}"
+			       max="65535" class="settings-port-field">
+		</li>
+
+		<button class="js-remove-icon btn btn-hint btn-negative pull-right icon icon-cancel"
+		        data-value="{{value}}" title="remove this icon"></button>
+		<li class="label-li">
+			<label for="project-icon">Project Icon</label>
+			<input id="project-icon" class="js-project-icon" name="project-icon" value="{{ projectIcon.url }}"
+			       size="30">
+		</li>
+
+		<button class="js-remove-custom-devserver-cmd btn btn-hint btn-negative pull-right icon icon-cancel"
+		        data-value="{{value}}" title="remove custom dev_appserver arguments"></button>
+		<li class="label-li">
+			<label for="custom-devserver-cmd"
+			       title="used flags for dev_appserver">
+				Dev_appserver.py Arguments
+			</label>
+			<input id="custom-devserver-cmd" name="custom_devserver_cmd"
+			       value="{{ custom_devserver_cmd }}"
+			       max="65535">
+		</li>
+	</ul>
+</div>
+<div class="nice-section">
+	<button class="js-open-documentation pull-right btn btn-hint icon icon-help" title="Explain this"
+	        data-view="#project-subdirectories"></button>
+	<h3>Usable Subdirectories</h3>
+	<table class="table-striped">
+		<thead>
+		<tr>
+			<th>Name</th>
+			<th>Active</th>
+			<th class="removecol">Remove</th>
+		</tr>
+		</thead>
+		<tbody class="js-subdirectory-ids">
+		{{#appengineDirectories}}
+			<tr>
+				<td>{{value}}</td>
+				<td><input type="checkbox" class="js-selectable-subdirectory-id"
+				           {{#checked}}checked{{/checked}} data-value="{{value}}"></td>
+				<td class="removecol">
+					<button class="js-remove-subdirectory btn btn-negative icon icon-cancel"
+					        data-value="{{value}}" title="remove that subdirectory from this project"></button>
+				</td>
+			</tr>
+		{{/appengineDirectories}}
+		</tbody>
+	</table>
+</div>

@@ -1,0 +1,122 @@
+//Sudo ? https://www.npmjs.com/package/sudo-prompt
+// envs "addEnv": ["C:\\Python27\\",	"C:\\Python27\\Scripts"]
+{
+	"steps": [
+		{
+			"name": "Brew",
+			"step": 1,
+			"checking": {
+				"cmd": "brew --version",
+				"stderrRegex": "Homebrew\\s+(\\d)\\.(\\d)\\.(\\d+)"
+			},
+			"install": {
+				"cmd": "yes '' | /usr/bin/ruby -e \"$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)\"",
+			}
+		},
+		{
+			"name": "Python 2.7",
+			"step": 2,
+			"checking": {
+				"cmd": "python2 --version",
+				"stderrRegex": "Python\\s+(\\d)\\.(\\d)\\.(\\d+)"
+			},
+			"install": {
+				"cmd": "brew install python",
+			},
+			"postInstall": "sudo easy_install pip"
+		},
+		{
+			"name": "node.js",
+			"step": 3,
+			"checking": {
+				"title": "Checking if node.js is installed",
+				"cmd": "node --version",
+				"stdoutRegex": "v(\\d+)\\.(\\d+)\\.(\\d+)"
+			},
+			"install": {
+				"cmd": "brew install node"
+			}
+		},
+		{
+			"name": "git",
+			"step": 4,
+			"checking": {
+				"cmd": "git --version",
+				"stdoutRegex": "git\\sversion\\s(\\d+)\\.(\\d+)\\.(\\d+)"
+			},
+			"install": {
+				"cmd": "brew install git",
+			}
+		},
+		{
+			"name": "Google cloud SDK",
+			"step": 5,
+			"checking": {
+				"cmd": "gcloud --version",
+				"stdoutRegex": "Google\\sCloud\\sSDK\\s.*"
+			},
+			"install": {
+				"cmd": "curl https://sdk.cloud.google.com | bash ",
+				"directory": "~/Documents/gcloud-sdk",
+				"inputNeeded": {
+					"output": "Press any key to continue",
+					"stdinFeed": "y\n"
+				},
+				"addEnv": [
+					"~/Documents/gcloud-sdk"
+				]
+			},
+		},
+		{
+			"name": "Google cloud SDK - App Engine",
+			"step": 6,
+			"checking": {
+				"cmd": "gcloud components list",
+				"stdoutRegex": "Installed\\sapp-engine-python\\s.*"
+			},
+			"install": {
+				"cmd": "gcloud components install app-engine-python app-engine-python-extras beta",
+				"directory": "~/Documents/gcloud-sdk",
+				"inputNeeded": {
+					"output": "Do you want to continue (Y/n)?",
+					"stdinFeed": "y\n"
+				}
+			},
+			"postInstall": "gcloud config configurations create viur-control-default; gcloud config set app/promote_by_default false"
+		},
+		{
+			"name": "lessc",
+			"step": 7,
+			"checking": {
+				"cmd": "lessc --version",
+				"stdoutRegex": ".*Less Compiler.*"
+			},
+			"install": {
+				"cmd": "npm install -g less"
+			}
+		},
+		{
+			"name": "pyjs",
+			"step": 8,
+			"checking": {
+				"cmd": "pyjsbuild --help",
+				"stdoutRegex": "Usage:\\spyjsbuild.*"
+			},
+			"install": {
+				"cmd": "sudo pip install \"git+https://github.com/pyjs/pyjs.git#egg=pyjs\""
+			}
+		},
+		{
+			"name": "Admin Tool for mac",
+			"step": 9,
+			"optional": true,
+			"checking": {
+				"cmd": "pyjsbuild --help",
+				"stdoutRegex": "Usage:\\spyjsbuild.*"
+			},
+			"install": {
+				"cmd": "pip install \"git+https://github.com/pyjs/pyjs.git#egg=pyjs\""
+			}
+		}
+	]
+}
