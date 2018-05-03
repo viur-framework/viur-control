@@ -140,7 +140,7 @@ function onIndexesDirtyCheck(currentProject) {
 function onIndexesDirtyCheckResponse(event, result) {
     console.log("onIndexesDirtyCheckResponse", result);
     if (result) {
-        $(".js-index-yaml-check").html("Index.yaml should be deployed first").removeClass("icon-check").addClass("icon-eye").css("color", "red");
+        $(".js-index-yaml-check").html("Index.yaml was changed. Perhaps commit to git and deploy it.").removeClass("icon-check").addClass("icon-eye").css("color", "red");
         $(".ctl-deploy").prop("disabled", true);
     }
     else {
@@ -408,7 +408,6 @@ function addApplicationIdToProject() {
             currentProject.applicationIds = myProject.applicationIds;
             projectStorage.set("projects", projects);
             amendLabelIcons(myProject);
-            console.log("myProject before rendering", myProject);
             $(".js-application-ids").html(renderer.render(projectApplicationTemplate, myProject));
         }
     }
@@ -482,14 +481,16 @@ function checkAppengineInstance(refresh = false) {
         frame: true,
         title: `ViUR control - checking appengine instance ${applicationId}`,
         icon: path.join(__dirname, '../img/favicon.png'),
-        show: debug
+        show: false
     });
     win.on('close', function () {
         win = null;
     });
     win.loadURL(path.join('file://', __dirname, '../views/taskWindow.html'));
     win.webContents.on('did-finish-load', function () {
-        win.show();
+        if (debug) {
+            win.show();
+        }
         win.webContents.send('request-check-appengine-status', thisWindowId, applicationId, debug);
     });
 }
@@ -680,8 +681,8 @@ function saveLabels(customLabelList = undefined) {
             labelCache.set(entry.title, entry);
         }
         if (currentInternalId) {
-            // TODO: a complete new recall of projectSelected for changed label?
-            projectSelected(null, currentInternalId);
+            // TODO: a complete new recall of onProjectSelected for changed label?
+            onProjectSelected(null, currentInternalId);
         }
     }
     console.log("labels should be saved");
@@ -771,7 +772,7 @@ function amendLabelIcons(projectClone) {
         }
     }
 }
-function projectSelected(event, internalIdOverwrite = undefined) {
+function onProjectSelected(event, internalIdOverwrite = undefined) {
     let internalId;
     $(".list-group-item").removeClass("active");
     if (internalIdOverwrite) {
@@ -784,7 +785,7 @@ function projectSelected(event, internalIdOverwrite = undefined) {
     }
     currentInternalId = internalId;
     let project = projectsByInternalId.get(internalId);
-    console.log("projectSelected", currentInternalId, project);
+    console.log("onProjectSelected", currentInternalId, project);
     currentProject = deepClone(project);
     currentProject.running = subprocessIds.has(project.internalId);
     if (!currentProject.custom_devserver_cmd) {
@@ -792,7 +793,7 @@ function projectSelected(event, internalIdOverwrite = undefined) {
     }
     currentProject.regions = regionsStorage.get("data");
     amendLabelIcons(currentProject);
-    console.log("projectSelected", event, currentProject);
+    console.log("onProjectSelected", event, currentProject);
     $(".js-welcome-pane").addClass("hidden");
     $(".js-project-pane").removeClass("hidden");
     // config content
@@ -906,6 +907,7 @@ function requestGetAppengineRegions() {
     });
 }
 function onRequestDomainMappings(refresh = false) {
+    // TODO: implement caching/refresh feature
     let applicationIds = [];
     for (let item of currentProject.applicationIds) {
         applicationIds.push(item.value);
@@ -925,7 +927,7 @@ function onRequestDomainMappings(refresh = false) {
         show: debug === true
     });
     win.on('close', function () {
-      win = null;
+        win = null;
     });
     win.loadURL(path.join('file://', __dirname, '../views/taskWindow.html'));
     win.webContents.on('did-finish-load', function () {
@@ -1107,7 +1109,7 @@ function onWindowReady(event, mainWindowId, userDir, debugMode = false) {
     $(".js-project-config-tab").on("click", switchToProjectConfigPane);
     $(".js-project-local-tab").on("click", switchToProjectLocalPane);
     $(".js-project-remote-tab").on("click", switchToProjectDeploymentPane);
-    $(".list-group").on("click", ".list-group-item", projectSelected);
+    $(".list-group").on("click", ".list-group-item", onProjectSelected);
     $(".content").on("click", ".js-add-application-id", addApplicationIdToProject);
     $(".js-project-search").on("keyup", searchProject);
     $(".js-add-project").on("click", addProject);
@@ -1128,6 +1130,8 @@ function onWindowReady(event, mainWindowId, userDir, debugMode = false) {
     });
     $(windowContent).on("click", ".js-open-documentation", onOpenDocumentation);
     $(windowContent).on("click", ".js-open-viur-documentation", onOpenViurSite);
+    $(".js-console-log-open-button").on("click", onOpenConsoleLog);
+    $(".js-console-dashboard-open-button").on("click", onOpenConsoleDashboard);
     $(windowContent).on("click", ".js-start-tasks", startTasks);
     $(windowContent).on("click", ".js-select-all-tasks", function (event) {
         let checked = $(event.currentTarget).prop("checked");
@@ -1293,9 +1297,21 @@ function onLocalDevServerMinimized(event, internalId) {
         devServerWindow.minimize();
     }
 }
-function onOpenViurSite() {
+function onOpenViurSite(event) {
     event.preventDefault();
     shell.openExternal("https://www.viur.is");
+    return false;
+}
+function onOpenConsoleLog(event) {
+    event.preventDefault();
+    let applicationId = $(".js-project-content.active .js-selectable-application-id:checked").data("value");
+    shell.openExternal(`https://console.cloud.google.com/logs/viewer?project=${applicationId}`);
+    return false;
+}
+function onOpenConsoleDashboard() {
+    event.preventDefault();
+    let applicationId = $(".js-project-content.active .js-selectable-application-id:checked").data("value");
+    shell.openExternal(`https://console.cloud.google.com/home?project=${applicationId}`);
     return false;
 }
 function onRescanProjectsDone() {
@@ -1334,10 +1350,12 @@ function onRequestCheckAppengineStatusResponse(event, applicationId, result) {
     if (!result) {
         $(".js-appengine-uncreated-section").removeClass("hidden");
         $(".js-appengine-created-section").addClass("hidden");
+        $(".js-console-button").addClass("hidden");
     }
     else {
         $(".js-appengine-uncreated-section").addClass("hidden");
         $(".js-appengine-created-section").removeClass("hidden");
+        $(".js-console-button").removeClass("hidden");
     }
     let applicationIdList = gcloudProjectStorage.get("data");
     console.log("applicationIdList", applicationIdList);
