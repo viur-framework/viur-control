@@ -465,12 +465,14 @@ function checkAppengineInstance(refresh = false) {
     let validApplicationId = false;
     let projectToCheck = null;
     for (let entry of applicationIdList.gcloudProjectIds) {
+        console.log("applicationId entry", entry);
         if (entry.name == applicationId) {
             validApplicationId = true;
             projectToCheck = entry;
             break;
         }
     }
+    console.log("validApplicationId, projectToCheck", validApplicationId, projectToCheck);
     if (!validApplicationId || (typeof projectToCheck.created === typeof true && refresh === false)) {
         let result = (!validApplicationId) ? false : (typeof projectToCheck.created === typeof true) ? projectToCheck.created : false;
         onRequestCheckAppengineStatusResponse(null, applicationId, result);
@@ -636,6 +638,7 @@ function setDefaultApplicationId(event) {
     }
     projectStorage.set("projects", projects);
     getProjectVersions();
+    checkAppengineInstance(true);
 }
 function saveLabels(customLabelList = undefined) {
     let workingList;
