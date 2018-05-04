@@ -384,6 +384,50 @@ function addProject(newProjectName, parentWindowId) {
   });
 }
 
+function onCheckGcloudUpdate(event, parentWindowId, debug = false) {
+  // TODO: need a check update command
+  let cmdTemplate = `gcloud --format json components update`;
+}
+
+function onUpdateGcloud(event, parentWindowId) {
+  $(".js-close").on("click", window.close);
+  let foregroundColor = settingsStorage.get("terminal_foreground_color", "#00ff00");
+  let backgroundColor = settingsStorage.get("terminal_background_color", "#000000");
+  let output = $(".output");
+  $(output).css(
+      {
+        "color": foregroundColor,
+        "background-color": backgroundColor
+      }
+  );
+  let cmdTemplate = `gcloud --quiet components update`;
+  let proc = exec(cmdTemplate);
+
+  proc.stdout.on("data", (chunk) => {
+    let data = chunk.toString();
+    if (data) {
+      outputHandler(data);
+    }
+  });
+
+  proc.stderr.on("data", (chunk) => {
+    let data = chunk.toString();
+    if (data) {
+      outputHandler(data);
+    }
+  });
+
+  proc.on('close', (code) => {
+    if (code === 0) {
+      BrowserWindow.fromId(parentWindowId).webContents.send('request-update-gcloud-response', true);
+      // setTimeout(function () {
+      //   window.close();
+      // }, 1500);
+    }
+  });
+}
+
+
 function onCheckAppengineStatus(event, parentWindowId, applicationId, debug = false) {
   $(".js-close").on("click", window.close);
   let foregroundColor = settingsStorage.get("terminal_foreground_color", "#00ff00");
@@ -567,3 +611,4 @@ ipc.on("request-create-appengine", onCreateAppengine);
 ipc.on("request-get-domain-mappings", onGetDomainMappings);
 ipc.on("check-tasks", onCheckTasks);
 ipc.on("verify-all", onVerifyAll);
+ipc.on("request-update-gcloud", onUpdateGcloud);

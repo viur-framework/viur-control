@@ -136,6 +136,12 @@ let template = [
         }
       },
       {
+        label: 'Update Gcloud',
+        click: function () {
+          updateGcloud();
+        }
+      },
+      {
         label: 'Documentation',
         click: function (event) {
           openDocumentation(event, null);
@@ -342,6 +348,39 @@ function openAbout(event) {
   });
 }
 
+function updateGcloud(event) {
+  let updateWindow = new BrowserWindow({
+    icon: path.join(__dirname, 'assets/img/favicon.png'),
+    frame: false,
+    width: 600,
+    height: 450,
+    show: false,
+    webPreferences: {
+      webSecurity: true
+    }
+  });
+  updateWindow.loadURL(url.format({
+    pathname: path.join(__dirname, 'assets/views/taskWindow.html'),
+    protocol: 'file:',
+    slashes: true
+  }));
+  let positioner = new Positioner(updateWindow);
+  positioner.move('center');
+  updateWindow.on('closed', function (event) {
+    updateWindow = null
+  });
+
+  updateWindow.webContents.on('did-finish-load', function () {
+    updateWindow.show();
+    updateWindow.webContents.send('request-update-gcloud', mainWindow.id);
+  });
+}
+
+function onRequestUpdateGcloudResponse(event, success) {
+  console.log("onRequestUpdateGcloudResponse", success);
+}
+
+
 function stopInstances(event) {
   for (let pid of subprocessIds.values()) {
     console.log("kill project dev_server", pid);
@@ -522,3 +561,4 @@ ipc.on("request-settings", openSettings);
 ipc.on("open-project-icon-dialog", onSelectProjectIconDialog);
 ipc.on("request-subprocess-ids", onRequestSubprocessIds);
 ipc.on("select-label-icon-dialog", onSelectLabelIconDialog);
+ipc.on("request-update-gcloud-response", onRequestUpdateGcloudResponse);

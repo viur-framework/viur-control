@@ -1596,3 +1596,4 @@ ipc.on("project-pane-selected", projectPaneSelected);
 ipc.on("check-tasks-done", onRequestTaskChecksDone);
 ipc.on("verify-all", onInternalVerify);
 ipc.on("request-domain-mappings-response", onRequestDomainMappingsResponse);
+
