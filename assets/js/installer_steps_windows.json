@@ -47,7 +47,7 @@
 				"dest": "dependency-cache\\Git-2.15.0-64-bit.exe"
 			},
 			"install": {
-				"cmd": "dependencyCache\\Git-2.15.0-64-bit.exe /SILENT /LOADINF=\"assets\\dependency-installer\\git-install-args.ini\"",
+				"cmd": "dependency-cache\\Git-2.15.0-64-bit.exe /SILENT /LOADINF=\"assets\\dependency-installer\\git-install-args.ini\"",
 				"addEnv": [
 					"C:\\Program Files\\Git\\cmd"
 				]
