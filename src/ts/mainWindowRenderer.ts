@@ -1,7 +1,7 @@
 "use strict";
 /// <reference path="node_modules/@types/electron-store/index.d.ts" />
 
-
+const {VcLogEntryStatus} = require("./vcLogger");
 const fs = require('fs');
 const path = require('path');
 const renderer = require('mustache');
@@ -25,7 +25,7 @@ const electronPositioner = require('electron-positioner');
 const Positioner = require('electron-positioner');
 const {defaultFlagsTpl} = require('./viur_instance_start');
 
-const projectsByInternalId = new Map();
+const projectsByInternalId: Map<string, ProjectInterface> = new Map();
 const projects = [];
 const versionsCache = new Map();
 const subprocessIds = new Map();
@@ -60,7 +60,7 @@ renderer.parse(domainMappingTemplate);
 // mutable data
 let thisWindowId;
 
-interface appengineDirectoryInterface {
+interface AppengineDirectoryInterface {
 	value: string;
 	checked: boolean;
 }
@@ -76,44 +76,62 @@ interface CredentialEntryInterface {
 	password: string;
 }
 
+interface ProjectIconInterface {
+	url: string;
+}
+
+interface ProjectTaskInterface {
+	id: string;
+}
+
 
 interface ProjectInterface {
 	absolutePath: string;
 	directoryName: string;
-	appengineDirectories: Array<appengineDirectoryInterface>;
+	appengineDirectories: Array<AppengineDirectoryInterface>;
 	applicationIds: Array<ApplictionIdInterface>;
 	credentials: Array<CredentialEntryInterface>;
 	internalId: string;
 	serverPort: number;
 	adminPort: number;
 	custom_devserver_cmd: string;
-	tasks: Array<Object>;
+	tasks: Array<ProjectTaskInterface>;
+	projectIcon: ProjectIconInterface;
+	created: boolean;
 }
 
 interface RawLabelsInteface {
 	[propName: string]: string;
 }
 
-interface ApplictionIdCacheEntryInterface {
+interface GcloudApplicationIdEntryInterface {
 	name: string;
-	labels: RawLabelsInteface
+	labels: RawLabelsInteface;
+	created: boolean;
 }
 
-interface ApplictionIdCacheInterface {
-	gcloudProjectIds: ApplictionIdCacheEntryInterface;
+interface GcloudApplicationIdsInterface {
+	gcloudProjectIds: Array<GcloudApplicationIdEntryInterface>;
 }
 
-let applicationsIdCache;
-let currentInternalId: ApplictionIdCacheInterface;
+/** This will hold an array of existing gcloud app/project ids got either from gcloudProjectStorage or from gcloud itself
+ *
+ */
+let gcloudApplicationIds: GcloudApplicationIdsInterface;
+
+let currentInternalId: string;
 let debug = false;
 let appPath;
 let labelList = [];
+let isGcloudAuthorized = false;
 
 /** this variable will hold a cloned instance of the project we're currently have active.
  *  Changes to that object will not survive a project change,
  *  so make your changes to the original project object found in projects or projectsByInternalId
  */
 let currentProject;
+
+let loggerWindow;
 
 function deepClone(obj) {
 	return JSON.parse(JSON.stringify(obj));
@@ -150,7 +168,7 @@ function projectSorter(a, b) {
 }
 
 function prepareProject(project, initials, isNew = false) {
-	console.log("prepareProject", project, isNew);
+	// console.log("prepareProject", project, isNew);
 
 	projectsByInternalId.set(project.internalId, project);
 	projects.push(project);
@@ -224,6 +242,18 @@ function getProjectVersions(event?: Event, refresh = false) {
 	let myApplicationId = $(".js-project-remote-content .js-selectable-application-id:checked").data("value");
 	$(".js-selected-application-id").text(myApplicationId);
 	console.log("getProjectVersions", myApplicationId);
+	if (!gcloudProjectByApplicationId.has(myApplicationId)) {
+		// loggerWindow.webContents.send("vclog-add-entry",
+		// 	{
+		// 		creationdate: moment().format(`YYYY-MM-DD HH:MM`),
+		// 		method: "getProjectVersions",
+		// 		command: "",
+		// 		status: "Error",
+		// 		msg: `Fetching versions stopped: The application/project Id ${myApplicationId} does not exists on gcloud.`
+		// 	});
+		$(".js-vs-log-icon").addClass(`vc-log-error`);
+		return;
+	}
 	if (myApplicationId) {
 		let projectVersions = versionsCache.get(myApplicationId);
 		console.log("going to set versions to project", myApplicationId, projectVersions);
@@ -329,7 +359,7 @@ function startTasks(event?: Event) {
 	let tasks = projectsByInternalId.get(currentInternalId).tasks;
 	let taskQueue = [];
 	for (let element of $(".js-task-selection:checked")) {
-		let taskId = $(element).data("id");
+		let taskId: string = $(element).data("id");
 		console.log("taskId", taskId, tasks);
 		let task;
 		for (let myTask of tasks) {
@@ -444,14 +474,14 @@ function projectPaneSelected(event, paneId) {
 	}
 }
 
-function removeApplicationId(event) {
-	console.log("removeApplicationId");
+function removeApplicationIdFromProject(event) {
+	console.log("removeApplicationIdFromProject");
 	let applicationId = $(event.currentTarget).data("value");
 	let internalId = $(".list-group-item.active").data("internal-id");
 	$(`.js-remove-application-id[data-value="${applicationId}"]`).parents(".js-applicationid-row").slideUp().remove();
 	let myProject = projectsByInternalId.get(internalId);
 	console.log("myProject", myProject);
-	for (let ix in myProject.applicationIds) {
+	for (let ix = 0; ix < myProject.applicationIds.length; ix++) {
 		let entry = myProject.applicationIds[ix];
 		console.log("entry, applicationId", entry, applicationId);
 		if (entry.value === applicationId) {
@@ -552,7 +582,7 @@ function checkAppengineInstance(refresh = false) {
 	let validApplicationId = false;
 	let projectToCheck = null;
 	for (let entry of applicationIdList.gcloudProjectIds) {
-	    console.log("applicationId entry", entry);
+		console.log("applicationId entry", entry);
 		if (entry.name == applicationId) {
 			validApplicationId = true;
 			projectToCheck = entry;
@@ -583,6 +613,27 @@ function checkAppengineInstance(refresh = false) {
 		}
 		win.webContents.send('request-check-appengine-status', thisWindowId, applicationId, debug);
 	});
+}
+
+function checkGcloudAuthStatus() {
+	let win = new BrowserWindow({
+		frame: true,
+		title: `ViUR control - Check gcloud auth status`,
+		icon: path.join(__dirname, '../img/favicon.png'),
+		show: false
+	});
+	win.on('close', function () {
+		win = null
+	});
+	win.loadURL(path.join('file://', __dirname, '../views/taskWindow.html'));
+	win.webContents.on('did-finish-load', function () {
+		win.webContents.send('request-gcloud-auth-status', thisWindowId, debug);
+	});
+}
+
+function checkGcloudAuthStatusResponse(event, status, accounts, errors) {
+	isGcloudAuthorized = status;
+	console.log("checkGcloudAuthStatusResponse", status, accounts, errors);
 }
 
 function updateIndexes() {
@@ -829,7 +880,7 @@ function processApplicationIdLabels() {
 
 	let changed = false;
 
-	for (let applicationIdEntry of applicationsIdCache.gcloudProjectIds) {
+	for (let applicationIdEntry of gcloudApplicationIds.gcloudProjectIds) {
 		gcloudProjectByApplicationId.set(applicationIdEntry.name, applicationIdEntry);
 		let gcloudProjectLabels = applicationIdEntry.labels;
 		if (gcloudProjectLabels) {
@@ -867,7 +918,7 @@ function amendLabelIcons(projectClone) {
 		console.log("projectApplicationIdEntry", projectApplicationIdEntry);
 		let applicationIdEntry = gcloudProjectByApplicationId.get(projectApplicationIdEntry.value);
 		if (applicationIdEntry) {
-			console.log("applicationIdEntry", gcloudProjectByApplicationId, applicationIdEntry);
+			console.log("applicationIdEntry", applicationIdEntry);
 			if (applicationIdEntry) {
 				let gcloudProjectLabels = applicationIdEntry.labels;
 				if (gcloudProjectLabels) {
@@ -888,7 +939,7 @@ function amendLabelIcons(projectClone) {
 }
 
 function onProjectSelected(event, internalIdOverwrite = undefined) {
-	let internalId;
+	let internalId: string;
 	$(".list-group-item").removeClass("active");
 	if (internalIdOverwrite) {
 		internalId = internalIdOverwrite;
@@ -924,7 +975,7 @@ function onProjectSelected(event, internalIdOverwrite = undefined) {
 	checkAppengineInstance();
 	onRequestDomainMappings(true);
 
-	$(".js-project-config-all-application-ids").html(renderer.render(projectConfigApplicationsTemplate, applicationsIdCache));
+	$(".js-project-config-all-application-ids").html(renderer.render(projectConfigApplicationsTemplate, gcloudApplicationIds));
 	onIndexesDirtyCheck(projectsByInternalId.get(currentInternalId));
 }
 
@@ -1043,8 +1094,26 @@ function onRequestDomainMappings(refresh = false) {
 	// TODO: implement caching/refresh feature
 	let applicationIds = [];
 
+	let localAppIds = [];
 	for (let item of currentProject.applicationIds) {
-		applicationIds.push(item.value)
+		if (!gcloudProjectByApplicationId.has(item.value)) {
+			localAppIds.push(item.value);
+		} else {
+			applicationIds.push(item.value)
+		}
+	}
+
+	if (localAppIds.length > 0) {
+		// loggerWindow.webContents.send("vclog-add-entry",
+		// 	{
+		// 		creationdate: moment().format(`YYYY-MM-DD HH:MM`),
+		// 		method: "onRequestDomainMappings",
+		// 		command: "",
+		// 		status: "Error",
+		// 		msg: `Fetching domain mappings stopped: The application/project Ids '${localAppIds}' do not exists on gcloud.`
+		// 	});
+		$(".js-vs-log-icon").addClass(`vc-log-error`);
+		return;
 	}
 
 	//
@@ -1220,7 +1289,7 @@ function onRemoveIcon() {
 	let currentProjectListItem = $(".list-group-item.active");
 	let internalId = $(currentProjectListItem).data("internal-id");
 	let project = projectsByInternalId.get(internalId);
-	delete project.icon;
+	delete project.projectIcon;
 	$(".js-project-icon").val("");
 	projectStorage.set("projects", projects);
 	$(currentProjectListItem).find(".js-project-icon-display").css("background-image", "url('../img/list-fallback.svg')");
@@ -1238,7 +1307,36 @@ function onOpenDocumentation(event) {
 	ipc.send("request-documentation", view);
 }
 
+function toggleVcLogger(event: Event) {
+	if (loggerWindow.isVisible()) {
+		loggerWindow.hide();
+	} else {
+		loggerWindow.show();
+	}
+}
+
+function startVcLogger(event) {
+	loggerWindow = new BrowserWindow({
+		title: `ViUR control - Logging`,
+		frame: false,
+		show: false
+	});
+
+	let positioner = new electronPositioner(loggerWindow);
+	positioner.move('topLeft');
+	loggerWindow.on('close', function () {
+		loggerWindow = null
+	});
+
+	loggerWindow.loadURL(path.join('file://', __dirname, '../views/vclogOutput.html'));
+	$(".js-open-control-log").on("click", toggleVcLogger);
+	loggerWindow.webContents.on('did-finish-load', function () {
+		loggerWindow.webContents.send("vclog-init");
+	});
+}
+
 function onWindowReady(event, mainWindowId, userDir, debugMode = false) {
+	// startVcLogger(null);
 	thisWindowId = mainWindowId;
 	debug = debugMode;
 	appPath = userDir;
@@ -1282,7 +1380,7 @@ function onWindowReady(event, mainWindowId, userDir, debugMode = false) {
 	$(remoteContentDiv).on('click', ".js-update-indexes", updateIndexes);
 	$(remoteContentDiv).on('click', ".js-migrate-version", migrateVersion);
 	$(remoteContentDiv).on('click', "a.js-version-link", versionLinkClicked);
-	$(paneDiv).on('click', ".js-remove-application-id", removeApplicationId);
+	$(paneDiv).on('click', ".js-remove-application-id", removeApplicationIdFromProject);
 	$(".js-home").on("click", onBackToHome);
 	$(".js-open-settings").on("click", function () {
 		ipc.send("request-settings");
@@ -1307,6 +1405,7 @@ function onWindowReady(event, mainWindowId, userDir, debugMode = false) {
 	$(windowContent).on("change", "#real-server-port", onServerPortChanged);
 	$(windowContent).on("change", "#real-admin-port", onAdminPortChanged);
 
+	checkGcloudAuthStatus();
 	onRequestSubprocessIds();
 	loadLabelCache();
 	requestGcloudProjects();
@@ -1333,15 +1432,15 @@ function onDeploymentDialogAnswer(event, index, absolutePath, applicationId, ver
 	})
 }
 
-function onRequestGcloudProjectsResponse(event: Event, data: ApplictionIdCacheInterface, update: boolean) {
+function onRequestGcloudProjectsResponse(event: Event, data: GcloudApplicationIdsInterface, update: boolean) {
 	console.log("onRequestGcloudProjectsResponse", data);
-	applicationsIdCache = data;
+	gcloudApplicationIds = data;
 	processApplicationIdLabels();
 	let applicationIdList = $(".js-project-config-all-application-ids");
-	console.log("applicationId selector", applicationIdList, data, applicationsIdCache.length);
-	if (applicationsIdCache && applicationsIdCache.gcloudProjectIds.length > 0) {
+	console.log("applicationId selector", applicationIdList, data, gcloudApplicationIds.gcloudProjectIds.length);
+	if (gcloudApplicationIds && gcloudApplicationIds.gcloudProjectIds.length > 0) {
 		let renderedHtml = renderer.render(projectConfigApplicationsTemplate, data);
-		console.log("renderedHtml from gcloud project list", renderedHtml);
+		// console.log("renderedHtml from gcloud project list", renderedHtml);
 		$(applicationIdList).html(renderedHtml);
 	}
 }
@@ -1596,4 +1695,4 @@ ipc.on("project-pane-selected", projectPaneSelected);
 ipc.on("check-tasks-done", onRequestTaskChecksDone);
 ipc.on("verify-all", onInternalVerify);
 ipc.on("request-domain-mappings-response", onRequestDomainMappingsResponse);
-
+ipc.on("request-gcloud-auth-status-response", checkGcloudAuthStatusResponse);

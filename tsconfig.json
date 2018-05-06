@@ -6,7 +6,8 @@
         "noImplicitAny": false,
         "noImplicitReturns": true,
         "noFallthroughCasesInSwitch": true,
-        "sourceMap": true
+        "sourceMap": true,
+        "declaration": true
     },
     "include": [
         "./src/ts/*"

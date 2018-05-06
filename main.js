@@ -200,6 +200,12 @@ function createWindow() {
   const contextMenu = Menu.buildFromTemplate(
     [
       {
+        label: 'Show/Hide ViUR control',
+        click: function () {
+          mainWindow.isVisible() ? mainWindow.hide() : mainWindow.show()
+        }
+      },
+      {
         label: 'Quit ViUR control',
         click: function () {
           onBeforeQuit();
@@ -209,16 +215,35 @@ function createWindow() {
       }
     ]
   );
-  appIcon.on("click", function () {
-    if (mainWindow.isVisible()) {
-      mainWindow.minimize();
-    } else {
-      mainWindow.show();
-    }
-  });
+
   appIcon.setTitle("ViUR control");
   appIcon.setToolTip('ViUR control - The ViUR Server Instance Manager.');
   appIcon.setContextMenu(contextMenu);
+
+  appIcon.on('click', () => {
+    console.log("handleTrayClick", ev);
+    mainWindow.isVisible() ? mainWindow.hide() : mainWindow.show()
+  });
+
+  mainWindow.on('show', () => {
+    appIcon.setHighlightMode('always')
+  });
+
+  mainWindow.on('hide', () => {
+    appIcon.setHighlightMode('never')
+  });
+
+  mainWindow.on('before-close', (ev) => {
+    ev.preventDefault();
+    mainWindow.hide();
+    return false;
+  });
+
+  // mainWindow.on('close', (ev) => {
+  //   ev.preventDefault();
+  //   mainWindow.hide();
+  //   return false;
+  // });
 
   mainWindow.webContents.on('crashed', function () {
     console.error("mainWindow crashed");
@@ -243,6 +268,7 @@ function createWindow() {
   mainWindow.webContents.on('did-finish-load', function (event) {
     mainWindow.webContents.send("window-ready", mainWindowId, app.getPath('userData'), debug);
   });
+
 }
 
 function startInstallWizard(event) {

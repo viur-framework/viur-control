@@ -505,6 +505,35 @@ function onGetDomainMappings(event, parentWindowId, applicationIds, debug) {
   }
 }
 
+function onGcloudAuthStatus(event, parentWindowId, debug) {
+  $(".js-close").on("click", window.close);
+  let foregroundColor = settingsStorage.get("terminal_foreground_color", "#00ff00");
+  let backgroundColor = settingsStorage.get("terminal_background_color", "#000000");
+  let output = $(".output");
+  $("title").text(`ViUR control - fetching gcloud authorized accounts`);
+  $(output).css(
+    {
+      "color": foregroundColor,
+      "background-color": backgroundColor
+    }
+  );
+  console.log("onGetAppengineRegions");
+  let cmdTemplate = `gcloud --format json auth list`;
+  $(output).append(`<p class="output-line"><span class="loglevel info">used command: </span>${cmdTemplate}</p>`);
+  const fromWindow = BrowserWindow.fromId(parentWindowId);
+  exec(cmdTemplate, function (error, stdout, stderr) {
+    if (error) {
+      fromWindow.webContents.send("request-gcloud-auth-status-response", false, null, error.toString());
+      return;
+    }
+
+    fromWindow.webContents.send("request-gcloud-auth-status-response", true, JSON.parse(stdout), "");
+    setTimeout(function () {
+      window.close()
+    }, 5000);
+  });
+}
+
 function onGetAppengineRegions(event, parentWindowId) {
   $(".js-close").on("click", window.close);
   let foregroundColor = settingsStorage.get("terminal_foreground_color", "#00ff00");
@@ -612,3 +641,4 @@ ipc.on("request-get-domain-mappings", onGetDomainMappings);
 ipc.on("check-tasks", onCheckTasks);
 ipc.on("verify-all", onVerifyAll);
 ipc.on("request-update-gcloud", onUpdateGcloud);
+ipc.on("request-gcloud-auth-status", onGcloudAuthStatus);
