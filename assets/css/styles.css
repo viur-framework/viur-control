@@ -3075,3 +3075,17 @@ strong.project-loading-text {
     display: inline-block;
     /*vertical-align: middle;*/
 }
+
+/* vc log marker foo */
+
+.vclog-marker-Info {
+
+}
+
+.vclog-marker-Warning {
+
+}
+
+.vclog-marker-Error {
+
+}

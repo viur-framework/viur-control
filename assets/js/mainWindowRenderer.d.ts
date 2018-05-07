@@ -183,3 +183,4 @@ declare function onCatchErrors(event: any, taskName: any, error: any): void;
 declare function onRequestCheckAppengineStatusResponse(event: any, applicationId: any, result: any): void;
 declare function onRequestAppengineRegionsResponse(event: any, result: any): void;
 declare function onRequestCreateAppengineResponse(event: any, applicationId: any): void;
+declare function addLogEntry(logEntry: any): void;

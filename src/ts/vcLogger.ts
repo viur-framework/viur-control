@@ -5,6 +5,7 @@ const $ = require('jquery');
 const fs = require('fs');
 const renderer = require('mustache');
 const ElectronStorage = require('electron-store');
+const BrowserWindow = require('electron').remote.BrowserWindow;
 const vcLogStorage = new ElectronStorage({"name": "vcLog"});
 const ipc = require('electron').ipcRenderer;
 import {plainToClass} from "class-transformer";
@@ -37,7 +38,7 @@ class VcLogEntry {
 }
 
 let logEntries: Array<VcLogEntry>;
-
+let parentWindowId;
 
 function clear() {
 	logEntries = [];
@@ -47,7 +48,7 @@ function clear() {
 
 function addEntry(ev: Event, entry: VcLogEntry) {
 		console.log("addEntry: ", ev, entry);
-		logEntries.push(plainToClass(VcLogEntry, entry));
+		logEntries.unshift(plainToClass(VcLogEntry, entry));
 		$(".output").append(renderer.render(vcLogEntriesTemplate, {vclogEntries: [entry]}));
 }
 
@@ -55,9 +56,12 @@ function getAllFormated(ev: Event) {
 		$(".output").html(renderer.render(vcLogEntriesTemplate, {vclogEntries: logEntries}));
 }
 
-function initVcLogs() {
+function initVcLogs(event, pWindowId) {
 	clear();
-	$(".js-close").on("click", window.close);
+	parentWindowId = pWindowId;
+	$(".js-close").on("click", function() {
+		BrowserWindow.fromId(parentWindowId).webContents.send('request-vclogger-hide');
+	});
 }
 
 ipc.on("vclog-init", initVcLogs);

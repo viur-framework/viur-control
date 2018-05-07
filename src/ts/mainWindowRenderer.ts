@@ -243,15 +243,14 @@ function getProjectVersions(event?: Event, refresh = false) {
 	$(".js-selected-application-id").text(myApplicationId);
 	console.log("getProjectVersions", myApplicationId);
 	if (!gcloudProjectByApplicationId.has(myApplicationId)) {
-		// loggerWindow.webContents.send("vclog-add-entry",
-		// 	{
-		// 		creationdate: moment().format(`YYYY-MM-DD HH:MM`),
-		// 		method: "getProjectVersions",
-		// 		command: "",
-		// 		status: "Error",
-		// 		msg: `Fetching versions stopped: The application/project Id ${myApplicationId} does not exists on gcloud.`
-		// 	});
-		$(".js-vs-log-icon").addClass(`vc-log-error`);
+
+		addLogEntry({
+			creationdate: moment().format(`YYYY-MM-DD HH:MM`),
+			method: "getProjectVersions",
+			command: "",
+			status: "Error",
+			msg: `Fetching versions stopped: The application/project Id ${myApplicationId} does not exists on gcloud.`
+		});
 		return;
 	}
 	if (myApplicationId) {
@@ -1104,15 +1103,13 @@ function onRequestDomainMappings(refresh = false) {
 	}
 
 	if (localAppIds.length > 0) {
-		// loggerWindow.webContents.send("vclog-add-entry",
-		// 	{
-		// 		creationdate: moment().format(`YYYY-MM-DD HH:MM`),
-		// 		method: "onRequestDomainMappings",
-		// 		command: "",
-		// 		status: "Error",
-		// 		msg: `Fetching domain mappings stopped: The application/project Ids '${localAppIds}' do not exists on gcloud.`
-		// 	});
-		$(".js-vs-log-icon").addClass(`vc-log-error`);
+		addLogEntry({
+			creationdate: moment().format(`YYYY-MM-DD HH:MM`),
+			method: "onRequestDomainMappings",
+			command: "",
+			status: "Error",
+			msg: `Fetching domain mappings stopped: The application/project Ids '${localAppIds}' do not exists on gcloud.`
+		});
 		return;
 	}
 
@@ -1308,6 +1305,7 @@ function onOpenDocumentation(event) {
 }
 
 function toggleVcLogger(event: Event) {
+	console.log("toggleVcLogger");
 	if (loggerWindow.isVisible()) {
 		loggerWindow.hide();
 	} else {
@@ -1331,12 +1329,12 @@ function startVcLogger(event) {
 	loggerWindow.loadURL(path.join('file://', __dirname, '../views/vclogOutput.html'));
 	$(".js-open-control-log").on("click", toggleVcLogger);
 	loggerWindow.webContents.on('did-finish-load', function () {
-		loggerWindow.webContents.send("vclog-init");
+		loggerWindow.webContents.send("vclog-init", thisWindowId);
 	});
 }
 
 function onWindowReady(event, mainWindowId, userDir, debugMode = false) {
-	// startVcLogger(null);
+	startVcLogger(null);
 	thisWindowId = mainWindowId;
 	debug = debugMode;
 	appPath = userDir;
@@ -1667,6 +1665,12 @@ function onRequestCreateAppengineResponse(event, applicationId) {
 	onRequestCheckAppengineStatusResponse(event, applicationId, true);
 }
 
+function addLogEntry(logEntry) {
+	let button = $(".js-open-control-log");
+	$(button).removeClass("class^='vclog-marker-']").addClass("vclog-marker-" + logEntry.status);
+	loggerWindow.webContents.send("vclog-add-entry", logEntry);
+}
+
 ipc.on('indexes-check-response', onIndexesDirtyCheckResponse);
 ipc.on('local-devserver-started', onLocalDevServerStarted);
 ipc.on('local-devserver-minimized', onLocalDevServerMinimized);
@@ -1696,3 +1700,4 @@ ipc.on("check-tasks-done", onRequestTaskChecksDone);
 ipc.on("verify-all", onInternalVerify);
 ipc.on("request-domain-mappings-response", onRequestDomainMappingsResponse);
 ipc.on("request-gcloud-auth-status-response", checkGcloudAuthStatusResponse);
+ipc.on("request-vclogger-hide", toggleVcLogger);

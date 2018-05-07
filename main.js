@@ -22,6 +22,7 @@ let mainWindow;
 let dependencyWizardWindow;
 let settingsWindow;
 let documentationWindow;
+let loggerWindowId;
 
 const debug = /--debug/.test(process.argv[2]);
 
@@ -423,6 +424,9 @@ function stopInstances(event) {
     });
   }
   subprocessIds.clear();
+  if (loggerWindowId) {
+    Br
+  }
 }
 
 app.on('ready', createWindow);

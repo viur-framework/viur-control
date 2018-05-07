@@ -244,3 +244,13 @@ p.output-line {
   padding: 10px;
   margin-bottom: 10px;
 }
+
+.vclog-status {
+    font-weight: bold;
+    font-size: 1.2em;
+    padding-left: 10px;
+}
+
+.vclog-status-Error {
+    color: red;
+}

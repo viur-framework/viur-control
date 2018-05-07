@@ -5,6 +5,7 @@ const $ = require('jquery');
 const fs = require('fs');
 const renderer = require('mustache');
 const ElectronStorage = require('electron-store');
+const BrowserWindow = require('electron').remote.BrowserWindow;
 const vcLogStorage = new ElectronStorage({ "name": "vcLog" });
 const ipc = require('electron').ipcRenderer;
 const class_transformer_1 = require("class-transformer");
@@ -27,6 +28,7 @@ class VcLogEntry {
     }
 }
 let logEntries;
+let parentWindowId;
 function clear() {
     logEntries = [];
     vcLogStorage.clear();
@@ -34,15 +36,18 @@ function clear() {
 }
 function addEntry(ev, entry) {
     console.log("addEntry: ", ev, entry);
-    logEntries.push(class_transformer_1.plainToClass(VcLogEntry, entry));
+    logEntries.unshift(class_transformer_1.plainToClass(VcLogEntry, entry));
     $(".output").append(renderer.render(vcLogEntriesTemplate, { vclogEntries: [entry] }));
 }
 function getAllFormated(ev) {
     $(".output").html(renderer.render(vcLogEntriesTemplate, { vclogEntries: logEntries }));
 }
-function initVcLogs() {
+function initVcLogs(event, pWindowId) {
     clear();
-    $(".js-close").on("click", window.close);
+    parentWindowId = pWindowId;
+    $(".js-close").on("click", function () {
+        BrowserWindow.fromId(parentWindowId).webContents.send('request-vclogger-hide');
+    });
 }
 ipc.on("vclog-init", initVcLogs);
 ipc.on("vclog-clear", clear);
