@@ -3,7 +3,7 @@
 /// <reference path="node_modules//electron/electron.d.ts" />
 /// <reference path="node_modules/@types/electron-store/index.d.ts" />
 
-import {VcLogEntryStatus,VcLogEntryInterface} from "./vcLogger";
+import {VcLogEntryInterface, VcLogEntryStatus} from "./vcLogger";
 
 const fs = require('fs');
 const path = require('path');
@@ -29,7 +29,7 @@ const Positioner = require('electron-positioner');
 const {defaultFlagsTpl} = require('./viur_instance_start');
 
 const projectsByInternalId: Map<string, ProjectInterface> = new Map();
-const projects : Array<ProjectInterface> = [];
+const projects: Array<ProjectInterface> = [];
 const versionsCache = new Map();
 const subprocessIds = new Map();
 const projectWindows = new Map();
@@ -60,13 +60,14 @@ renderer.parse(projectCredentialsRow);
 renderer.parse(regionsTemplate);
 renderer.parse(domainMappingTemplate);
 
+
 // mutable data
-let thisWindowId: null|number;
+let thisWindowId: null | number;
 
 interface SubprocessIdInterface {
 	0: string;
 	1: number;
-};
+}
 
 interface LabelInterface {
 	title: string;
@@ -88,7 +89,7 @@ interface AppengineDirectoryInterface {
 interface ApplictionIdInterface {
 	value: string;
 	checked: boolean;
-	labels?: null|Array<LabelInterface>;
+	labels?: null | Array<LabelInterface>;
 }
 
 interface CredentialEntryInterface {
@@ -149,18 +150,18 @@ let gcloudApplicationIds: GcloudApplicationIdsInterface;
 
 let currentInternalId: string;
 let debug = false;
-let appPath : string;
-let labelList : Array<LabelInterface> = [];
-let isGcloudAuthorized : boolean = false;
-let loggerEntryCount : number = 0;
+let appPath: string;
+let labelList: Array<LabelInterface> = [];
+let isGcloudAuthorized: boolean = false;
+let loggerEntryCount: number = 0;
 
 /** this variable will hold a cloned instance of the project we're currently have active.
  *  Changes to that object will not survive a project change,
  *  so make your changes to the original project object found in projects or projectsByInternalId
  */
-let currentProject : null|ProjectInterface;
+let currentProject: null | ProjectInterface;
 
-let loggerWindow : null|typeof BrowserWindow;
+let loggerWindow: null | typeof BrowserWindow;
 
 function deepClone(obj: Object) {
 	return JSON.parse(JSON.stringify(obj));
@@ -196,7 +197,7 @@ function projectSorter(a: any, b: any) {
 	return ($(b).data('name').toLowerCase()) < ($(a).data('name').toLowerCase()) ? 1 : -1;
 }
 
-function prepareProject(project : ProjectInterface, initials : string, isNew : boolean = false) {
+function prepareProject(project: ProjectInterface, initials: string, isNew: boolean = false) {
 	// console.log("prepareProject", project, isNew);
 
 	projectsByInternalId.set(project.internalId, project);
@@ -237,7 +238,7 @@ function onIndexesDirtyCheck(currentProject: ProjectInterface) {
 	let win = new BrowserWindow(
 		{
 			title: `ViUR control - Project Versions`,
-			icon: path.join(__dirname, '../img/favicon.png'),
+			icon: path.join(__dirname, '../img/viur_control_icon_32.png'),
 			frame: false,
 			show: debug === true
 		}
@@ -248,7 +249,7 @@ function onIndexesDirtyCheck(currentProject: ProjectInterface) {
 	});
 }
 
-function onIndexesDirtyCheckResponse(event: Event, result : boolean) {
+function onIndexesDirtyCheckResponse(event: Event, result: boolean) {
 	console.log("onIndexesDirtyCheckResponse", result);
 	if (result) {
 		$(".js-index-yaml-check").html("Index.yaml was changed. Perhaps commit to git and deploy it.").removeClass("icon-check").addClass("icon-eye").css("color", "red");
@@ -267,18 +268,18 @@ function loadVersions() {
 	console.log("versionsCache", versionsCache);
 }
 
-function getProjectVersions(event?: Event, refresh : boolean = false) {
+function getProjectVersions(event?: Event, refresh: boolean = false) {
 	let myApplicationId = $(".js-project-remote-content .js-selectable-application-id:checked").data("value");
 	$(".js-selected-application-id").text(myApplicationId);
 	console.log("getProjectVersions", myApplicationId);
 	if (!gcloudProjectByApplicationId.has(myApplicationId)) {
 
 		addLogEntry(<VcLogEntryInterface> {
-			creationdate: moment().format(`YYYY-MM-DD HH:MM`),
-			method: "getProjectVersions",
+			creationdate: moment().format(`YYYY-MM-DD HH:mm`),
+			method: `Fetching versions for project with application id '${myApplicationId}'`,
 			command: "",
 			status: VcLogEntryStatus.ERROR,
-			msg: `Fetching versions stopped: The application/project Id '${myApplicationId}' does not exists on gcloud.`
+			msg: `Stopped: The application/project Id '${myApplicationId}' does not yet exist!`
 		});
 		return;
 	}
@@ -290,7 +291,7 @@ function getProjectVersions(event?: Event, refresh : boolean = false) {
 			let win = new BrowserWindow(
 				{
 					title: `ViUR control - Project Versions`,
-					icon: path.join(__dirname, '../img/favicon.png'),
+					icon: path.join(__dirname, '../img/viur_control_icon_32.png'),
 					frame: false,
 					show: debug === true
 				}
@@ -332,7 +333,7 @@ function toggleDevServer(event: Event) {
 		let devServerWindow = new BrowserWindow(
 			{
 				title: `ViUR control | log for ${applicationId}`,
-				icon: path.join(__dirname, '../img/favicon.png'),
+				icon: path.join(__dirname, '../img/viur_control_icon_32.png'),
 				frame: false,
 				show: false,
 				width: 1280,
@@ -385,7 +386,7 @@ function addProject() {
 function startTasks(event?: Event) {
 	console.log("startTasks");
 	let tasks = projectsByInternalId.get(currentInternalId).tasks;
-	let taskQueue : Array<Object> = [];
+	let taskQueue: Array<Object> = [];
 	for (let element of $(".js-task-selection:checked")) {
 		let taskId: string = $(element).data("id");
 		console.log("taskId", taskId, tasks);
@@ -588,7 +589,7 @@ function createAppengineInstance() {
 	let win = new BrowserWindow({
 		frame: true,
 		title: `ViUR control - Creating appengine instance ${applicationId}`,
-		icon: path.join(__dirname, '../img/favicon.png'),
+		icon: path.join(__dirname, '../img/viur_control_icon_32.png'),
 		show: debug
 	});
 	win.on('close', function () {
@@ -602,46 +603,26 @@ function createAppengineInstance() {
 	});
 }
 
-function checkAppengineInstance(refresh = false) {
-	let applicationId = $(".content.active").find(".js-selectable-application-id:checked").data("value");
+function checkAppengineInstance(event: null | Event, refresh = true) {
+	let applicationId: string = $(".content.active").find(".js-selectable-application-id:checked").data("value");
 	console.log("checkAppengineInstance", applicationId);
-	let applicationIdList = gcloudProjectStorage.get("data");
-	console.log("applicationIdList", applicationIdList);
 	let validApplicationId = false;
-	let projectToCheck = null;
-	for (let entry of applicationIdList.gcloudProjectIds) {
-		console.log("applicationId entry", entry);
-		if (entry.name == applicationId) {
-			validApplicationId = true;
-			projectToCheck = entry;
-			break;
-		}
+	let projectToCheck = gcloudProjectByApplicationId.get(applicationId);
+	if (projectToCheck) {
+		validApplicationId = true;
 	}
-	console.log("validApplicationId, projectToCheck", validApplicationId, projectToCheck);
-	if (!validApplicationId || (typeof projectToCheck.created === typeof true && refresh === false)) {
-		if (!validApplicationId) {
-			if (!gcloudProjectByApplicationId.has(applicationId)) {
 
-				addLogEntry(<VcLogEntryInterface> {
-					creationdate: moment().format(`YYYY-MM-DD HH:MM`),
-					method: "checkAppengineInstance",
-					command: "",
-					status: VcLogEntryStatus.ERROR,
-					msg: `Checking appengine instance stopped: The application/project Id '${applicationId}' does not exists on gcloud.`
-				});
-			}
-		}
-		let result = (!validApplicationId) ? false : (typeof projectToCheck.created === typeof true) ? projectToCheck.created : false;
-
-		onRequestCheckAppengineStatusResponse(null, applicationId, result);
+	let result = !refresh && !validApplicationId;
+	if (result) {
+		console.log("checkAppengineInstance: going to terminate this and go on error condition");
+		onRequestCheckAppengineStatusResponse(null, applicationId, !result, refresh);
 		return;
 	}
-	console.log("projectToCheck", projectToCheck.created, refresh, validApplicationId);
 
 	let win = new BrowserWindow({
 		frame: true,
 		title: `ViUR control - checking appengine instance ${applicationId}`,
-		icon: path.join(__dirname, '../img/favicon.png'),
+		icon: path.join(__dirname, '../img/viur_control_icon_32.png'),
 		show: false
 	});
 	win.on('close', function () {
@@ -660,7 +641,7 @@ function checkGcloudAuthStatus() {
 	let win = new BrowserWindow({
 		frame: true,
 		title: `ViUR control - Check gcloud auth status`,
-		icon: path.join(__dirname, '../img/favicon.png'),
+		icon: path.join(__dirname, '../img/viur_control_icon_32.png'),
 		show: false
 	});
 	win.on('close', function () {
@@ -696,7 +677,7 @@ function updateIndexes() {
 	let win = new BrowserWindow({
 		frame: true,
 		title: `ViUR control - Deploying ${applicationId}`,
-		icon: path.join(__dirname, '../img/favicon.png'),
+		icon: path.join(__dirname, '../img/viur_control_icon_32.png'),
 		show: false
 	});
 	win.on('close', function () {
@@ -729,7 +710,7 @@ function migrateVersion() {
 	let win = new BrowserWindow({
 		frame: true,
 		title: `ViUR control - Deploying ${applicationId}`,
-		icon: path.join(__dirname, '../img/favicon.png'),
+		icon: path.join(__dirname, '../img/viur_control_icon_32.png'),
 		show: false
 	});
 	win.on('close', function () {
@@ -830,11 +811,11 @@ function setDefaultApplicationId(event: Event) {
 
 	projectStorage.set("projects", projects);
 	getProjectVersions();
-	checkAppengineInstance(true);
+	checkAppengineInstance(null, true);
 }
 
-function saveLabels(customLabelList : undefined|Array<LabelInterface> = undefined) {
-	let workingList : Array<LabelInterface>;
+function saveLabels(customLabelList: undefined | Array<LabelInterface> = undefined) {
+	let workingList: Array<LabelInterface>;
 	if (customLabelList) {
 		workingList = customLabelList;
 	} else {
@@ -856,9 +837,9 @@ function saveLabels(customLabelList : undefined|Array<LabelInterface> = undefine
 		fs.mkdirSync(labelIconRepository);
 	}
 
-	let resultList : Array<LabelInterface> = [];
+	let resultList: Array<LabelInterface> = [];
 	for (let entry of workingList) {
-		let clone : LabelInterface = <LabelInterface> Object.assign({}, entry);
+		let clone: LabelInterface = <LabelInterface> Object.assign({}, entry);
 		if (clone.path) {
 			if (clone.hasOwnProperty("id")) {
 				delete clone.id;
@@ -930,7 +911,7 @@ function processApplicationIdLabels() {
 				let cacheKey = `${labelKey}: ${labelValue}`;
 				if (!labelCache.has(cacheKey)) {
 					try {
-						let payload : LabelInterface = {
+						let payload: LabelInterface = {
 							"path": null,
 							"title": cacheKey
 						};
@@ -979,7 +960,7 @@ function amendLabelIcons(projectClone: ProjectInterface) {
 	}
 }
 
-function onProjectSelected(event: Event, internalIdOverwrite : string = undefined) {
+function onProjectSelected(event: Event, internalIdOverwrite: string = undefined) {
 	let internalId: string;
 	$(".list-group-item").removeClass("active");
 	if (internalIdOverwrite) {
@@ -1013,7 +994,7 @@ function onProjectSelected(event: Event, internalIdOverwrite : string = undefine
 
 	getProjectVersions();
 	fillNextVersion();
-	checkAppengineInstance();
+	checkAppengineInstance(null, false);
 	onRequestDomainMappings(true);
 
 	$(".js-project-config-all-application-ids").html(renderer.render(projectConfigApplicationsTemplate, gcloudApplicationIds));
@@ -1050,7 +1031,7 @@ function requestProjectsScan(refresh: boolean = false) {
 	let win = new BrowserWindow(
 		{
 			title: `ViUR control - Projects Scanning`,
-			icon: path.join(__dirname, '../img/favicon.png'),
+			icon: path.join(__dirname, '../img/viur_control_icon_32.png'),
 			frame: false,
 			show: debug === true
 		}
@@ -1072,7 +1053,7 @@ function requestLabelSettings(event: Event) {
 	let win = new BrowserWindow(
 		{
 			title: `ViUR control - Label Settings`,
-			icon: path.join(__dirname, '../img/favicon.png'),
+			icon: path.join(__dirname, '../img/viur_control_icon_32.png'),
 			show: false,
 			frame: false
 		}
@@ -1089,7 +1070,7 @@ function requestScanNewProject(event: Event, projectName: string) {
 	let win = new BrowserWindow(
 		{
 			title: `ViUR control - Projects Scanning`,
-			icon: path.join(__dirname, '../img/favicon.png'),
+			icon: path.join(__dirname, '../img/viur_control_icon_32.png'),
 			show: false
 		}
 	);
@@ -1103,7 +1084,7 @@ function requestGcloudProjects(update: boolean = false) {
 	let win = new BrowserWindow(
 		{
 			title: `ViUR control - fetch gcloud projects`,
-			icon: path.join(__dirname, '../img/favicon.png'),
+			icon: path.join(__dirname, '../img/viur_control_icon_32.png'),
 			frame: false,
 			show: debug
 		}
@@ -1119,7 +1100,7 @@ function requestGetAppengineRegions() {
 	let win = new BrowserWindow(
 		{
 			title: `ViUR control - fetch appengine regions`,
-			icon: path.join(__dirname, '../img/favicon.png'),
+			icon: path.join(__dirname, '../img/viur_control_icon_32.png'),
 			frame: false,
 			show: true
 		}
@@ -1133,7 +1114,7 @@ function requestGetAppengineRegions() {
 
 function onRequestDomainMappings(refresh: boolean = false) {
 	// TODO: implement caching/refresh feature
-	let applicationIds : Array<string> = [];
+	let applicationIds: Array<string> = [];
 
 	let localAppIds = [];
 	for (let item of currentProject.applicationIds) {
@@ -1146,11 +1127,11 @@ function onRequestDomainMappings(refresh: boolean = false) {
 
 	if (localAppIds.length > 0) {
 		addLogEntry(<VcLogEntryInterface> {
-			creationdate: moment().format(`YYYY-MM-DD HH:MM`),
-			method: "onRequestDomainMappings",
+			creationdate: moment().format(`YYYY-MM-DD HH:mm`),
+			method: `fetching domain mapping for project`,
 			command: "",
 			status: VcLogEntryStatus.ERROR,
-			msg: `Fetching domain mappings stopped: The application/project Ids '${localAppIds}' do not exists on gcloud.`
+			msg: `Stopped: The application/project Ids '${localAppIds}' do not (yet) exist.`
 		});
 		return;
 	}
@@ -1167,7 +1148,7 @@ function onRequestDomainMappings(refresh: boolean = false) {
 	let win = new BrowserWindow(
 		{
 			title: `ViUR control - fetch appengine regions`,
-			icon: path.join(__dirname, '../img/favicon.png'),
+			icon: path.join(__dirname, '../img/viur_control_icon_32.png'),
 			frame: false,
 			show: debug === true
 		}
@@ -1198,7 +1179,7 @@ function onRequestSubprocessIds() {
 	ipc.send("request-subprocess-ids");
 }
 
-function onRequestSubprocessIdsResponse(event: Event, subprocessIdsFromMain : Array<Array<any>>, projectWindowsFromMain: Array<Array<any>>) {
+function onRequestSubprocessIdsResponse(event: Event, subprocessIdsFromMain: Array<Array<any>>, projectWindowsFromMain: Array<Array<any>>) {
 	console.log("onRequestSubprocessIdsResponse", subprocessIdsFromMain, projectWindowsFromMain);
 	subprocessIds.clear();
 	for (let [internalId, processId] of subprocessIdsFromMain) {
@@ -1216,7 +1197,7 @@ function onRequestSubprocessIdsResponse(event: Event, subprocessIdsFromMain : Ar
 function onInternalVerify(event: Event) {
 	console.log("onInternalVerify");
 	let verifyWindow = new BrowserWindow({
-		icon: path.join(__dirname, '../img/favicon.png'),
+		icon: path.join(__dirname, '../img/viur_control_icon_32.png'),
 		frame: false,
 		width: 600,
 		height: 300,
@@ -1411,12 +1392,9 @@ function onWindowReady(event: Event, mainWindowId: number, userDir: string, debu
 	$(".js-add-project").on("click", addProject);
 
 	$(remoteContentDiv).on('click', ".js-deploy-selected-app", deployProject);
-	$(remoteContentDiv).on('click', ".js-check-appengine-exists", checkAppengineInstance);
 	$(remoteContentDiv).on('click', ".js-get-appengine-regions", requestGetAppengineRegions);
 	$(remoteContentDiv).on('click', ".js-create-appengine", createAppengineInstance);
-	$(remoteContentDiv).on('click', ".js-check-appengine-status", function () {
-		checkAppengineInstance(true);
-	});
+	$(remoteContentDiv).on('click', ".js-check-appengine-status", checkAppengineInstance);
 	$(remoteContentDiv).on('click', ".js-update-indexes", updateIndexes);
 	$(remoteContentDiv).on('click', ".js-migrate-version", migrateVersion);
 	$(remoteContentDiv).on('click', "a.js-version-link", versionLinkClicked);
@@ -1460,7 +1438,7 @@ function onDeploymentDialogAnswer(event: Event, index: number, absolutePath: str
 	let win = new BrowserWindow({
 		frame: true,
 		title: `ViUR control - Deploying ${applicationId}`,
-		icon: path.join(__dirname, '../img/favicon.png')
+		icon: path.join(__dirname, '../img/viur_control_icon_32.png')
 	});
 	win.on('close', function () {
 		win = null
@@ -1661,23 +1639,31 @@ function onRescanLabels() {
 }
 
 
-function onSaveLabels(event: Event,  remoteLabels: Array<LabelInterface>) {
+function onSaveLabels(event: Event, remoteLabels: Array<LabelInterface>) {
 	saveLabels(remoteLabels);
 }
 
 
-function onCatchErrors(event: Event,  taskName: string, error: string) {
+function onCatchErrors(event: Event, taskName: string, error: string) {
 	console.log("onCatchingErrors", taskName, error);
 }
 
-function onRequestCheckAppengineStatusResponse(event: Event, applicationId: string, result: boolean) {
-	console.log("onRequestCheckAppengineStatusResponse", applicationId, result);
+function onRequestCheckAppengineStatusResponse(event: Event, applicationId: string, result: boolean, refresh: boolean = true) {
+	console.log("onRequestCheckAppengineStatusResponse", event, applicationId, result, refresh);
 	let myProject = projectsByInternalId.get(currentInternalId);
 	myProject.created = result;
 	if (!result) {
+		let prefix = (refresh) ? "" : "Stopped: ";
 		$(".js-appengine-uncreated-section").removeClass("hidden");
 		$(".js-appengine-created-section").addClass("hidden");
 		$(".js-console-button").addClass("hidden");
+		addLogEntry(<VcLogEntryInterface> {
+			creationdate: moment().format(`YYYY-MM-DD HH:mm`),
+			method: "Checking appengine instance status",
+			command: "",
+			status: VcLogEntryStatus.ERROR,
+			msg: `${prefix}The application/project Id '${applicationId}' does not exists on gcloud.`
+		});
 	} else {
 		$(".js-appengine-uncreated-section").addClass("hidden");
 		$(".js-appengine-created-section").removeClass("hidden");
@@ -1702,7 +1688,7 @@ function onRequestAppengineRegionsResponse(event: Event, result: AppengineRegion
 	$(".js-regions-last-fetched").text(result.lastFetched);
 }
 
-function onRequestCreateAppengineResponse(event: Event,  applicationId: string) {
+function onRequestCreateAppengineResponse(event: Event, applicationId: string) {
 	console.log("onRequestCreateAppengineResponse");
 	onRequestCheckAppengineStatusResponse(event, applicationId, true);
 }

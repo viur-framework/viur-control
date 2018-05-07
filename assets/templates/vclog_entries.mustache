@@ -1,7 +1,10 @@
 {{#vclogEntries}}
 	<div class="js-vclog-entry vclog-entry">
-		<h1><span class="vclog-creationdate">{{creationdate}}</span><span class="vclog-status vclog-status-{{status}}">{{status}}</span></h1>
-		<p class="vclog-method">{{method}}</p>
+		<h2>
+			<span class="vclog-creationdate">{{creationdate}}</span>
+			<span class="vclog-status vclog-status-{{status}}">{{status}}</span>
+			<span class="vclog-method">{{method}}</span>
+		</h2>
 		<p class="vclog-msg">{{msg}}</p>
 	</div>
 {{/vclogEntries}}
