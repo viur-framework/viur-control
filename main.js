@@ -184,6 +184,7 @@ function createWindow() {
   const iconName = process.platform === 'win32' ? 'favicon.ico' : 'favicon.png';
   const iconPath = path.join(__dirname, "assets", "img", iconName);
   appIcon = new Tray(iconPath);
+  app.isQuitting = false;
 
   if (debug) {
     mainWindow.webContents.openDevTools();
@@ -210,6 +211,7 @@ function createWindow() {
         click: function () {
           onBeforeQuit();
           stopInstances();
+          app.isQuitting = true;
           app.quit();
         }
       }
@@ -221,7 +223,6 @@ function createWindow() {
   appIcon.setContextMenu(contextMenu);
 
   appIcon.on('click', () => {
-    console.log("handleTrayClick", ev);
     mainWindow.isVisible() ? mainWindow.hide() : mainWindow.show()
   });
 
@@ -229,8 +230,8 @@ function createWindow() {
     appIcon.setHighlightMode('always')
   });
 
-  mainWindow.on('hide', () => {
-    appIcon.setHighlightMode('never')
+  mainWindow.on('minimize', () => {
+    mainWindow.hide();
   });
 
   mainWindow.on('before-close', (ev) => {
@@ -239,11 +240,13 @@ function createWindow() {
     return false;
   });
 
-  // mainWindow.on('close', (ev) => {
-  //   ev.preventDefault();
-  //   mainWindow.hide();
-  //   return false;
-  // });
+  mainWindow.on('close', (ev) => {
+    if (!app.isQuitting) {
+      ev.preventDefault();
+      mainWindow.hide();
+      return false;
+    }
+  });
 
   mainWindow.webContents.on('crashed', function () {
     console.error("mainWindow crashed");
