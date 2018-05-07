@@ -420,9 +420,9 @@ function onUpdateGcloud(event, parentWindowId) {
   proc.on('close', (code) => {
     if (code === 0) {
       BrowserWindow.fromId(parentWindowId).webContents.send('request-update-gcloud-response', true);
-      // setTimeout(function () {
-      //   window.close();
-      // }, 1500);
+      setTimeout(function () {
+        window.close();
+      }, 1500);
     }
   });
 }

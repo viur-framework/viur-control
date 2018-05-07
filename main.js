@@ -171,7 +171,7 @@ function createWindow() {
       width: 1080,
       minWidth: 680,
       height: 840,
-      icon: path.join(__dirname, 'assets', 'img', 'favicon.png')
+      icon: path.join(__dirname, 'assets', 'img', 'viur_control_icon_64.png')
     }
   );
 
@@ -182,7 +182,7 @@ function createWindow() {
     slashes: true
   }));
 
-  const iconName = process.platform === 'win32' ? 'favicon.ico' : 'viur_control_icon-64.png';
+  const iconName = process.platform === 'win32' ? 'favicon.ico' : 'viur_control_icon_64.png';
   const iconPath = path.join(__dirname, "assets", "img", iconName);
   appIcon = new Tray(iconPath);
   app.isQuitting = false;
@@ -277,7 +277,7 @@ function createWindow() {
 
 function startInstallWizard(event) {
   dependencyWizardWindow = new BrowserWindow({
-    icon: path.join(__dirname, 'assets/img/favicon.png'),
+    icon: path.join(__dirname, 'assets/img/viur_control_icon_64.png'),
     frame: false,
     width: 900,
     height: 800
@@ -301,7 +301,7 @@ function startInstallWizard(event) {
 
 function openSettings(event) {
   settingsWindow = new BrowserWindow({
-    icon: path.join(__dirname, 'assets/img/favicon.png'),
+    icon: path.join(__dirname, 'assets/img/viur_control_icon_64.png'),
     frame: false
   });
   settingsWindow.loadURL(url.format({
@@ -324,7 +324,7 @@ function openDocumentation(event, view) {
       contextIsolation: true,
       nodeIntegration: false,
       sandbox: true,
-      icon: path.join(__dirname, 'assets/img/favicon.png'),
+      icon: path.join(__dirname, 'assets/img/viur_control_icon_64.png'),
       frame: false,
       // parent: mainWindow,
       // modal: true,
@@ -356,7 +356,7 @@ function openDocumentation(event, view) {
 
 function openAbout(event) {
   let aboutWindow = new BrowserWindow({
-    icon: path.join(__dirname, 'assets/img/favicon.png'),
+    icon: path.join(__dirname, 'assets/img/viur_control_icon_64.png'),
     frame: false,
     width: 600,
     height: 450,
@@ -380,7 +380,7 @@ function openAbout(event) {
 
 function updateGcloud(event) {
   let updateWindow = new BrowserWindow({
-    icon: path.join(__dirname, 'assets/img/favicon.png'),
+    icon: path.join(__dirname, 'assets/img/viur_control_icon_64.png'),
     frame: false,
     width: 600,
     height: 450,
