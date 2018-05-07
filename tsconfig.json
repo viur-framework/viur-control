@@ -3,7 +3,7 @@
         "outDir": "./assets/js",
         "target": "es2015",
         "module": "commonjs",
-        "noImplicitAny": false,
+        "noImplicitAny": true,
         "noImplicitReturns": true,
         "noFallthroughCasesInSwitch": true,
         "sourceMap": true,

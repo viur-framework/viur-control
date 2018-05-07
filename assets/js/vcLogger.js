@@ -17,7 +17,7 @@ var VcLogEntryStatus;
     VcLogEntryStatus["SUCCESS"] = "Success";
     VcLogEntryStatus["WARNING"] = "Warning";
     VcLogEntryStatus["ERROR"] = "Error";
-})(VcLogEntryStatus || (VcLogEntryStatus = {}));
+})(VcLogEntryStatus = exports.VcLogEntryStatus || (exports.VcLogEntryStatus = {}));
 class VcLogEntry {
     constructor(creationdate, method, command, status, msg) {
         this.creationdate = creationdate;
@@ -27,6 +27,7 @@ class VcLogEntry {
         this.msg = msg;
     }
 }
+exports.VcLogEntry = VcLogEntry;
 let logEntries;
 let parentWindowId;
 function clear() {

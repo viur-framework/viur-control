@@ -1,6 +1,8 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+/// <reference path="node_modules//electron/electron.d.ts" />
 /// <reference path="node_modules/@types/electron-store/index.d.ts" />
-const { VcLogEntryStatus } = require("./vcLogger");
+const vcLogger_1 = require("./vcLogger");
 const fs = require('fs');
 const path = require('path');
 const renderer = require('mustache');
@@ -54,6 +56,7 @@ renderer.parse(regionsTemplate);
 renderer.parse(domainMappingTemplate);
 // mutable data
 let thisWindowId;
+;
 /** This will hold an array of existing gcloud app/project ids got either from gcloudProjectStorage or from gcloud itself
  *
  */
@@ -171,7 +174,7 @@ function getProjectVersions(event, refresh = false) {
             creationdate: moment().format(`YYYY-MM-DD HH:MM`),
             method: "getProjectVersions",
             command: "",
-            status: "Error",
+            status: vcLogger_1.VcLogEntryStatus.ERROR,
             msg: `Fetching versions stopped: The application/project Id '${myApplicationId}' does not exists on gcloud.`
         });
         return;
@@ -491,6 +494,17 @@ function checkAppengineInstance(refresh = false) {
     }
     console.log("validApplicationId, projectToCheck", validApplicationId, projectToCheck);
     if (!validApplicationId || (typeof projectToCheck.created === typeof true && refresh === false)) {
+        if (!validApplicationId) {
+            if (!gcloudProjectByApplicationId.has(applicationId)) {
+                addLogEntry({
+                    creationdate: moment().format(`YYYY-MM-DD HH:MM`),
+                    method: "checkAppengineInstance",
+                    command: "",
+                    status: vcLogger_1.VcLogEntryStatus.ERROR,
+                    msg: `Checking appengine instance stopped: The application/project Id '${applicationId}' does not exists on gcloud.`
+                });
+            }
+        }
         let result = (!validApplicationId) ? false : (typeof projectToCheck.created === typeof true) ? projectToCheck.created : false;
         onRequestCheckAppengineStatusResponse(null, applicationId, result);
         return;
@@ -962,7 +976,7 @@ function onRequestDomainMappings(refresh = false) {
             creationdate: moment().format(`YYYY-MM-DD HH:MM`),
             method: "onRequestDomainMappings",
             command: "",
-            status: "Error",
+            status: vcLogger_1.VcLogEntryStatus.ERROR,
             msg: `Fetching domain mappings stopped: The application/project Ids '${localAppIds}' do not exists on gcloud.`
         });
         return;

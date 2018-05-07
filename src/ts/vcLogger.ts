@@ -14,14 +14,23 @@ const vcLogEntriesTemplate = fs.readFileSync("assets/templates/vclog_entries.mus
 renderer.parse(vcLogEntriesTemplate);
 
 
-enum VcLogEntryStatus {
+export enum VcLogEntryStatus {
 	STARTED = "Started",
 	SUCCESS = "Success",
 	WARNING = "Warning",
 	ERROR = "Error"
 }
 
-class VcLogEntry {
+export interface VcLogEntryInterface {
+	creationdate: string;
+	method: string;
+	command: string;
+	status: VcLogEntryStatus;
+	msg: string;
+}
+
+
+export class VcLogEntry {
 	creationdate: string;
 	method: string;
 	command: string;
@@ -38,7 +47,7 @@ class VcLogEntry {
 }
 
 let logEntries: Array<VcLogEntry>;
-let parentWindowId;
+let parentWindowId : number;
 
 function clear() {
 	logEntries = [];
@@ -57,7 +66,7 @@ function getAllFormated(ev: Event) {
 		$(".output").html(renderer.render(vcLogEntriesTemplate, {vclogEntries: logEntries}));
 }
 
-function initVcLogs(event, pWindowId) {
+function initVcLogs(event: Event, pWindowId: number) {
 	clear();
 	parentWindowId = pWindowId;
 	$(".js-close").on("click", function() {
