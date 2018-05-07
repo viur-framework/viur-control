@@ -49,7 +49,8 @@ function clear() {
 function addEntry(ev: Event, entry: VcLogEntry) {
 		console.log("addEntry: ", ev, entry);
 		logEntries.unshift(plainToClass(VcLogEntry, entry));
-		$(".output").append(renderer.render(vcLogEntriesTemplate, {vclogEntries: [entry]}));
+		$(".output").prepend(renderer.render(vcLogEntriesTemplate, {vclogEntries: [entry]}));
+		BrowserWindow.fromId(parentWindowId).webContents.send('vclog-entry-count', logEntries.length);
 }
 
 function getAllFormated(ev: Event) {

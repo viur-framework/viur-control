@@ -37,7 +37,8 @@ function clear() {
 function addEntry(ev, entry) {
     console.log("addEntry: ", ev, entry);
     logEntries.unshift(class_transformer_1.plainToClass(VcLogEntry, entry));
-    $(".output").append(renderer.render(vcLogEntriesTemplate, { vclogEntries: [entry] }));
+    $(".output").prepend(renderer.render(vcLogEntriesTemplate, { vclogEntries: [entry] }));
+    BrowserWindow.fromId(parentWindowId).webContents.send('vclog-entry-count', logEntries.length);
 }
 function getAllFormated(ev) {
     $(".output").html(renderer.render(vcLogEntriesTemplate, { vclogEntries: logEntries }));

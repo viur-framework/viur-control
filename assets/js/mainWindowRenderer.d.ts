@@ -93,6 +93,7 @@ declare let debug: boolean;
 declare let appPath: any;
 declare let labelList: any[];
 declare let isGcloudAuthorized: boolean;
+declare let loggerEntryCount: number;
 /** this variable will hold a cloned instance of the project we're currently have active.
  *  Changes to that object will not survive a project change,
  *  so make your changes to the original project object found in projects or projectsByInternalId
@@ -184,3 +185,4 @@ declare function onRequestCheckAppengineStatusResponse(event: any, applicationId
 declare function onRequestAppengineRegionsResponse(event: any, result: any): void;
 declare function onRequestCreateAppengineResponse(event: any, applicationId: any): void;
 declare function addLogEntry(logEntry: any): void;
+declare function onVcLoggerEntryCount(event: any, count: any): void;

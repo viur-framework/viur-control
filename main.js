@@ -182,7 +182,7 @@ function createWindow() {
     slashes: true
   }));
 
-  const iconName = process.platform === 'win32' ? 'favicon.ico' : 'favicon.png';
+  const iconName = process.platform === 'win32' ? 'favicon.ico' : 'viur_control_icon-64.png';
   const iconPath = path.join(__dirname, "assets", "img", iconName);
   appIcon = new Tray(iconPath);
   app.isQuitting = false;

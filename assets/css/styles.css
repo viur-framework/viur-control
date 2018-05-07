@@ -3078,6 +3078,10 @@ strong.project-loading-text {
 
 /* vc log marker foo */
 
+.vclog-button {
+    position: relative;
+}
+
 .vclog-marker-Info {
 
 }
@@ -3087,5 +3091,17 @@ strong.project-loading-text {
 }
 
 .vclog-marker-Error {
+}
 
+.vclog-entry-count {
+    position: absolute;
+    color: red;
+    z-index: 90;
+    padding: 10px;
+    width: 20px;
+    height: 20px;
+    font-weight: bold;
+    font-size: 1.6em;
+    top: -6px;
+    left: 33%;
 }

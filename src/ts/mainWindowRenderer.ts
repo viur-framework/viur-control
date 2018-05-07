@@ -124,6 +124,7 @@ let debug = false;
 let appPath;
 let labelList = [];
 let isGcloudAuthorized = false;
+let loggerEntryCount = 0;
 
 /** this variable will hold a cloned instance of the project we're currently have active.
  *  Changes to that object will not survive a project change,
@@ -249,7 +250,7 @@ function getProjectVersions(event?: Event, refresh = false) {
 			method: "getProjectVersions",
 			command: "",
 			status: "Error",
-			msg: `Fetching versions stopped: The application/project Id ${myApplicationId} does not exists on gcloud.`
+			msg: `Fetching versions stopped: The application/project Id '${myApplicationId}' does not exists on gcloud.`
 		});
 		return;
 	}
@@ -1671,6 +1672,11 @@ function addLogEntry(logEntry) {
 	loggerWindow.webContents.send("vclog-add-entry", logEntry);
 }
 
+function onVcLoggerEntryCount(event, count) {
+	loggerEntryCount = count;
+	$(".js-vclog-entry-count").text(count.toString());
+}
+
 ipc.on('indexes-check-response', onIndexesDirtyCheckResponse);
 ipc.on('local-devserver-started', onLocalDevServerStarted);
 ipc.on('local-devserver-minimized', onLocalDevServerMinimized);
@@ -1701,3 +1707,4 @@ ipc.on("verify-all", onInternalVerify);
 ipc.on("request-domain-mappings-response", onRequestDomainMappingsResponse);
 ipc.on("request-gcloud-auth-status-response", checkGcloudAuthStatusResponse);
 ipc.on("request-vclogger-hide", toggleVcLogger);
+ipc.on("vclog-entry-count", onVcLoggerEntryCount);
