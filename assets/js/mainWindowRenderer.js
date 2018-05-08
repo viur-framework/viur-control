@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-/// <reference path="node_modules//electron/electron.d.ts" />
+/// <reference path="node_modules/electron/electron.d.ts" />
 /// <reference path="node_modules/@types/electron-store/index.d.ts" />
 const vcLogger_1 = require("./vcLogger");
 const fs = require('fs');
@@ -759,7 +759,8 @@ function processApplicationIdLabels() {
                     try {
                         let payload = {
                             "path": null,
-                            "title": cacheKey
+                            "title": cacheKey,
+                            "id": null
                         };
                         labelCache.set(cacheKey, payload);
                         labelList.push(payload);
@@ -1119,7 +1120,7 @@ function onRemoveIcon() {
     delete project.projectIcon;
     $(".js-project-icon").val("");
     projectStorage.set("projects", projects);
-    $(currentProjectListItem).find(".js-project-icon-display").css("background-image", "url('../img/list-fallback.svg')");
+    $(currentProjectListItem).find(".js-project-icon-display").css("background-image", "url('../img/viur_control_icon_32.png')");
     updateProjectSpecFile(internalId);
 }
 function onBackToHome() {

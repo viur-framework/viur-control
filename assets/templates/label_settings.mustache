@@ -1,13 +1,13 @@
 <li class="settings-li">
 	<image class="icon labelicon"
-	       src="{{^fallbackIconPath}}../img/fallback.svg{{/fallbackIconPath}}{{#fallbackIconPath}}{{fallbackIconPath}}{{/fallbackIconPath}}"
+	       src="{{^fallbackIconPath}}../img/viur_control_icon_32.png{{/fallbackIconPath}}{{#fallbackIconPath}}{{fallbackIconPath}}{{/fallbackIconPath}}"
 	        title="Fallback icon when not set"></image>
 	<label class="settings-label" for="label-fallback-icon-id">Fallback Label Icon</label>
 	<input id="label-fallback-icon-id" class="js-label-settings-path" value="{{ fallbackIconPath }}" size="30">
 </li>
 {{#allLabels}}
 	<li class="settings-li">
-		<image class="js-label-icon icon labelicon" src="{{^path}}../img/fallback.svg{{/path}}{{#path}}{{path}}{{/path}}"
+		<image class="js-label-icon icon labelicon" src="{{^path}}../img/viur_control_icon_32.png{{/path}}{{#path}}{{path}}{{/path}}"
 		        title="{{title}}"></image>
 		<label class="settings-label" for="{{ id }}">{{ title }}</label>
 		<input id="{{ id }}" class="js-label-settings-path" value="{{ path }}" size="30">

@@ -1,0 +1,73 @@
+"use strict";
+/// <reference path="node_modules/@types/node/index.d.ts" />
+/// <reference path="node_modules/@types/electron-store/index.d.ts" />
+
+const $ = require('jquery');
+const fs = require('fs');
+const renderer = require('mustache');
+const ElectronStorage = require('electron-store');
+const BrowserWindow = require('electron').remote.BrowserWindow;
+const ipc = require('electron').ipcRenderer;
+
+const storage = new ElectronStorage({"name": "settings"});
+let parentWindowId: number;
+
+
+export const settingsTemplate = fs.readFileSync("assets/templates/settings.mustache").toString();
+renderer.parse(settingsTemplate);
+
+
+ipc.on("load-settings", function (event: Event, fromWindowId: number) {
+  console.log("settings", storage.store);
+  parentWindowId = fromWindowId;
+  if (!storage.get("terminal_background_color")) {
+    storage.set("terminal_background_color", "#000000");
+  }
+
+  if (!storage.get("terminal_foreground_color")) {
+    storage.set("terminal_foreground_color", "#00ff00");
+  }
+
+  $(".settings-ul").append(renderer.render(settingsTemplate, storage.store));
+
+  $(".js-settings-paths").on('click', function (event: Event) {
+    let name = $(event.currentTarget).prop("name");
+    ipc.send('select-directory-dialog', name);
+  });
+
+  $(".js-settings-terminal-colors").on('change', function (event: Event) {
+    let name = $(event.currentTarget).prop("name");
+    let value = $(event.currentTarget).val();
+    console.log("js-settings-terminal-colors", name, value);
+    ipc.send('output-color-changed', name, value);
+  });
+
+  $(".js-settings-strings").on('keyup', function (event: Event) {
+    let name = $(event.currentTarget).prop("name");
+    let value = $(event.currentTarget).val();
+    console.log("js-settings-strings", name, value);
+    ipc.send('settings-string-changed', name, value);
+  });
+
+  $(".js-open-documentation").on("click", function (event: Event) {
+    let view = $(event.currentTarget).data("view");
+    ipc.send("request-documentation", view);
+  });
+  $(".js-close").on("click", window.close);
+});
+
+ipc.on('projects_directory', function (event: Event, path: string) {
+  console.log("set new projects-directory");
+  $("#projects-directory").val(path);
+});
+
+ipc.on('gcloud_tool_path', function (event: Event, path: string) {
+  console.log("set new gcloud-directory");
+  $("#gcloud-path").val(path);
+});
+
+ipc.on('label_icon_repository', function (event: Event, path: string) {
+  console.log("set new labels-path");
+  $("#labels-path").val(path);
+  BrowserWindow.fromId(parentWindowId).webContents.send('rescan-labels');
+});

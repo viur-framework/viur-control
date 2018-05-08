@@ -1,6 +1,6 @@
 "use strict";
 
-/// <reference path="node_modules//electron/electron.d.ts" />
+/// <reference path="node_modules/electron/electron.d.ts" />
 /// <reference path="node_modules/@types/electron-store/index.d.ts" />
 
 import {VcLogEntryInterface, VcLogEntryStatus} from "./vcLogger";
@@ -64,50 +64,50 @@ renderer.parse(domainMappingTemplate);
 // mutable data
 let thisWindowId: null | number;
 
-interface SubprocessIdInterface {
+export interface SubprocessIdInterface {
 	0: string;
 	1: number;
 }
 
-interface LabelInterface {
+export interface LabelInterface {
 	title: string;
 	path: string;
-	id?: string;
+	id: number;
 }
 
-interface VersionsInterface {
+export interface VersionsInterface {
 	lastFetched: Date;
 	applicationId: string;
 	versions: Array<Object>
 }
 
-interface AppengineDirectoryInterface {
+export interface AppengineDirectoryInterface {
 	value: string;
 	checked: boolean;
 }
 
-interface ApplictionIdInterface {
+export interface ApplictionIdInterface {
 	value: string;
 	checked: boolean;
 	labels?: null | Array<LabelInterface>;
 }
 
-interface CredentialEntryInterface {
+export interface CredentialEntryInterface {
 	applicationId: string;
 	username: string;
 	password: string;
 }
 
-interface ProjectIconInterface {
+export interface ProjectIconInterface {
 	url: string;
 }
 
-interface ProjectTaskInterface {
+export interface ProjectTaskInterface {
 	id: string;
 }
 
 
-interface ProjectInterface {
+export interface ProjectInterface {
 	absolutePath: string;
 	directoryName: string;
 	appengineDirectories: Array<AppengineDirectoryInterface>;
@@ -124,21 +124,21 @@ interface ProjectInterface {
 	regions?: Array<Object>;
 }
 
-interface RawLabelsInterface {
+export interface RawLabelsInterface {
 	[propName: string]: string;
 }
 
-interface GcloudApplicationIdEntryInterface {
+export interface GcloudApplicationIdEntryInterface {
 	name: string;
 	labels: RawLabelsInterface;
 	created: boolean;
 }
 
-interface GcloudApplicationIdsInterface {
+export interface GcloudApplicationIdsInterface {
 	gcloudProjectIds: Array<GcloudApplicationIdEntryInterface>;
 }
 
-interface AppengineRegionsInterface {
+export interface AppengineRegionsInterface {
 	lastFetched: Date;
 	result: Array<Object>;
 }
@@ -913,7 +913,8 @@ function processApplicationIdLabels() {
 					try {
 						let payload: LabelInterface = {
 							"path": null,
-							"title": cacheKey
+							"title": cacheKey,
+							"id": null
 						};
 						labelCache.set(cacheKey, payload);
 						labelList.push(payload);
@@ -1312,7 +1313,7 @@ function onRemoveIcon() {
 	delete project.projectIcon;
 	$(".js-project-icon").val("");
 	projectStorage.set("projects", projects);
-	$(currentProjectListItem).find(".js-project-icon-display").css("background-image", "url('../img/list-fallback.svg')");
+	$(currentProjectListItem).find(".js-project-icon-display").css("background-image", "url('../img/viur_control_icon_32.png')");
 	updateProjectSpecFile(internalId);
 }
 

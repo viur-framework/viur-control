@@ -40,10 +40,11 @@ function setupUI() {
 
   let installStepsFile;
   if (os.platform === "win32") {
-    installStepsFile = "assets/js/installer_steps_windows.json";
+    installStepsFile = "assets/dependency-installer/windows/installer_steps_windows.json";
   } else if (os.platform === "darwin") {
-    installStepsFile = "assets/js/installer_steps_darwin.json";
+    installStepsFile = "assets/dependency-installer/darwin/installer_steps_darwin.json";
   } else {
+    // TODO: add linux installer step files for major distros
     return;
   }
 
