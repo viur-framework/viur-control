@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta charset="charset=UTF-8"/>
+	<title>ViUR control</title>
+	<link rel="icon" type="image/x-icon" href="../img/favicon.ico">
+	<link rel="stylesheet" type="text/css" media="screen" href="../css/styles.css"/>
+	<script>window.$ = window.jQuery = require('jquery');</script>
+	<script type="application/javascript">require("../js/firstStart.js")</script>
+</head>
+<body>
+<div class="window">
+	<header class="toolbar toolbar-header">
+		<a href="javascript:undefined;" class="js-home">
+			<img class="logo-viur-control" src="../img/logo_viur_control.svg">
+		</a>
+		<span class="logo-title"></span>
+		<button class="js-close btn-action minimize" title="Minimize Window">–</button>
+	</header>
+	<div class="window-content">
+		<div class="pane-group">
+			<div class="js-project-pane pane">
+				<div class="tab-group">
+					<div class="js-firststart-workspace-tab tab-item active" title="Alt+1">
+						Select Workspace
+					</div>
+					<div class="js-firststart-installwizard-tab tab-item" title="Alt+2">
+						Install wizard
+					</div>
+					<div class="js-firststart-new-project-tab tab-item" title="Alt+3">
+						Create Project
+					</div>
+				</div>
+				<div class="js-firststart-project-content js-project-content content active">
+					<div class="nice-section">
+						<h2>Add workspace</h2>
+						<h3>Select a directory where we should save your ViUR projects.</h3>
+						<ul class="settings-ul">
+							<li class="settings-li">
+								<label class="settings-label" for="projects-directory">Projects Directory</label>
+								<input id="projects-directory" class="js-settings-paths" name="projects_directory" value="{{ projects_directory }}" size="30">
+							</li>
+						</ul>
+						<button class="btn-positive" style="font-size: 1.4em">Next</button>
+					</div>
+				</div>
+				<div class="js-firststart-installwizard-content js-project-content content">
+					<div class="nice-section">
+						<h1>Current Step :: <span class="js-current-step-name"></span></h1>
+					</div>
+					<div class="js-check-section nice-section">
+						<h2 class="js-check-step">Checking if the tool is already installed</h2>
+					</div>
+					<div class="js-showable-sections js-download-section nice-section hidden">
+						<h2 class="js-downloading-step">Downloading...</h2>
+						<div class="progress-bar-container">
+							<div class="progress-bar-content"></div>
+						</div>
+					</div>
+					<div class="js-showable-sections js-unpack-section nice-section hidden">
+						<h2 class="js-unpack-step">Unpacking...</h2>
+						<pre class="js-unpack-step-output inline-output"></pre>
+					</div>
+					<div class="js-showable-sections js-install-section nice-section hidden">
+						<h2 class="js-installing-step">Installing...</h2>
+						<pre class="js-installing-step-output inline-output"></pre>
+					</div>
+					<div class="js-showable-sections js-configure-section nice-section hidden">
+						<h2 class="js-configuration-step">Configuration...</h2>
+						<pre class="js-configure-step-output inline-output"></pre>
+					</div>
+					<div class="js-showable-sections nice-section hidden">
+						<h2 class="js-validating-step">Validating installation...</h2>
+						<pre class="inline-output"></pre>
+					</div>
+				</div>
+				<div class="js-firststart-new-project-content js-project-content content">
+					<div class="nice-section">
+						<h2>Create your first project</h2>
+						<h3>Create a "Hello World" project in ViUR.</h3>
+						<ul class="settings-ul">
+						</ul>
+
+						<button class="btn-negative">Back</button>
+						<button class="btn-primary" style="font-size: 1.4em">Finish</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+</body>
+</html>

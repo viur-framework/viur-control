@@ -124,13 +124,13 @@ interface ProjectInterface {
 	regions?: Array<Object>;
 }
 
-interface RawLabelsInteface {
+interface RawLabelsInterface {
 	[propName: string]: string;
 }
 
 interface GcloudApplicationIdEntryInterface {
 	name: string;
-	labels: RawLabelsInteface;
+	labels: RawLabelsInterface;
 	created: boolean;
 }
 

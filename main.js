@@ -63,6 +63,12 @@ let template = [
         }
       },
       {
+        label: 'Open First Steps',
+        click: function (menuItem, browserWindow, event) {
+          startFirstSteps();
+        }
+      },
+      {
         label: 'Open Dependencies Wizard',
         click: function (menuItem, browserWindow, event) {
           startInstallWizard();
@@ -307,6 +313,31 @@ function startInstallWizard(event) {
   dependencyWizardWindow.webContents.on('did-finish-load', function () {
     dependencyWizardWindow.show();
     dependencyWizardWindow.webContents.send('start-wizard');
+  });
+}
+
+function startFirstSteps(event) {
+  dependencyWizardWindow = new BrowserWindow({
+    icon: path.join(__dirname, 'assets/img/viur_control_icon_32.png'),
+    frame: false,
+    width: 900,
+    height: 800
+  });
+  let positioner = new Positioner(dependencyWizardWindow);
+  positioner.move('topLeft');
+  dependencyWizardWindow.loadURL(url.format({
+    pathname: path.join(__dirname, 'assets/views/firstStart.html'),
+    protocol: 'file:',
+    slashes: true,
+    show: false
+  }));
+  dependencyWizardWindow.on('closed', function (event) {
+    dependencyWizardWindow = null
+  });
+  dependencyWizardWindow.webContents.on('did-finish-load', function () {
+    dependencyWizardWindow.show();
+    dependencyWizardWindow.webContents.send("first-start", dependencyWizardWindow.id, debug);
+    console.log("after first start event");
   });
 }
 
