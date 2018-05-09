@@ -11,8 +11,12 @@ const ElectronStorage = require('electron-store');
 const settingsStorage = new ElectronStorage({"name": "settings"});
 const electron = require('electron');
 const ipc = electron.ipcRenderer;
+const remote = electron.remote;
 const BrowserWindow = electron.remote.BrowserWindow;
-export const settingsTemplate = fs.readFileSync("assets/templates/label_settings.mustache").toString();
+
+let frozenAppPath = remote.getGlobal('process').env['frozenAppPath'];
+
+export const settingsTemplate = fs.readFileSync(path.join(frozenAppPath, "assets/templates/label_settings.mustache")).toString();
 renderer.parse(settingsTemplate);
 let parentWindowId: number;
 let labelList: Array<LabelInterface>;

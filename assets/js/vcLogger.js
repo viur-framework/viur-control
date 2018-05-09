@@ -2,13 +2,17 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const $ = require('jquery');
 const fs = require('fs');
+const path = require('path');
 const renderer = require('mustache');
 const ElectronStorage = require('electron-store');
-const BrowserWindow = require('electron').remote.BrowserWindow;
+const electron = require('electron');
+const BrowserWindow = electron.remote.BrowserWindow;
+const remote = electron.remote;
 const vcLogStorage = new ElectronStorage({ "name": "vcLog" });
 const ipc = require('electron').ipcRenderer;
 const class_transformer_1 = require("class-transformer");
-const vcLogEntriesTemplate = fs.readFileSync("assets/templates/vclog_entries.mustache").toString();
+let frozenAppPath = remote.getGlobal('process').env['frozenAppPath'];
+const vcLogEntriesTemplate = fs.readFileSync(path.join(frozenAppPath, "assets/templates/vclog_entries.mustache")).toString();
 renderer.parse(vcLogEntriesTemplate);
 var VcLogEntryStatus;
 (function (VcLogEntryStatus) {

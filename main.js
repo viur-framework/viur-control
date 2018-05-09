@@ -37,6 +37,9 @@ let loggerWindowId;
 
 const debug = /--debug/.test(process.argv[2]);
 
+let frozenAppPath;
+
+
 let template = [
   {
     label: 'File',
@@ -175,6 +178,8 @@ let template = [
   }];
 
 function createWindow() {
+  frozenAppPath = process.env["frozenAppPath"] = app.getAppPath();
+  console.log("frozenAppPath", frozenAppPath);
   const menu = Menu.buildFromTemplate(template);
   Menu.setApplicationMenu(menu);
   console.log("user data directory:", app.getPath('userData'));
@@ -188,19 +193,19 @@ function createWindow() {
       width: 1080,
       minWidth: 680,
       height: 840,
-      icon: path.join(__dirname, 'assets', 'img', 'viur_control_icon_32.png')
+      icon: path.join(frozenAppPath, 'assets', 'img', 'viur_control_icon_32.png')
     }
   );
 
   // and load the index.html of the app.
   mainWindow.loadURL(url.format({
-    pathname: path.join(__dirname, 'assets/views/index.html'),
+    pathname: path.join(frozenAppPath, 'assets/views/index.html'),
     protocol: 'file:',
     slashes: true
   }));
 
   const iconName = process.platform === 'win32' ? 'favicon.ico' : 'viur_control_icon_32.png';
-  const iconPath = path.join(__dirname, "assets", "img", iconName);
+  const iconPath = path.join(frozenAppPath, "assets", "img", iconName);
   appIcon = new Tray(iconPath);
   app.isQuitting = false;
 
@@ -294,7 +299,7 @@ function createWindow() {
 
 function startInstallWizard(event) {
   dependencyWizardWindow = new BrowserWindow({
-    icon: path.join(__dirname, 'assets/img/viur_control_icon_32.png'),
+    icon: path.join(frozenAppPath, 'assets/img/viur_control_icon_32.png'),
     frame: false,
     width: 900,
     height: 800
@@ -302,7 +307,7 @@ function startInstallWizard(event) {
   let positioner = new Positioner(dependencyWizardWindow);
   positioner.move('topLeft');
   dependencyWizardWindow.loadURL(url.format({
-    pathname: path.join(__dirname, 'assets/views/installWizard.html'),
+    pathname: path.join(frozenAppPath, 'assets/views/installWizard.html'),
     protocol: 'file:',
     slashes: true,
     show: false
@@ -318,7 +323,7 @@ function startInstallWizard(event) {
 
 function startFirstSteps(event) {
   dependencyWizardWindow = new BrowserWindow({
-    icon: path.join(__dirname, 'assets/img/viur_control_icon_32.png'),
+    icon: path.join(frozenAppPath, 'assets/img/viur_control_icon_32.png'),
     frame: false,
     width: 900,
     height: 800
@@ -326,7 +331,7 @@ function startFirstSteps(event) {
   let positioner = new Positioner(dependencyWizardWindow);
   positioner.move('topLeft');
   dependencyWizardWindow.loadURL(url.format({
-    pathname: path.join(__dirname, 'assets/views/firstStart.html'),
+    pathname: path.join(frozenAppPath, 'assets/views/firstStart.html'),
     protocol: 'file:',
     slashes: true,
     show: false
@@ -343,11 +348,11 @@ function startFirstSteps(event) {
 
 function openSettings(event) {
   settingsWindow = new BrowserWindow({
-    icon: path.join(__dirname, 'assets/img/viur_control_icon_32.png'),
+    icon: path.join(frozenAppPath, 'assets/img/viur_control_icon_32.png'),
     frame: false
   });
   settingsWindow.loadURL(url.format({
-    pathname: path.join(__dirname, 'assets/views/settings.html'),
+    pathname: path.join(frozenAppPath, 'assets/views/settings.html'),
     protocol: 'file:',
     slashes: true
   }));
@@ -366,7 +371,7 @@ function openDocumentation(event, view) {
       contextIsolation: true,
       nodeIntegration: false,
       sandbox: true,
-      icon: path.join(__dirname, 'assets/img/viur_control_icon_32.png'),
+      icon: path.join(frozenAppPath, 'assets/img/viur_control_icon_32.png'),
       frame: false,
       // parent: mainWindow,
       // modal: true,
@@ -375,7 +380,7 @@ function openDocumentation(event, view) {
     });
 
     documentationWindow.loadURL(url.format({
-      pathname: path.join(__dirname, 'assets/views/documentation.html'),
+      pathname: path.join(frozenAppPath, 'assets/views/documentation.html'),
       protocol: 'file:',
       slashes: true
     }));
@@ -398,14 +403,14 @@ function openDocumentation(event, view) {
 
 function openAbout(event) {
   let aboutWindow = new BrowserWindow({
-    icon: path.join(__dirname, 'assets/img/viur_control_icon_32.png'),
+    icon: path.join(frozenAppPath, 'assets/img/viur_control_icon_32.png'),
     frame: false,
     width: 600,
     height: 450,
     show: false,
   });
   aboutWindow.loadURL(url.format({
-    pathname: path.join(__dirname, 'assets/views/about.html'),
+    pathname: path.join(frozenAppPath, 'assets/views/about.html'),
     protocol: 'file:',
     slashes: true
   }));
@@ -422,7 +427,7 @@ function openAbout(event) {
 
 function updateGcloud(event) {
   let updateWindow = new BrowserWindow({
-    icon: path.join(__dirname, 'assets/img/viur_control_icon_32.png'),
+    icon: path.join(frozenAppPath, 'assets/img/viur_control_icon_32.png'),
     frame: false,
     width: 600,
     height: 450,
@@ -432,7 +437,7 @@ function updateGcloud(event) {
     }
   });
   updateWindow.loadURL(url.format({
-    pathname: path.join(__dirname, 'assets/views/taskWindow.html'),
+    pathname: path.join(frozenAppPath, 'assets/views/taskWindow.html'),
     protocol: 'file:',
     slashes: true
   }));

@@ -11,6 +11,7 @@ const renderer = require('mustache');
 const electron = require('electron');
 const $ = require('jquery');
 const BrowserWindow = electron.remote.BrowserWindow;
+const remote = electron.remote;
 const ipc = electron.ipcRenderer;
 const shell = electron.shell;
 const moment = require('moment');
@@ -37,17 +38,19 @@ const labelCache = new Map();
 const usedServerPortMap = new Map();
 const usedAdminPortMap = new Map();
 
+let frozenAppPath = remote.getGlobal('process').env['frozenAppPath'];
+
 // needed templates
-const projectItemTemplate = fs.readFileSync("assets/templates/project_list_item.mustache").toString();
-const projectControlsTemplate = fs.readFileSync("assets/templates/project_development.mustache").toString();
-const projectConfigTemplate = fs.readFileSync("assets/templates/project_configuration.mustache").toString();
-const projectRemoteTemplate = fs.readFileSync("assets/templates/project_deployment.mustache").toString();
-const projectVersionsTemplate = fs.readFileSync("assets/templates/project_versions.mustache").toString();
-const projectApplicationTemplate = fs.readFileSync("assets/templates/project_applications_row.mustache").toString();
-const projectConfigApplicationsTemplate = fs.readFileSync("assets/templates/project_config_applications_list.mustache").toString();
-const projectCredentialsRow = fs.readFileSync("assets/templates/project_credentials_row.mustache").toString();
-const regionsTemplate = fs.readFileSync("assets/templates/regions.mustache").toString();
-const domainMappingTemplate = fs.readFileSync("assets/templates/domain_mappings.mustache").toString();
+const projectItemTemplate = fs.readFileSync(path.join(frozenAppPath, "assets/templates/project_list_item.mustache")).toString();
+const projectControlsTemplate = fs.readFileSync(path.join(frozenAppPath, "assets/templates/project_development.mustache")).toString();
+const projectConfigTemplate = fs.readFileSync(path.join(frozenAppPath, "assets/templates/project_configuration.mustache")).toString();
+const projectRemoteTemplate = fs.readFileSync(path.join(frozenAppPath, "assets/templates/project_deployment.mustache")).toString();
+const projectVersionsTemplate = fs.readFileSync(path.join(frozenAppPath, "assets/templates/project_versions.mustache")).toString();
+const projectApplicationTemplate = fs.readFileSync(path.join(frozenAppPath, "assets/templates/project_applications_row.mustache")).toString();
+const projectConfigApplicationsTemplate = fs.readFileSync(path.join(frozenAppPath, "assets/templates/project_config_applications_list.mustache")).toString();
+const projectCredentialsRow = fs.readFileSync(path.join(frozenAppPath, "assets/templates/project_credentials_row.mustache")).toString();
+const regionsTemplate = fs.readFileSync(path.join(frozenAppPath, "assets/templates/regions.mustache")).toString();
+const domainMappingTemplate = fs.readFileSync(path.join(frozenAppPath, "assets/templates/domain_mappings.mustache")).toString();
 renderer.parse(projectControlsTemplate);
 renderer.parse(projectItemTemplate);
 renderer.parse(projectConfigTemplate);

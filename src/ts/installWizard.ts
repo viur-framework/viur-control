@@ -8,7 +8,7 @@ const fs = require('fs');
 const async = require('async');
 const request = require('request');
 const progress = require('request-progress');
-const ipc = require('electron').ipcRenderer;
+const {ipc, remote} = require('electron').ipcRenderer;
 const renderer = require('mustache');
 const {spawn, spawnSync} = require('child_process');
 const Storage = require('electron-store');
@@ -18,7 +18,10 @@ const yauzl = require("yauzl");
 const os = require('os');
 const path = require('path');
 const Transform = require('stream').Transform;
-let wizardStepsTemplate = fs.readFileSync("assets/templates/wizard_step.mustache").toString();
+
+let frozenAppPath = remote.getGlobal('process').env['frozenAppPath'];
+
+let wizardStepsTemplate = fs.readFileSync(path.join(frozenAppPath, "assets/templates/wizard_step.mustache")).toString();
 
 export const docDummy = "1";
 
@@ -46,9 +49,9 @@ function setupUI() {
 
   let installStepsFile;
   if (os.platform === "win32") {
-    installStepsFile = "assets/dependency-installer/windows/installer_steps_windows.json";
+    installStepsFile = path.join(frozenAppPath, "assets/dependency-installer/windows/installer_steps_windows.json");
   } else if (os.platform === "darwin") {
-    installStepsFile = "assets/dependency-installer/darwin/installer_steps_darwin.json";
+    installStepsFile = path.join(frozenAppPath, "assets/dependency-installer/darwin/installer_steps_darwin.json");
   } else {
     // TODO: add linux installer step files for major distros
     return;

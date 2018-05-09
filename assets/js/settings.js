@@ -2,13 +2,16 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const $ = require('jquery');
 const fs = require('fs');
+const path = require('path');
 const renderer = require('mustache');
 const ElectronStorage = require('electron-store');
 const BrowserWindow = require('electron').remote.BrowserWindow;
 const ipc = require('electron').ipcRenderer;
+const remote = require("electron").remote;
 const storage = new ElectronStorage({ "name": "settings" });
 let parentWindowId;
-exports.settingsTemplate = fs.readFileSync("assets/templates/settings.mustache").toString();
+let frozenAppPath = remote.getGlobal('process').env['frozenAppPath'];
+exports.settingsTemplate = fs.readFileSync(path.join(frozenAppPath, "assets/templates/settings.mustache")).toString();
 renderer.parse(exports.settingsTemplate);
 ipc.on("load-settings", function (event, fromWindowId) {
     console.log("settings", storage.store);
