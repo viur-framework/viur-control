@@ -1,7 +1,5 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-/// <reference path="node_modules/@types/node/index.d.ts" />
-/// <reference path="node_modules/@types/electron-store/index.d.ts" />
 const $ = require('jquery');
 const fs = require('fs');
 const renderer = require('mustache');
@@ -57,4 +55,3 @@ ipc.on('label_icon_repository', function (event, path) {
     $("#labels-path").val(path);
     BrowserWindow.fromId(parentWindowId).webContents.send('rescan-labels');
 });
-//# sourceMappingURL=settings.js.map

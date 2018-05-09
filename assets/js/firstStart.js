@@ -1,5 +1,4 @@
 "use strict";
-/// <reference path="node_modules/@types/electron-store/index.d.ts" />
 const $ = require('jquery');
 const fs = require('fs');
 const renderer = require('mustache');
@@ -21,4 +20,3 @@ ipc.on('projects_directory', function (event, path) {
     console.log("set new projects-directory");
     $("#projects-directory").val(path);
 });
-//# sourceMappingURL=firstStart.js.map

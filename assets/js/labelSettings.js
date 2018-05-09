@@ -70,4 +70,3 @@ ipc.on('label-icon-selected', function (event, id, filePath) {
     labelCache.get(Number.parseInt(id)).path = destPath;
     dirty = true;
 });
-//# sourceMappingURL=labelSettings.js.map

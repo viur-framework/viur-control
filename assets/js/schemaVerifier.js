@@ -1,6 +1,5 @@
 'use strict';
 Object.defineProperty(exports, "__esModule", { value: true });
-/// <reference path="node_modules/@types/electron-store/index.d.ts" />
 const Ajv = require('ajv');
 const fs = require('fs');
 const path = require('path');
@@ -8,14 +7,8 @@ const { projectSpecSchema } = require('../schemata/project-spec');
 const { projectStorageSchema } = require('../schemata/projects-storage');
 const { credentialsSchema } = require('../schemata/credentials-json');
 const { settingsStorageSchema } = require('../schemata/settings-storage');
-const ajv = new Ajv(); // options can be passed, e.g. {allErrors: true}
+const ajv = new Ajv();
 exports.docDummy = "1";
-/**
- *Validates if project-spec.json files conform to the appropriate schema
- *
- * @param {string} projectsDir The projects folder path
- * @param {undefined|function} screenConsole logging method or console.log
- */
 function verifyProjectSpecFiles(projectsDir, screenConsole = undefined) {
     if (!screenConsole)
         screenConsole = console.log;
@@ -39,15 +32,10 @@ function verifyProjectSpecFiles(projectsDir, screenConsole = undefined) {
             }
         }
         catch (err) {
-            // console.log(err);
         }
     }
     screenConsole("<br/>validation of projects' project-spec.json files done", "info");
 }
-/**
- * Validates if projects.json storage file conforms to the appropriate schema
- *
- */
 function verifyProjectStorageFile(userDir, screenConsole = undefined) {
     if (!screenConsole)
         screenConsole = console.log;
@@ -73,10 +61,6 @@ function verifyProjectStorageFile(userDir, screenConsole = undefined) {
     }
     screenConsole("<br/>validation of projects storage json file done", "info");
 }
-/**
- * Validates if settings.json storage file conforms to the appropriate schema
- *
- */
 function verifySettingsStorageFile(userDir, screenConsole = undefined) {
     if (!screenConsole)
         screenConsole = console.log;
@@ -102,10 +86,6 @@ function verifySettingsStorageFile(userDir, screenConsole = undefined) {
     }
     screenConsole("<br/>validation of settings storage json file done", "info");
 }
-/**
- * Validates if credentials.json files conform to the appropriate schema
- *
- */
 function verifyCredentialsFiles(projectsDir, screenConsole = undefined) {
     if (!screenConsole)
         screenConsole = console.log;
@@ -121,7 +101,6 @@ function verifyCredentialsFiles(projectsDir, screenConsole = undefined) {
         try {
             let projectSpec = JSON.parse(fs.readFileSync(credentialsFilePath));
             let valid = validate(projectSpec);
-            // console.log("valid", valid);
             if (!valid) {
                 screenConsole(JSON.stringify(validate.errors, (key, value) => value, 2), "error");
             }
@@ -130,7 +109,6 @@ function verifyCredentialsFiles(projectsDir, screenConsole = undefined) {
             }
         }
         catch (err) {
-            // console.log(err);
         }
     }
     screenConsole("<br/>validation of projects' credentials.json files done", "info");
@@ -139,4 +117,3 @@ module.exports["verifyProjectSpecFiles"] = verifyProjectSpecFiles;
 module.exports["verifyProjectStorageFile"] = verifyProjectStorageFile;
 module.exports["verifyCredentialsFiles"] = verifyCredentialsFiles;
 module.exports["verifySettingsStorageFile"] = verifySettingsStorageFile;
-//# sourceMappingURL=schemaVerifier.js.map

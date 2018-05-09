@@ -16,21 +16,6 @@ const path = require('path');
 const Transform = require('stream').Transform;
 let wizardStepsTemplate = fs.readFileSync("assets/templates/wizard_step.mustache").toString();
 exports.docDummy = "1";
-/**
- * Here we'are building a dependency installation wizard for viur-control.
- *
- * Which software should be installed depends on the operating system and which tools are already installed.
- *
- * For now we only provide an installer for windows, but perhaps we also take mac os and linux into account in the future.
- *
- * The data for the installer gets provided by an json file.
- *
- * Each tool is described in a so called step. Each step may need downloading some files, installation cmd and post installation configuration.
- *
- * We bind each to the appropriate functions in a sequence.
- *
- * Only checkInstall is mandatory for each step, the other funcs depend on the steps' data.
- */
 function setupUI() {
     console.log("setupUi");
     if (!fs.existsSync("depencencyCache")) {
@@ -44,7 +29,6 @@ function setupUI() {
         installStepsFile = "assets/dependency-installer/darwin/installer_steps_darwin.json";
     }
     else {
-        // TODO: add linux installer step files for major distros
         return;
     }
     fs.readFile(installStepsFile, (err, data) => {
@@ -78,7 +62,6 @@ function setupUI() {
             if (step.checking.stdoutRegex) {
                 output = proc.stdout.toString();
                 console.log("before appending stdout check data", output);
-                // $(outputDiv).append(output);
                 regex = new RegExp(step.checking.stdoutRegex, 'g');
                 regexResult = regex.exec(output);
                 result = (!!regexResult);
@@ -98,7 +81,6 @@ function setupUI() {
             else {
                 output = proc.stderr.toString();
                 console.log("before appending stderr check data", output);
-                // $(outputDiv).append(output);
                 regex = new RegExp(step.checking.stderrRegex, 'g');
                 regexResult = regex.exec(output);
                 result = (!!regexResult);
@@ -173,7 +155,7 @@ function setupUI() {
                     return cb();
                 fs.stat(dir, function (err) {
                     if (err == null)
-                        return cb(); // already exists
+                        return cb();
                     let parent = path.dirname(dir);
                     mkdirp(parent, function () {
                         fs.mkdir(dir, cb);
@@ -183,7 +165,6 @@ function setupUI() {
             yauzl.open(step.download.dest, { lazyEntries: true }, function (err, zipfile) {
                 if (err)
                     throw err;
-                // track when we've closed all our file handles
                 let handleCount = 0;
                 function incrementHandleCount() {
                     handleCount++;
@@ -203,7 +184,6 @@ function setupUI() {
                 zipfile.readEntry();
                 zipfile.on("entry", function (entry) {
                     if (/\/$/.test(entry.fileName)) {
-                        // directory file names end with '/'
                         mkdirp(path.join(destDir, entry.fileName), function () {
                             if (err)
                                 throw err;
@@ -211,7 +191,6 @@ function setupUI() {
                         });
                     }
                     else {
-                        // ensure parent directory exists
                         mkdirp(path.join(destDir, path.dirname(entry.fileName)), function () {
                             zipfile.openReadStream(entry, function (err, readStream) {
                                 if (err)
@@ -225,7 +204,6 @@ function setupUI() {
                                     cb();
                                     zipfile.readEntry();
                                 };
-                                // pump file contents
                                 let writeStream = fs.createWriteStream(destFilename);
                                 incrementHandleCount();
                                 writeStream.on("close", decrementHandleCount);
@@ -283,7 +261,6 @@ function setupUI() {
             });
             proc.on('error', (error) => {
                 console.log(`${cmd} error ${error}`);
-                // callback(error, null);
             });
         }
         function postInstall(result, callback) {
@@ -296,7 +273,6 @@ function setupUI() {
             callback(null, null);
         }
         let jobs = [];
-        // we do it that way to hopefully have some time file locks are released before trying to access the downloaded files.
         for (let step of steps) {
             jobs.push(_.bind(checkInstall, step));
             if (step.download) {
@@ -331,4 +307,3 @@ function setupUI() {
 ipc.on("start-wizard", function (event) {
     setupUI();
 });
-//# sourceMappingURL=installWizard.js.map

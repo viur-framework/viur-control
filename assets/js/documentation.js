@@ -1,6 +1,5 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-/// <reference path="node_modules/@types/node/index.d.ts" />
 const $ = require('jquery');
 const { ipcRenderer } = require('electron');
 exports.docDummy = "1";
@@ -45,4 +44,3 @@ ipcRenderer.on("change", function (event, view) {
     console.log("change", view);
     activateData(view);
 });
-//# sourceMappingURL=documentation.js.map
