@@ -62,3 +62,4 @@ typings/
 *.exe
 *.zip
 *.msi
+out
