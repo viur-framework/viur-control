@@ -5,7 +5,6 @@ const fs = require('fs');
 const renderer = require('mustache');
 const ElectronStorage = require('electron-store');
 const BrowserWindow = require('electron').remote.BrowserWindow;
-const vcLogStorage = new ElectronStorage({ "name": "vcLog" });
 const ipc = require('electron').ipcRenderer;
 function startWindow(fromWindowId, mainWindowId, debugMode = false) {
     console.log("on first-start", mainWindowId);
