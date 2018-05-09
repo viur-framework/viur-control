@@ -1,5 +1,6 @@
 'use strict';
 Object.defineProperty(exports, "__esModule", { value: true });
+const $ = require('jquery');
 const fs = require('fs');
 const async = require('async');
 const request = require('request');

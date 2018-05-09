@@ -1,6 +1,8 @@
 'use strict';
 /// <reference path="node_modules/@types/electron-store/index.d.ts" />
 
+const $ = require('jquery');
+
 const path = require('path');
 const fastGlob = require('globby');
 const BrowserWindow = require('electron').remote.BrowserWindow;

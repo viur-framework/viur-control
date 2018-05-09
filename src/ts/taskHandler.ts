@@ -5,6 +5,7 @@ import {ProjectInterface} from "./mainWindowRenderer";
 
 const moment = require('moment');
 import WriteStream = NodeJS.WriteStream;
+const $ = require('jquery');
 
 const {exec, execSync, spawn} = require('child_process');
 const ipc = require('electron').ipcRenderer;

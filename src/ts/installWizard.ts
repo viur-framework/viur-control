@@ -2,6 +2,8 @@
 /// <reference path="node_modules/@types/electron-store/index.d.ts" />
 
 import WriteStream = NodeJS.WriteStream;
+const $ = require('jquery');
+
 const fs = require('fs');
 const async = require('async');
 const request = require('request');

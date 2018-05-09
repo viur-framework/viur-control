@@ -43,11 +43,11 @@
 				"stdoutRegex": "git\\sversion\\s(\\d+)\\.(\\d+)\\.(\\d+)"
 			},
 			"download": {
-				"url": "https://github.com/git-for-windows/git/releases/download/v2.15.0.windows.1/Git-2.15.0-64-bit.exe",
-				"dest": "dependencyCache\\Git-2.15.0-64-bit.exe"
+				"url": "https://github.com/git-for-windows/git/releases/download/v2.17.0.windows.1/Git-2.17.0-64-bit.exe",
+				"dest": "dependencyCache\\Git-2.17.0-64-bit.exe"
 			},
 			"install": {
-				"cmd": "dependencyCache\\Git-2.15.0-64-bit.exe /SILENT /LOADINF=\"assets\\dependency-installer\\git-install-args.ini\"",
+				"cmd": "dependencyCache\\Git-2.17.0-64-bit.exe /SILENT /LOADINF=\"assets\\dependency-installer\\git-install-args.ini\"",
 				"addEnv": [
 					"C:\\Program Files\\Git\\cmd"
 				]
@@ -72,7 +72,7 @@
 				"stdoutRegex": "Google\\sCloud\\sSDK\\s.*"
 			},
 			"download": {
-				"url": "https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-170.0.1-windows-x86_64.zip?hl=de",
+				"url": "https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-192.0.0-windows-x86_64.zip?hl=de",
 				"dest": "dependencyCache\\GoogleCloudSDKInstaller.zip"
 			},
 			"unpack": {
@@ -90,7 +90,7 @@
 					"%HOMEDIR%\\AppData\\Local\\Google\\google-cloud-sdk\\bin"
 				]
 			},
-			"postInstall": "gcloud config configurations create viur-control-default; gcloud config set app/promote_by_default false"
+			"postInstall": "gcloud config configurations create viur-control-default; gcloud config set app/promote_by_default false; start cmd.exe /K \"gcloud init\""
 		},
 		{
 			"name": "lessc",

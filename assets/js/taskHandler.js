@@ -1,6 +1,7 @@
 'use strict';
 Object.defineProperty(exports, "__esModule", { value: true });
 const moment = require('moment');
+const $ = require('jquery');
 const { exec, execSync, spawn } = require('child_process');
 const ipc = require('electron').ipcRenderer;
 const fs = require('fs');

@@ -20,6 +20,10 @@
 	</header>
 	<div class="window-content">
 		<div class="pane-group">
+			<div class="pane-sm sidebar sidebar-hidden">
+				<ul class="list-group">
+				</ul>
+			</div>
 			<div class="js-project-pane pane">
 				<div class="tab-group">
 					<div class="js-firststart-workspace-tab tab-item active" data-index="0" title="Alt+1">
@@ -32,17 +36,13 @@
 						3. Create Project
 					</div>
 				</div>
-				<div class="js-firststart-project-content js-project-content content active">
+				<div class="js-firststart-workspace-content js-project-content content active">
 					<div class="nice-section">
 						<h2>Add workspace</h2>
 						<h3>Select a directory where we should save your ViUR projects.</h3>
-						<ul class="settings-ul">
-							<li class="settings-li">
-								<label class="settings-label" for="projects-directory">Projects Directory</label>
-								<input id="projects-directory" class="js-settings-paths" name="projects_directory" value="{{ projects_directory }}" size="30">
-							</li>
+						<ul class="js-settings-ul settings-ul">
 						</ul>
-						<button class="btn-positive" style="font-size: 1.4em">Next</button>
+						<button class="js-tab0-next btn-positive" style="font-size: 1.4em">Next</button>
 					</div>
 				</div>
 				<div class="js-firststart-installwizard-content js-project-content content">

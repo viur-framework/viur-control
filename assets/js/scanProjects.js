@@ -1,5 +1,6 @@
 'use strict';
 Object.defineProperty(exports, "__esModule", { value: true });
+const $ = require('jquery');
 const path = require('path');
 const fastGlob = require('globby');
 const BrowserWindow = require('electron').remote.BrowserWindow;

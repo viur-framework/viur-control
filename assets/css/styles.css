@@ -3105,3 +3105,10 @@ strong.project-loading-text {
     top: -6px;
     left: 33%;
 }
+
+.sidebar-hidden {
+    width: 0;
+    -webkit-transition: width 2s; /* Safari */
+    transition: width 2s;
+}
+
