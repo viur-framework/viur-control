@@ -323,13 +323,12 @@ function startInstallWizard(event) {
 
 function startFirstSteps(event) {
   dependencyWizardWindow = new BrowserWindow({
+    title: `ViUR control - first steps`,
     icon: path.join(frozenAppPath, 'assets/img/viur_control_icon_32.png'),
-    frame: false,
-    width: 900,
-    height: 800
+    frame: false
   });
   let positioner = new Positioner(dependencyWizardWindow);
-  positioner.move('topLeft');
+  positioner.move('bottomLeft');
   dependencyWizardWindow.loadURL(url.format({
     pathname: path.join(frozenAppPath, 'assets/views/firstStart.html'),
     protocol: 'file:',

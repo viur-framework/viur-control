@@ -15,23 +15,23 @@ const yauzl = require("yauzl");
 const os = require('os');
 const path = require('path');
 const Transform = require('stream').Transform;
-let frozenAppPath = remote.getGlobal('process').env['frozenAppPath'];
-let wizardStepsTemplate = fs.readFileSync(path.join(frozenAppPath, "assets/templates/wizard_step.mustache")).toString();
 exports.docDummy = "1";
-function setupUI() {
+function setup_wizard(customPath) {
+    let finalPath = customPath ? customPath : remote.getGlobal('process').env['frozenAppPath'];
+    let wizardStepsTemplate = fs.readFileSync(path.join(finalPath, "assets/templates/wizard_step.mustache")).toString();
     console.log("setupUi");
     if (!fs.existsSync("depencencyCache")) {
         fs.mkdirSync("depencencyCache");
     }
     let installStepsFile;
     if (os.platform === "win32") {
-        installStepsFile = path.join(frozenAppPath, "assets/dependency-installer/windows/installer_steps_windows.json");
+        installStepsFile = path.join(finalPath, "assets/dependency-installer/windows/installer_steps_windows.json");
     }
     else if (os.platform === "darwin") {
-        installStepsFile = path.join(frozenAppPath, "assets/dependency-installer/darwin/installer_steps_darwin.json");
+        installStepsFile = path.join(finalPath, "assets/dependency-installer/darwin/installer_steps_darwin.json");
     }
     else {
-        return;
+        installStepsFile = path.join(finalPath, "assets/dependency-installer/windows/installer_steps_windows.json");
     }
     fs.readFile(installStepsFile, (err, data) => {
         let wizardData = JSON.parse(data);
@@ -299,13 +299,13 @@ function setupUI() {
             "background-color": backgroundColor
         });
         $(".js-close").on("click", window.close);
-        setTimeout(function () {
-            async.seq(...jobs)(true, function (err, data) {
-                console.log("callback", err, data);
-            });
-        }, 2500);
     });
 }
-ipc.on("start-wizard", function (event) {
-    setupUI();
-});
+exports.setup_wizard = setup_wizard;
+try {
+    ipc.on("start-wizard", function (event) {
+        setup_wizard();
+    });
+}
+catch (err) {
+}

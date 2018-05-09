@@ -19,9 +19,6 @@ const os = require('os');
 const path = require('path');
 const Transform = require('stream').Transform;
 
-let frozenAppPath = remote.getGlobal('process').env['frozenAppPath'];
-
-let wizardStepsTemplate = fs.readFileSync(path.join(frozenAppPath, "assets/templates/wizard_step.mustache")).toString();
 
 export const docDummy = "1";
 
@@ -41,7 +38,10 @@ export const docDummy = "1";
  * Only checkInstall is mandatory for each step, the other funcs depend on the steps' data.
  */
 
-function setupUI() {
+export function setup_wizard(customPath?: any) : any {
+
+	let finalPath = customPath ? customPath : remote.getGlobal('process').env['frozenAppPath'];
+	let wizardStepsTemplate = fs.readFileSync(path.join(finalPath, "assets/templates/wizard_step.mustache")).toString();
   console.log("setupUi");
   if (!fs.existsSync("depencencyCache")) {
     fs.mkdirSync("depencencyCache");
@@ -49,12 +49,13 @@ function setupUI() {
 
   let installStepsFile;
   if (os.platform === "win32") {
-    installStepsFile = path.join(frozenAppPath, "assets/dependency-installer/windows/installer_steps_windows.json");
+    installStepsFile = path.join(finalPath, "assets/dependency-installer/windows/installer_steps_windows.json");
   } else if (os.platform === "darwin") {
-    installStepsFile = path.join(frozenAppPath, "assets/dependency-installer/darwin/installer_steps_darwin.json");
+    installStepsFile = path.join(finalPath, "assets/dependency-installer/darwin/installer_steps_darwin.json");
   } else {
+	  installStepsFile = path.join(finalPath, "assets/dependency-installer/windows/installer_steps_windows.json");
     // TODO: add linux installer step files for major distros
-    return;
+    // return;
   }
 
   fs.readFile(installStepsFile, (err: string, data: string) => {
@@ -351,14 +352,19 @@ function setupUI() {
     );
     $(".js-close").on("click", window.close);
 
-    setTimeout(function () {
-      async.seq(...jobs)(true, function (err: string, data: string) {
-        console.log("callback", err, data);
-      })
-    }, 2500);
+    // setTimeout(function () {
+    //   async.seq(...jobs)(true, function (err: string, data: string) {
+    //     console.log("callback", err, data);
+    //   })
+    // }, 2500);
   });
 }
 
-ipc.on("start-wizard", function (event: Event) {
-  setupUI();
-});
+try {
+	ipc.on("start-wizard", function (event: Event) {
+		setup_wizard();
+	});
+} catch (err) {
+
+}
+
