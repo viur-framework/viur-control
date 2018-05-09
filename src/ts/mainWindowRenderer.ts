@@ -22,7 +22,6 @@ const versionsStorage = new ElectronStorage({"name": "versions"});
 const projectStorage = new ElectronStorage({"name": "projects"});
 const labelStorage = new ElectronStorage({"name": "labels"});
 const regionsStorage = new ElectronStorage({"name": "regions"});
-const domainMappingsStorage = new ElectronStorage({"name": "domainMappings"});
 const gcloudProjectStorage = new ElectronStorage({"name": "gcloudProjects"});
 const electronPositioner = require('electron-positioner');
 const Positioner = require('electron-positioner');
@@ -63,11 +62,6 @@ renderer.parse(domainMappingTemplate);
 
 // mutable data
 let thisWindowId: null | number;
-
-export interface SubprocessIdInterface {
-	0: string;
-	1: number;
-}
 
 export interface LabelInterface {
 	title: string;
@@ -1172,7 +1166,7 @@ function onRequestDomainMappingsResponse(event: Event, result: any) {
 		console.log("element", element);
 		let renderedHtml = renderer.render(domainMappingTemplate, domainMappings);
 		console.log("renderedHtml", renderedHtml);
-		$(`.js-domain-mappings[data-application-id="${applicationId}"]`).html(renderedHtml);
+		$(element).html(renderedHtml);
 	}
 }
 
