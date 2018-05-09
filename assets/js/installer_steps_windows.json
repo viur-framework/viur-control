@@ -28,7 +28,7 @@
 				"stdoutRegex": "v(\\d+)\\.(\\d+)\\.(\\d+)"
 			},
 			"download": {
-				"url": "https://nodejs.org/dist/v9.2.0/node-v9.2.0-x64.msi",
+				"url": "https://nodejs.org/dist/v10.0.0/node-v10.0.0-x64.msi",
 				"dest": "dependencyCache\\node-v9.2.0-x64.msi"
 			},
 			"install": {
@@ -44,10 +44,10 @@
 			},
 			"download": {
 				"url": "https://github.com/git-for-windows/git/releases/download/v2.15.0.windows.1/Git-2.15.0-64-bit.exe",
-				"dest": "dependency-cache\\Git-2.15.0-64-bit.exe"
+				"dest": "dependencyCache\\Git-2.15.0-64-bit.exe"
 			},
 			"install": {
-				"cmd": "dependency-cache\\Git-2.15.0-64-bit.exe /SILENT /LOADINF=\"assets\\dependency-installer\\git-install-args.ini\"",
+				"cmd": "dependencyCache\\Git-2.15.0-64-bit.exe /SILENT /LOADINF=\"assets\\dependency-installer\\git-install-args.ini\"",
 				"addEnv": [
 					"C:\\Program Files\\Git\\cmd"
 				]
