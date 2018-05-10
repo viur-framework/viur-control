@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+/// <reference path="node_modules/@types/electron-store/index.d.ts" />
 const $ = require('jquery');
 const fs = require('fs');
 const path = require('path');
@@ -58,3 +59,4 @@ ipc.on("vclog-init", initVcLogs);
 ipc.on("vclog-clear", clear);
 ipc.on("vclog-add-entry", addEntry);
 ipc.on("vclog-get-all-formated", getAllFormated);
+//# sourceMappingURL=vcLogger.js.map

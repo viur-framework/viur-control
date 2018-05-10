@@ -98,3 +98,4 @@ ipc.on("first-start", startWindow);
 ipc.on('projects_directory', function (event, path) {
     $("#projects-directory").val(path);
 });
+//# sourceMappingURL=firstStart.js.map

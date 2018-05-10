@@ -116,6 +116,7 @@ ipc.on("start-handler", function (event, fromWindowId, project, tasksWithOptions
         "background-color": backgroundColor
     });
     let jobs = [];
+    // we do it that way to hopefully have some time file locks are released before trying to access the downloaded files.
     for (let taskWithOptions of tasksWithOptions) {
         jobs.push(_.bind(startTask, [fromWindowId, project, taskWithOptions]));
     }
@@ -344,6 +345,7 @@ function addProject(newProjectName, parentWindowId) {
     });
 }
 function onCheckGcloudUpdate(event, parentWindowId, debug = false) {
+    // TODO: need a check update command
     let cmdTemplate = `gcloud --format json components update`;
 }
 function onUpdateGcloud(event, parentWindowId) {
@@ -575,3 +577,4 @@ ipc.on("check-tasks", onCheckTasks);
 ipc.on("verify-all", onVerifyAll);
 ipc.on("request-update-gcloud", onUpdateGcloud);
 ipc.on("request-gcloud-auth-status", onGcloudAuthStatus);
+//# sourceMappingURL=taskHandler.js.map

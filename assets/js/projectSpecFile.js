@@ -190,3 +190,4 @@ function checkTaskOk(task, currentApplicationDirectory) {
 }
 module.exports["scanProjectForSpec"] = scanProjectForSpec;
 module.exports["checkTaskOk"] = checkTaskOk;
+//# sourceMappingURL=projectSpecFile.js.map

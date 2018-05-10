@@ -1,5 +1,6 @@
 'use strict';
 Object.defineProperty(exports, "__esModule", { value: true });
+/// <reference path="node_modules/@types/electron-store/index.d.ts" />
 const $ = require('jquery');
 const path = require('path');
 const fastGlob = require('globby');
@@ -180,6 +181,7 @@ function getProjects(event, windowId, subprocessIds = undefined, debug = false) 
         $(".js-close").on("click", window.close);
     }
     const fromWindow = BrowserWindow.fromId(windowId);
+    // TODO: this is new - we'll test this for catching a strange error in project spec generation on macos
     window.onerror = function (error, url, line) {
         fromWindow.webContents.send('error-in-window', "getProjects()", error);
     };
@@ -389,3 +391,4 @@ ipc.on("start-rescanning", getProjects);
 ipc.on("request-gcloud-projects", OnRequestGcloudProjects);
 ipc.on("request-versions", onRequestVersions);
 ipc.on("scan-new-project", scanNewProject);
+//# sourceMappingURL=scanProjects.js.map

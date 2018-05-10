@@ -8,7 +8,9 @@ const fs = require('fs');
 const async = require('async');
 const request = require('request');
 const progress = require('request-progress');
-const {ipc, remote} = require('electron').ipcRenderer;
+const electron = require('electron');
+const remote = electron.remote;
+const ipc = electron.ipcRenderer;
 const renderer = require('mustache');
 const {spawn, spawnSync} = require('child_process');
 const Storage = require('electron-store');
@@ -42,7 +44,7 @@ export function setup_wizard(customPath?: any) : any {
 
 	let finalPath = customPath ? customPath : remote.getGlobal('process').env['frozenAppPath'];
 	let wizardStepsTemplate = fs.readFileSync(path.join(finalPath, "assets/templates/wizard_step.mustache")).toString();
-  console.log("setupUi");
+  console.log("setupUi", finalPath);
   if (!fs.existsSync("distfiles")) {
     fs.mkdirSync("distfiles");
   }
@@ -53,7 +55,7 @@ export function setup_wizard(customPath?: any) : any {
   } else if (os.platform === "darwin") {
     installStepsFile = path.join(finalPath, "assets/dependency-installer/darwin/installer_steps_darwin.json");
   } else {
-	  installStepsFile = path.join(finalPath, "assets/dependency-installer/windows/installer_steps_windows.json");
+	  installStepsFile = path.join(finalPath, "assets/dependency-installer/linux/ubuntu/installer_steps_ubuntu.json");
     // TODO: add linux installer step files for major distros
     // return;
   }
@@ -365,6 +367,6 @@ try {
 		setup_wizard();
 	});
 } catch (err) {
-
+	console.log(err);
 }
 
