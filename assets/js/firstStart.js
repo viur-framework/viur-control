@@ -11,14 +11,22 @@ const BrowserWindow = require('electron').remote.BrowserWindow;
 const ipc = require('electron').ipcRenderer;
 const remote = require('electron').remote;
 const storage = new ElectronStorage({ "name": "settings" });
-const tab0Template = fs.readFileSync("assets/templates/first_steps_0.mustache").toString();
-const tab1Template = fs.readFileSync("assets/templates/first_steps_1.mustache").toString();
-const tab2Template = fs.readFileSync("assets/templates/first_steps_2.mustache").toString();
+let frozenAppPath = remote.getGlobal('process').env['frozenAppPath'];
+const tab0Template = fs.readFileSync(path.join(frozenAppPath, "assets/templates/first_steps_0.mustache")).toString();
+const tab1Template = fs.readFileSync(path.join(frozenAppPath, "assets/templates/first_steps_1.mustache")).toString();
+const tab2Template = fs.readFileSync(path.join(frozenAppPath, "assets/templates/first_steps_2.mustache")).toString();
 renderer.parse(tab0Template);
 renderer.parse(tab1Template);
 renderer.parse(tab2Template);
 let thisWindowId;
-let frozenAppPath = remote.getGlobal('process').env['frozenAppPath'];
+function checkTab0(event) {
+    let result = storage.has("projects_directory");
+    console.log("checkTab0", result);
+    if (result) {
+        $(".js-firststart-workspace-tab").addClass("green");
+        $(".js-firststart-workspace-result").removeClass("hidden");
+    }
+}
 function activateTab0(event) {
     console.log("activateTab0");
     $(".js-project-content.active").removeClass("active");
@@ -26,6 +34,7 @@ function activateTab0(event) {
     $(".js-firststart-workspace-tab").addClass("active");
     $(".js-firststart-workspace-content").addClass("active");
     $(".sidebar").addClass("sidebar-hidden");
+    checkTab0();
 }
 function activateTab1(event) {
     console.log("activateTab1");
@@ -49,7 +58,6 @@ function addProject() {
     let projectAddButton = $(".js-project-add");
     let newProjectName = $(projectAddButton).val();
     $(projectAddButton).val("");
-    const modalPath = path.join('file://', __dirname, '../views/taskWindow.html');
     let win = new BrowserWindow({
         frame: true,
         title: `ViUR control - Add Project ${newProjectName}`,
@@ -60,6 +68,7 @@ function addProject() {
     win.on('close', function () {
         win = null;
     });
+    const modalPath = path.join('file://', frozenAppPath, 'assets/views/taskWindow.html');
     win.loadURL(modalPath);
     win.show();
     win.webContents.on('did-finish-load', function () {
@@ -83,6 +92,7 @@ function startWindow(fromWindowId, firstStartWindowId, debugMode = false) {
     $(".js-firststart-installwizard-tab").on("click", activateTab1);
     $(".js-firststart-new-project-tab").on("click", activateTab2);
     $(".js-add-project").on("click", addProject);
+    checkTab0();
 }
 ipc.on("first-start", startWindow);
 ipc.on('projects_directory', function (event, path) {

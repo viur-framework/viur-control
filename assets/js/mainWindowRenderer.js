@@ -126,11 +126,11 @@ function onIndexesDirtyCheck(currentProject) {
     console.log("onIndexesDirtyCheck");
     let win = new BrowserWindow({
         title: `ViUR control - Project Versions`,
-        icon: path.join(__dirname, '../img/viur_control_icon_32.png'),
+        icon: path.join(frozenAppPath, 'assets/img/viur_control_icon_32.png'),
         frame: false,
         show: debug === true
     });
-    win.loadURL(path.join('file://', __dirname, '../views/scanProjects.html'));
+    win.loadURL(path.join('file://', frozenAppPath, 'assets/views/scanProjects.html'));
     win.webContents.on('did-finish-load', function () {
         win.webContents.send('indexes-check', thisWindowId, currentProject, debug);
     });
@@ -174,11 +174,11 @@ function getProjectVersions(event, refresh = false) {
             console.log("projectVersions not found - requesting them");
             let win = new BrowserWindow({
                 title: `ViUR control - Project Versions`,
-                icon: path.join(__dirname, '../img/viur_control_icon_32.png'),
+                icon: path.join(frozenAppPath, 'assets/img/viur_control_icon_32.png'),
                 frame: false,
                 show: debug === true
             });
-            win.loadURL(path.join('file://', __dirname, '../views/scanProjects.html'));
+            win.loadURL(path.join('file://', frozenAppPath, 'assets/views/scanProjects.html'));
             win.webContents.on('did-finish-load', function () {
                 console.log("requesting project versions", thisWindowId);
                 win.webContents.send('request-versions', thisWindowId, myApplicationId, debug);
@@ -216,7 +216,7 @@ function toggleDevServer(event) {
     else {
         let devServerWindow = new BrowserWindow({
             title: `ViUR control | log for ${applicationId}`,
-            icon: path.join(__dirname, '../img/viur_control_icon_32.png'),
+            icon: path.join(frozenAppPath, 'assets/img/viur_control_icon_32.png'),
             frame: false,
             show: false,
             width: 1280,
@@ -225,7 +225,7 @@ function toggleDevServer(event) {
         ipc.send("new-project-window", currentProject.internalId, devServerWindow.id);
         let positioner = new electronPositioner(devServerWindow);
         positioner.move('topLeft');
-        devServerWindow.loadURL(path.join('file://', __dirname, '../views/viurInstanceOutput.html'));
+        devServerWindow.loadURL(path.join('file://', frozenAppPath, 'assets/views/viurInstanceOutput.html'));
         projectWindows.set(internalId, devServerWindow.id);
         console.log("currentWindow", projectWindows);
         $(self).addClass("active").html("&#9724;");
@@ -243,7 +243,7 @@ function addProject() {
     let projectAddButton = $(".js-project-add");
     let newProjectName = $(projectAddButton).val();
     $(projectAddButton).val("");
-    const modalPath = path.join('file://', __dirname, '../views/taskWindow.html');
+    const modalPath = path.join('file://', frozenAppPath, 'assets/views/taskWindow.html');
     let win = new BrowserWindow({
         frame: true,
         title: `ViUR control - Add Project ${newProjectName}`,
@@ -305,7 +305,7 @@ function startTasks(event) {
     win.on('close', function () {
         win = null;
     });
-    win.loadURL(path.join('file://', __dirname, '../views/taskWindow.html'));
+    win.loadURL(path.join('file://', frozenAppPath, 'assets/views/taskWindow.html'));
     win.webContents.on('did-finish-load', function () {
         win.show();
         win.webContents.send('start-handler', windowId, currentProject, taskQueue);
@@ -452,14 +452,14 @@ function createAppengineInstance() {
     let win = new BrowserWindow({
         frame: true,
         title: `ViUR control - Creating appengine instance ${applicationId}`,
-        icon: path.join(__dirname, '../img/viur_control_icon_32.png'),
+        icon: path.join(frozenAppPath, 'assets/img/viur_control_icon_32.png'),
         show: debug
     });
     win.on('close', function () {
         win = null;
     });
     let region = $(".js-regions-selector option:selected").val();
-    win.loadURL(path.join('file://', __dirname, '../views/taskWindow.html'));
+    win.loadURL(path.join('file://', frozenAppPath, 'assets/views/taskWindow.html'));
     win.webContents.on('did-finish-load', function () {
         win.show();
         win.webContents.send('request-create-appengine', thisWindowId, applicationId, region, debug);
@@ -482,13 +482,13 @@ function checkAppengineInstance(event, refresh = true) {
     let win = new BrowserWindow({
         frame: true,
         title: `ViUR control - checking appengine instance ${applicationId}`,
-        icon: path.join(__dirname, '../img/viur_control_icon_32.png'),
+        icon: path.join(frozenAppPath, 'assets/img/viur_control_icon_32.png'),
         show: false
     });
     win.on('close', function () {
         win = null;
     });
-    win.loadURL(path.join('file://', __dirname, '../views/taskWindow.html'));
+    win.loadURL(path.join('file://', frozenAppPath, 'assets/views/taskWindow.html'));
     win.webContents.on('did-finish-load', function () {
         if (debug) {
             win.show();
@@ -500,13 +500,13 @@ function checkGcloudAuthStatus() {
     let win = new BrowserWindow({
         frame: true,
         title: `ViUR control - Check gcloud auth status`,
-        icon: path.join(__dirname, '../img/viur_control_icon_32.png'),
+        icon: path.join(frozenAppPath, 'assets/img/viur_control_icon_32.png'),
         show: false
     });
     win.on('close', function () {
         win = null;
     });
-    win.loadURL(path.join('file://', __dirname, '../views/taskWindow.html'));
+    win.loadURL(path.join('file://', frozenAppPath, 'assets/views/taskWindow.html'));
     win.webContents.on('did-finish-load', function () {
         win.webContents.send('request-gcloud-auth-status', thisWindowId, debug);
     });
@@ -532,13 +532,13 @@ function updateIndexes() {
     let win = new BrowserWindow({
         frame: true,
         title: `ViUR control - Deploying ${applicationId}`,
-        icon: path.join(__dirname, '../img/viur_control_icon_32.png'),
+        icon: path.join(frozenAppPath, 'assets/img/viur_control_icon_32.png'),
         show: false
     });
     win.on('close', function () {
         win = null;
     });
-    win.loadURL(path.join('file://', __dirname, '../views/taskWindow.html'));
+    win.loadURL(path.join('file://', frozenAppPath, 'assets/views/taskWindow.html'));
     win.webContents.on('did-finish-load', function () {
         win.show();
         win.webContents.send('start-update-indexes', thisWindowId, absolutePath, applicationId, debug);
@@ -562,13 +562,13 @@ function migrateVersion() {
     let win = new BrowserWindow({
         frame: true,
         title: `ViUR control - Deploying ${applicationId}`,
-        icon: path.join(__dirname, '../img/viur_control_icon_32.png'),
+        icon: path.join(frozenAppPath, 'assets/img/viur_control_icon_32.png'),
         show: false
     });
     win.on('close', function () {
         win = null;
     });
-    win.loadURL(path.join('file://', __dirname, '../views/taskWindow.html'));
+    win.loadURL(path.join('file://', frozenAppPath, 'assets/views/taskWindow.html'));
     win.webContents.on('did-finish-load', function () {
         win.show();
         win.webContents.send('start-migrate-version', thisWindowId, absolutePath, applicationId, version, debug);
@@ -854,11 +854,11 @@ function requestProjectsScan(refresh = false) {
     }
     let win = new BrowserWindow({
         title: `ViUR control - Projects Scanning`,
-        icon: path.join(__dirname, '../img/viur_control_icon_32.png'),
+        icon: path.join(frozenAppPath, 'assets/img/viur_control_icon_32.png'),
         frame: false,
         show: debug === true
     });
-    win.loadURL(path.join('file://', __dirname, '../views/scanProjects.html'));
+    win.loadURL(path.join('file://', frozenAppPath, 'assets/views/scanProjects.html'));
     win.webContents.on('did-finish-load', function () {
         if (refresh) {
             console.log("on start rescanning projects", thisWindowId);
@@ -874,11 +874,11 @@ function requestLabelSettings(event) {
     console.log("requestLabelSettings");
     let win = new BrowserWindow({
         title: `ViUR control - Label Settings`,
-        icon: path.join(__dirname, '../img/viur_control_icon_32.png'),
+        icon: path.join(frozenAppPath, 'assets/img/viur_control_icon_32.png'),
         show: false,
         frame: false
     });
-    win.loadURL(path.join('file://', __dirname, '../views/labelSettings.html'));
+    win.loadURL(path.join('file://', frozenAppPath, 'assets/views/labelSettings.html'));
     win.webContents.on('did-finish-load', function () {
         win.show();
         win.webContents.send('open-label-settings', thisWindowId, labelList, appPath);
@@ -888,10 +888,10 @@ function requestScanNewProject(event, projectName) {
     console.log("requestScanNewProject", projectName);
     let win = new BrowserWindow({
         title: `ViUR control - Projects Scanning`,
-        icon: path.join(__dirname, '../img/viur_control_icon_32.png'),
+        icon: path.join(frozenAppPath, 'assets/img/viur_control_icon_32.png'),
         show: false
     });
-    win.loadURL(path.join('file://', __dirname, '../views/scanProjects.html'));
+    win.loadURL(path.join('file://', frozenAppPath, 'assets/views/scanProjects.html'));
     win.webContents.on('did-finish-load', function () {
         win.webContents.send('scan-new-project', projectName, thisWindowId);
     });
@@ -899,11 +899,11 @@ function requestScanNewProject(event, projectName) {
 function requestGcloudProjects(update = false) {
     let win = new BrowserWindow({
         title: `ViUR control - fetch gcloud projects`,
-        icon: path.join(__dirname, '../img/viur_control_icon_32.png'),
+        icon: path.join(frozenAppPath, 'assets/img/viur_control_icon_32.png'),
         frame: false,
         show: debug
     });
-    win.loadURL(path.join('file://', __dirname, '../views/scanProjects.html'));
+    win.loadURL(path.join('file://', frozenAppPath, 'assets/views/scanProjects.html'));
     win.webContents.on('did-finish-load', function () {
         console.log("requesting gcloud projects", thisWindowId);
         win.webContents.send('request-gcloud-projects', thisWindowId, update, debug);
@@ -912,11 +912,11 @@ function requestGcloudProjects(update = false) {
 function requestGetAppengineRegions() {
     let win = new BrowserWindow({
         title: `ViUR control - fetch appengine regions`,
-        icon: path.join(__dirname, '../img/viur_control_icon_32.png'),
+        icon: path.join(frozenAppPath, 'assets/img/viur_control_icon_32.png'),
         frame: false,
         show: true
     });
-    win.loadURL(path.join('file://', __dirname, '../views/taskWindow.html'));
+    win.loadURL(path.join('file://', frozenAppPath, 'assets/views/taskWindow.html'));
     win.webContents.on('did-finish-load', function () {
         console.log("requesting appengine regions", thisWindowId);
         win.webContents.send('request-get-appengine-regions', thisWindowId);
@@ -945,14 +945,14 @@ function onRequestDomainMappings(refresh = false) {
     }
     let win = new BrowserWindow({
         title: `ViUR control - fetch appengine regions`,
-        icon: path.join(__dirname, '../img/viur_control_icon_32.png'),
+        icon: path.join(frozenAppPath, 'assets/img/viur_control_icon_32.png'),
         frame: false,
         show: debug === true
     });
     win.on('close', function () {
         win = null;
     });
-    win.loadURL(path.join('file://', __dirname, '../views/taskWindow.html'));
+    win.loadURL(path.join('file://', frozenAppPath, 'assets/views/taskWindow.html'));
     win.webContents.on('did-finish-load', function () {
         console.log("requesting appengine regions", thisWindowId);
         win.webContents.send('request-get-domain-mappings', thisWindowId, applicationIds, debug);
@@ -988,14 +988,14 @@ function onRequestSubprocessIdsResponse(event, subprocessIdsFromMain, projectWin
 function onInternalVerify(event) {
     console.log("onInternalVerify");
     let verifyWindow = new BrowserWindow({
-        icon: path.join(__dirname, '../img/viur_control_icon_32.png'),
+        icon: path.join(frozenAppPath, 'assets/img/viur_control_icon_32.png'),
         frame: false,
         width: 600,
         height: 300,
         show: false,
     });
     verifyWindow.loadURL(url.format({
-        pathname: path.join(__dirname, '../views/taskWindow.html'),
+        pathname: path.join(frozenAppPath, 'assets/views/taskWindow.html'),
         protocol: 'file:',
         slashes: true
     }));
@@ -1031,7 +1031,7 @@ function onRequestTaskChecks() {
     win.on('close', function () {
         win = null;
     });
-    win.loadURL(path.join('file://', __dirname, '../views/taskWindow.html'));
+    win.loadURL(path.join('file://', frozenAppPath, 'assets/views/taskWindow.html'));
     win.webContents.on('did-finish-load', function () {
         if (debug) {
             win.show();
@@ -1121,7 +1121,7 @@ function startVcLogger(event) {
     loggerWindow.on('close', function () {
         loggerWindow = null;
     });
-    loggerWindow.loadURL(path.join('file://', __dirname, '../views/vclogOutput.html'));
+    loggerWindow.loadURL(path.join('file://', frozenAppPath, 'assets/views/vclogOutput.html'));
     $(".js-open-control-log").on("click", toggleVcLogger);
     loggerWindow.webContents.on('did-finish-load', function () {
         loggerWindow.webContents.send("vclog-init", thisWindowId);
@@ -1200,12 +1200,12 @@ function onDeploymentDialogAnswer(event, index, absolutePath, applicationId, ver
     let win = new BrowserWindow({
         frame: true,
         title: `ViUR control - Deploying ${applicationId}`,
-        icon: path.join(__dirname, '../img/viur_control_icon_32.png')
+        icon: path.join(frozenAppPath, 'assets/img/viur_control_icon_32.png')
     });
     win.on('close', function () {
         win = null;
     });
-    win.loadURL(path.join('file://', __dirname, '../views/taskWindow.html'));
+    win.loadURL(path.join('file://', frozenAppPath, 'assets/views/taskWindow.html'));
     win.show();
     win.webContents.on('did-finish-load', function () {
         win.webContents.send('start-deploy', thisWindowId, absolutePath, applicationId, version, debug);

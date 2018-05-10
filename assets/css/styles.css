@@ -3103,3 +3103,8 @@ strong.project-loading-text {
   transition: width 2s;
 }
 
+.firststart-workspace-result {
+  display: inline-block;
+  color: #0f9402;
+  font-size: 1.6em;
+}

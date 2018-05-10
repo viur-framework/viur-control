@@ -20,8 +20,8 @@ function setup_wizard(customPath) {
     let finalPath = customPath ? customPath : remote.getGlobal('process').env['frozenAppPath'];
     let wizardStepsTemplate = fs.readFileSync(path.join(finalPath, "assets/templates/wizard_step.mustache")).toString();
     console.log("setupUi");
-    if (!fs.existsSync("depencencyCache")) {
-        fs.mkdirSync("depencencyCache");
+    if (!fs.existsSync("distfiles")) {
+        fs.mkdirSync("distfiles");
     }
     let installStepsFile;
     if (os.platform === "win32") {

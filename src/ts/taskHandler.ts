@@ -8,18 +8,22 @@ import WriteStream = NodeJS.WriteStream;
 const $ = require('jquery');
 
 const {exec, execSync, spawn} = require('child_process');
-const ipc = require('electron').ipcRenderer;
+const electron = require('electron');
+const ipc = electron.ipcRenderer;
 const fs = require('fs');
 const path = require('path');
 const Storage = require('electron-store');
 const settingsStorage = new Storage({"name": "settings"});
 const regionsStorage = new Storage({"name": "regions"});
 const domainMappingsStorage = new Storage({"name": "domainMappings"});
-const BrowserWindow = require('electron').remote.BrowserWindow;
+const remote = electron.remote;
+const BrowserWindow = remote.BrowserWindow;
 const async = require('async');
 const _ = require('underscore');
 const {checkTaskOk} = require('./projectSpecFile');
 const {verifyProjectStorageFile, verifyCredentialsFiles, verifyProjectSpecFiles, verifySettingsStorageFile} = require('./schemaVerifier');
+
+const frozenAppPath = remote.getGlobal("process").env["frozenAppPath"];
 
 let proc : any = null;
 export const docDummy = "1";
