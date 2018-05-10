@@ -113,18 +113,6 @@
 			"install": {
 				"cmd": "pip install \"git+https://github.com/pyjs/pyjs.git#egg=pyjs\""
 			}
-		},
-		{
-			"name": "native admin for windows",
-			"step": 8,
-			"optional": true,
-			"checking": {
-				"cmd": "pyjsbuild --help",
-				"stdoutRegex": "Usage:\\spyjsbuild.*"
-			},
-			"install": {
-				"cmd": "pip install \"git+https://github.com/pyjs/pyjs.git#egg=pyjs\""
-			}
 		}
 	]
 }

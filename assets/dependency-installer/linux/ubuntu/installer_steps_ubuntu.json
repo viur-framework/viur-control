@@ -1,18 +1,14 @@
 {
 	"steps": [
 		{
-			"name": "apt install $packages",
+			"name": "apt-get install system dependencies",
 			"step": 1,
 			"checking": {
 				"cmd": "python --version",
 				"stderrRegex": "Python\\s+(\\d)\\.(\\d)\\.(\\d+)"
 			},
 			"install": {
-				"cmd": "apt-get install apt-transport-https build-essential python2.7 python-imaging python-pip python-dev git python-jinja2 python-setuptools python-wheel python-pytz",
-				"addEnv": [
-					"C:\\Python27\\",
-					"C:\\Python27\\Scripts"
-				]
+				"cmd": "apt-get install -y curl apt-transport-https build-essential git libpython-dev python2.7 python-pil python-pip python-dev python-jinja2 python-setuptools python-wheel python-tz"
 			}
 		},
 		{
@@ -23,12 +19,8 @@
 				"cmd": "node --version",
 				"stdoutRegex": "v(\\d+)\\.(\\d+)\\.(\\d+)"
 			},
-			"download": {
-				"url": "https://nodejs.org/dist/v9.2.0/node-v9.2.0-x64.msi",
-				"dest": "dependencyCache\\node-v9.2.0-x64.msi"
-			},
 			"install": {
-				"cmd": "curl -sL https://deb.nodesource.com/setup_10.x | sudo -E bash - && sudo apt-get install -y nodejs"
+				"cmd": "curl -sL https://deb.nodesource.com/setup_9.x | sudo -E bash - && sudo apt-get install -y nodejs"
 			}
 		},
 		{
@@ -70,19 +62,7 @@
 				"stdoutRegex": "Usage:\\spyjsbuild.*"
 			},
 			"install": {
-				"cmd": "pip install \"git+https://github.com/pyjs/pyjs.git#egg=pyjs\""
-			}
-		},
-		{
-			"name": "native admin for windows",
-			"step": 8,
-			"optional": true,
-			"checking": {
-				"cmd": "pyjsbuild --help",
-				"stdoutRegex": "Usage:\\spyjsbuild.*"
-			},
-			"install": {
-				"cmd": "pip install \"git+https://github.com/pyjs/pyjs.git#egg=pyjs\""
+				"cmd": "sudo pip install \"git+https://github.com/pyjs/pyjs.git#egg=pyjs\""
 			}
 		}
 	]

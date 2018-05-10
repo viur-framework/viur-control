@@ -1,0 +1,31 @@
+{
+  "arch": "amd64",
+  "dest": "out/installers/",
+  "icon": {
+    "32x32": "out/viur-control-linux-x64/resources/app/assets/img/viur_control_icon_32.png",
+    "64x64": "out/viur-control-linux-x64/resources/app/assets/img/viur_control_icon_64.png"
+  },
+  "categories": [
+    "Development"
+  ],
+  "section": [
+    "Development"
+  ],
+  "lintianOverrides": [
+    "changelog-file-missing-in-native-package"
+  ],
+  "depends": [
+    "apt-transport-https",
+    "build-essential",
+    "git",
+    "libpython-dev",
+    "python2.7",
+    "python-pil",
+    "python-pip",
+    "python-dev",
+    "python-jinja2",
+    "python-setuptools",
+    "python-wheel",
+    "python-tz"
+  ]
+}
