@@ -14,7 +14,7 @@
 <div class="window frameless">
 	<header class="toolbar toolbar-header">
 		<img class="logo-viur-control" src="../img/logo_viur_control.svg">
-		<span class="logo-title">Label Settings</span>
+		<span class="logo-title">Label Discovery</span>
 		<button class="js-close btn-action" title="Close Window">&times;</button>
 	</header>
 	<div class="window-content">
@@ -23,15 +23,27 @@
 				<div class="content active">
 
 					<div class="nice-section">
-						<p>Your current label icon repository was set to: <span class="js-label-repository"></span></p>
+
+						<p class="js-label-settings-repository">Your current label icon repository was set to: <span
+								class="js-label-repository"></span></p>
+						<p class="js-label-settings-repository-missing hidden">Your current label icon repository
+							was set to: <span class="js-label-repository"></span></p>
 						<p>You can change it in the global settings</p>
-						<p>Labels will be displayed with absolute path here, but saved as relative to your label icon repository</p>
-						<p>Choose your icons here and press save when done. The icons will be copied over to your repository when selected from another path. Before close it will be saved when you changed something</p>
-						<button class="js-save btn btn-positive btn-large pull-right">Save</button>
-						<button class="js-open-documentation pull-right btn btn-hint icon icon-help"
+						<p>You're seeing here labels of the form "$key: $value" on the left side.</p>
+						<p>If you want to use an icon or image for label representation, put your png, jpg or svg
+							file in the label repository with a filename like "$key-$value.(png|jpg|svg)"</p>
+						<p>Pro Tip: You can use the same icon for multiple labels via symlinks! ;)</p>
+						<p>In a future version of viur-control, you can also set a fallback icon yourself via fallback.(png|jpg|svg)</p>
+
+						<button class="js-open-documentation btn btn-hint icon icon-help pull-right"
 						        title="Explain this"
 						        data-view="#labels"></button>
-						<h4>Label configurator</h4>
+						<button class="js-refresh-label-mappings btn btn-positive btn-large">Refresh
+							label repository
+						</button>
+						<button class="js-collect-and-refresh-label-mappings btn btn-positive btn-large">
+							(Re-)collect labels & refresh label repository
+						</button>
 						<ul class="label-settings-ul">
 						</ul>
 					</div>

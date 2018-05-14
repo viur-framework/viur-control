@@ -249,7 +249,7 @@ function setup_wizard(customPath) {
                 callback(null, true);
                 return;
             }
-            let cmd = step.install.cmd;
+            let cmd = step.install.cmd.replace("${{frozenAppPath}}", finalPath);
             let args = step.install.args;
             let env = process.env;
             env.PATH = currentPath;
@@ -326,11 +326,11 @@ function setup_wizard(customPath) {
             "background-color": backgroundColor
         });
         $(".js-close").on("click", window.close);
-        // setTimeout(function () {
-        //   async.seq(...jobs)(true, function (err: string, data: string) {
-        //     console.log("callback", err, data);
-        //   })
-        // }, 2500);
+        setTimeout(function () {
+            async.seq(...jobs)(true, function (err, data) {
+                console.log("callback", err, data);
+            });
+        }, 2500);
     });
 }
 exports.setup_wizard = setup_wizard;

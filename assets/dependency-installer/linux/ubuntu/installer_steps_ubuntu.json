@@ -1,60 +1,15 @@
 {
   "steps": [
     {
-      "name": "apt-get install system dependencies",
-      "step": 1,
-      "checking": {
-        "cmd": "python --version",
-        "stderrRegex": "Python\\s+(\\d)\\.(\\d)\\.(\\d+)"
-      },
-      "install": {
-        "cmd": "apt-get update && apt-get install -y curl apt-transport-https build-essential git libpython-dev python2.7 python-pil python-pip python-dev python-jinja2 python-setuptools python-wheel python-tz"
-      }
-    },
-    {
-      "name": "node.js",
+      "name": "additional development tools",
       "step": 2,
       "checking": {
         "title": "Checking if node.js is installed",
-        "cmd": "node --version",
+        "cmd": "echo '1'",
         "stdoutRegex": "v(\\d+)\\.(\\d+)\\.(\\d+)"
       },
       "install": {
-        "cmd": "curl -sL https://deb.nodesource.com/setup_9.x | sudo -E bash - && sudo apt-get install -y nodejs"
-      }
-    },
-    {
-      "name": "Google cloud SDK",
-      "step": 3,
-      "checking": {
-        "cmd": "gcloud --version",
-        "stdoutRegex": "Google\\sCloud\\sSDK\\s.*"
-      },
-      "install": {
-        "cmd": "bash dependency-installer/linux/ubuntu/gcloudRepoInstall.sh",
-        "directory": "~/dev/google-cloud-sdk"
-      }
-    },
-    {
-      "name": "lessc",
-      "step": 4,
-      "checking": {
-        "cmd": "lessc --version",
-        "stdoutRegex": ".*Less Compiler.*"
-      },
-      "install": {
-        "cmd": "npm install -g less"
-      }
-    },
-    {
-      "name": "pyjs",
-      "step": 5,
-      "checking": {
-        "cmd": "pyjsbuild --help",
-        "stdoutRegex": "Usage:\\spyjsbuild.*"
-      },
-      "install": {
-        "cmd": "sudo pip install \"git+https://github.com/pyjs/pyjs.git#egg=pyjs\""
+        "cmd": "gnome-terminal -- bash ${{frozenAppPath}}/assets/dependency-installer/linux/ubuntu/node_and_gcloud.sh"
       }
     }
   ]

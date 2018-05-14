@@ -63,7 +63,7 @@ function startLocalInstance(project, applicationId, fromWindowId) {
         activeAppengineDirectory = project.appengineDirectories[0].value;
     }
     let projectPath = path.join(project.absolutePath, activeAppengineDirectory);
-    let cmdTemplate;
+    let cmdArgsTemplate = [];
     let serverPort = project.serverPort;
     let adminPort = project.adminPort;
     let gcloudPath = settingsStorage.get("gcloud_tool_path");
@@ -75,16 +75,38 @@ function startLocalInstance(project, applicationId, fromWindowId) {
         devserverPath = "dev_appserver.py";
     }
     if (project.custom_devserver_cmd) {
-        let result = project.custom_devserver_cmd;
-        result = result.replace("${adminPort}", adminPort.toString()).replace("${serverPort}", serverPort.toString()).replace("${applicationId}", applicationId);
-        cmdTemplate = `${devserverPath} ${result}`;
+        let customArgsString = project.custom_devserver_cmd;
+        let spliitedRawArgs = customArgsString.split(" ");
+        let replacements = {
+            "${adminPort}": adminPort.toString(),
+            "${serverPort}": serverPort.toString(),
+            "${applicationId}": applicationId
+        };
+        for (let arg of spliitedRawArgs) {
+            if (!arg) {
+                continue;
+            }
+            console.log("arg: '", arg, "'");
+            let tmp = replacements[arg];
+            if (tmp) {
+                arg = tmp;
+            }
+            cmdArgsTemplate.push(arg);
+        }
     }
     else {
-        cmdTemplate = `${devserverPath} --admin_port ${adminPort} --port ${serverPort} --log_level debug --storage_path ../storage/ -A ${applicationId} .`;
+        cmdArgsTemplate = [
+            "--admin_port", adminPort.toString(),
+            "--port", serverPort.toString(),
+            "--log_level", "debug",
+            "--storage_path", "../storage",
+            "-A", applicationId,
+            "."
+        ];
     }
-    $(output).append(`<p class="output-line"><span class="loglevel info">current working directory: </span>${projectPath}</p><p class="output-line"><span class="loglevel info">used command: </span>${cmdTemplate}</p>`);
+    $(output).append(`<p class="output-line"><span class="loglevel info">current working directory: </span>${projectPath}</p><p class="output-line"><span class="loglevel info">used command: </span>${cmdArgsTemplate}</p>`);
     $(output).on("scroll", scrollHandler);
-    let proc = spawn(cmdTemplate, { "cwd": projectPath, "shell": true });
+    let proc = spawn(devserverPath, cmdArgsTemplate, { "cwd": projectPath });
     ipc.send('local-devserver-started', project.internalId, proc.pid);
     let parentWindow = BrowserWindow.fromId(fromWindowId);
     parentWindow.webContents.send("local-devserver-started", project.internalId, proc.pid);

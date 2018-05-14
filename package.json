@@ -1,6 +1,6 @@
 {
   "name": "viur-control",
-  "version": "0.3.0",
+  "version": "0.30.6",
   "description": "The better App Engine Launcher",
   "main": "main.js",
   "scripts": {
@@ -9,8 +9,8 @@
     "package": "npm-run-all package:*",
     "package:mac": "electron-packager . --overwrite --platform=darwin --arch=x64 --out=out --icon=assets/img/viur.icns --osx-sign.identity='Developer ID Application: Mausbrand' --extend-info=assets/mac/info.plist",
     "package:win": "electron-packager . --overwrite --platform=win32 --arch=x64 --out=out",
-    "package:linux": "electron-packager . --overwrite --platform=linux --arch=x64 --out=out",
-    "deb64": "dependency-installer/linux/ubuntu/fixperms.sh && electron-installer-debian --src out/viur-control-linux-x64/ --dest out/installers/ --config dependency-installer/linux/ubuntu/debian-options.json"
+    "package:linux": "electron-packager . --overwrite --platform=linux --arch=x64 --out=out && bash build_tools/linux/optimize_package.sh",
+    "deb64": "electron-installer-debian --src out/viur-control-linux-x64/ --dest out/installers/ --config build_tools/linux/ubuntu/debian-options.json"
   },
   "keywords": [
     "development",
@@ -25,9 +25,9 @@
   "author": "Stefan Kögl <sk@mausbrand.de>",
   "homepage": "https://github.com/viur-framework/control",
   "license": "GPL-3.0",
-  "repository" : {
-    "type" : "git",
-    "url" : "https://github.com/viur-framework/control.git"
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/viur-framework/control.git"
   },
   "devDependencies": {
     "@types/electron-store": "^1.3.0",
@@ -37,17 +37,7 @@
     "electron-installer-redhat": "*",
     "electron-installer-windows": "*",
     "electron-ipc-log": "^3.0.1",
-    "electron-packager": "^10.1.2",
-    "gulp": "^3.9.1",
-    "gulp-concat": "^2.6.1",
-    "gulp-cssnano": "^2.1.2",
-    "gulp-jshint": "^2.0.4",
-    "gulp-notify": "^3.0.0",
-    "gulp-rename": "^1.2.2",
-    "gulp-strip-debug": "^1.1.0",
-    "gulp-typescript": "^3.2.3",
-    "gulp-uglify": "^3.0.0",
-    "typescript": "^2.8.3"
+    "electron-packager": "^10.1.2"
   },
   "dependencies": {
     "ajv": "^6.5.0",
@@ -61,7 +51,6 @@
     "jquery": "^3.3.1",
     "moment": "^2.22.1",
     "mustache": "^2.3.0",
-    "node-glob": "^1.2.0",
     "npm": "^6.0.0",
     "ps-node": "^0.1.6",
     "request": "^2.85.0",

@@ -261,9 +261,9 @@ function applicationIdSorter(a, b) {
         return 1;
     return 0;
 }
-function OnRequestGcloudProjects(event, windowId, update = false, debug = false) {
+function OnRequestGcloudProjects(event, windowId, refresh = false, debug = false) {
     $(".js-close").on("click", window.close);
-    console.log("scanGcloudProjects", windowId, update);
+    console.log("scanGcloudProjects", windowId, refresh);
     let storedGcloudProjects = gcloudProjectStorage.get("data");
     const fromWindow = BrowserWindow.fromId(windowId);
     let output = $("#output");
@@ -274,7 +274,7 @@ function OnRequestGcloudProjects(event, windowId, update = false, debug = false)
         "background-color": backgroundColor
     });
     const storedGcloudProjectsVersion = gcloudProjectStorage.get("gcloud_project_storage_version", GCLOUD_PROJECT_STORAGE_VERSION - 1);
-    if (!storedGcloudProjects || !storedGcloudProjects.hasOwnProperty("gcloudProjectIds") || storedGcloudProjects.gcloudProjectIds.length === 0 || update || (storedGcloudProjectsVersion < GCLOUD_PROJECT_STORAGE_VERSION)) {
+    if (!storedGcloudProjects || !storedGcloudProjects.hasOwnProperty("gcloudProjectIds") || storedGcloudProjects.gcloudProjectIds.length === 0 || refresh || (storedGcloudProjectsVersion < GCLOUD_PROJECT_STORAGE_VERSION)) {
         let cmd = "gcloud --format json projects list";
         $(output).append(`<p class="output-line">going to fetch project list from google:</p>`);
         $(output).append(`<p class="output-line">${cmd}</p>`);
@@ -300,7 +300,7 @@ function OnRequestGcloudProjects(event, windowId, update = false, debug = false)
             let finalData = { "gcloudProjectIds": gcloudProjects };
             gcloudProjectStorage.set("gcloud_project_storage_version", GCLOUD_PROJECT_STORAGE_VERSION);
             gcloudProjectStorage.set("data", finalData);
-            fromWindow.webContents.send("request-gcloud-projects-response", finalData, update);
+            fromWindow.webContents.send("request-gcloud-projects-response", finalData, refresh);
             if (!debug) {
                 setTimeout(function () {
                     window.close();
@@ -316,7 +316,7 @@ function OnRequestGcloudProjects(event, windowId, update = false, debug = false)
                 return value;
             }, 4)}</p>`);
         }
-        fromWindow.webContents.send("request-gcloud-projects-response", storedGcloudProjects, update);
+        fromWindow.webContents.send("request-gcloud-projects-response", storedGcloudProjects, refresh);
         if (!debug) {
             setTimeout(function () {
                 window.close();

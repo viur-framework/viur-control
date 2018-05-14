@@ -4,6 +4,9 @@
 /// <reference path="node_modules/@types/electron-store/index.d.ts" />
 
 import {VcLogEntryInterface, VcLogEntryStatus} from "./vcLogger";
+import {GcloudApplicationIdEntryInterface} from "./projectLib";
+import {LabelInternalInterface, LabelInternalInterfaceSorter, StoredLabelInterface} from "./labelSettingsLib";
+
 
 const fs = require('fs');
 const path = require('path');
@@ -66,12 +69,6 @@ renderer.parse(domainMappingTemplate);
 // mutable data
 let thisWindowId: null | number;
 
-export interface LabelInterface {
-	title: string;
-	path: string;
-	id: number;
-}
-
 export interface VersionsInterface {
 	lastFetched: Date;
 	applicationId: string;
@@ -86,7 +83,7 @@ export interface AppengineDirectoryInterface {
 export interface ApplictionIdInterface {
 	value: string;
 	checked: boolean;
-	labels?: null | Array<LabelInterface>;
+	labels?: null | Array<LabelInternalInterface>;
 }
 
 export interface CredentialEntryInterface {
@@ -121,15 +118,6 @@ export interface ProjectInterface {
 	regions?: Array<Object>;
 }
 
-export interface RawLabelsInterface {
-	[propName: string]: string;
-}
-
-export interface GcloudApplicationIdEntryInterface {
-	name: string;
-	labels: RawLabelsInterface;
-	created: boolean;
-}
 
 export interface GcloudApplicationIdsInterface {
 	gcloudProjectIds: Array<GcloudApplicationIdEntryInterface>;
@@ -148,7 +136,7 @@ let gcloudApplicationIds: GcloudApplicationIdsInterface;
 let currentInternalId: string;
 let debug = false;
 let appPath: string;
-let labelList: Array<LabelInterface> = [];
+let labelList: Array<LabelInternalInterface> = [];
 let isGcloudAuthorized: boolean = false;
 let loggerEntryCount: number = 0;
 
@@ -159,6 +147,7 @@ let loggerEntryCount: number = 0;
 let currentProject: null | ProjectInterface;
 
 let loggerWindow: null | typeof BrowserWindow;
+let loggerWindowId: number;
 
 function deepClone(obj: Object) {
 	return JSON.parse(JSON.stringify(obj));
@@ -235,7 +224,7 @@ function onIndexesDirtyCheck(currentProject: ProjectInterface) {
 	let win = new BrowserWindow(
 		{
 			title: `ViUR control - Project Versions`,
-			icon: path.join(frozenAppPath, 'assets/img/viur_control_icon_32.png'),
+			icon: path.join(frozenAppPath, 'assets/img/icon-vc-64.png'),
 			frame: false,
 			show: debug === true
 		}
@@ -270,7 +259,6 @@ function getProjectVersions(event?: Event, refresh: boolean = false) {
 	$(".js-selected-application-id").text(myApplicationId);
 	console.log("getProjectVersions", myApplicationId);
 	if (!gcloudProjectByApplicationId.has(myApplicationId)) {
-
 		addLogEntry(<VcLogEntryInterface> {
 			creationdate: moment().format(`YYYY-MM-DD HH:mm`),
 			method: `Fetching versions for project with application id '${myApplicationId}'`,
@@ -288,7 +276,7 @@ function getProjectVersions(event?: Event, refresh: boolean = false) {
 			let win = new BrowserWindow(
 				{
 					title: `ViUR control - Project Versions`,
-					icon: path.join(frozenAppPath, 'assets/img/viur_control_icon_32.png'),
+					icon: path.join(frozenAppPath, 'assets/img/icon-vc-64.png'),
 					frame: false,
 					show: debug === true
 				}
@@ -330,7 +318,7 @@ function toggleDevServer(event: Event) {
 		let devServerWindow = new BrowserWindow(
 			{
 				title: `ViUR control | log for ${applicationId}`,
-				icon: path.join(frozenAppPath, 'assets/img/viur_control_icon_32.png'),
+				icon: path.join(frozenAppPath, 'assets/img/icon-vc-64.png'),
 				frame: false,
 				show: false,
 				width: 1280,
@@ -586,7 +574,7 @@ function createAppengineInstance() {
 	let win = new BrowserWindow({
 		frame: true,
 		title: `ViUR control - Creating appengine instance ${applicationId}`,
-		icon: path.join(frozenAppPath, 'assets/img/viur_control_icon_32.png'),
+		icon: path.join(frozenAppPath, 'assets/img/icon-vc-64.png'),
 		show: debug
 	});
 	win.on('close', function () {
@@ -619,7 +607,7 @@ function checkAppengineInstance(event: null | Event, refresh = true) {
 	let win = new BrowserWindow({
 		frame: true,
 		title: `ViUR control - checking appengine instance ${applicationId}`,
-		icon: path.join(frozenAppPath, 'assets/img/viur_control_icon_32.png'),
+		icon: path.join(frozenAppPath, 'assets/img/icon-vc-64.png'),
 		show: false
 	});
 	win.on('close', function () {
@@ -638,7 +626,7 @@ function checkGcloudAuthStatus() {
 	let win = new BrowserWindow({
 		frame: true,
 		title: `ViUR control - Check gcloud auth status`,
-		icon: path.join(frozenAppPath, 'assets/img/viur_control_icon_32.png'),
+		icon: path.join(frozenAppPath, 'assets/img/icon-vc-64.png'),
 		show: false
 	});
 	win.on('close', function () {
@@ -674,7 +662,7 @@ function updateIndexes() {
 	let win = new BrowserWindow({
 		frame: true,
 		title: `ViUR control - Deploying ${applicationId}`,
-		icon: path.join(frozenAppPath, 'assets/img/viur_control_icon_32.png'),
+		icon: path.join(frozenAppPath, 'assets/img/icon-vc-64.png'),
 		show: false
 	});
 	win.on('close', function () {
@@ -707,7 +695,7 @@ function migrateVersion() {
 	let win = new BrowserWindow({
 		frame: true,
 		title: `ViUR control - Deploying ${applicationId}`,
-		icon: path.join(frozenAppPath, 'assets/img/viur_control_icon_32.png'),
+		icon: path.join(frozenAppPath, 'assets/img/icon-vc-64.png'),
 		show: false
 	});
 	win.on('close', function () {
@@ -811,62 +799,6 @@ function setDefaultApplicationId(event: Event) {
 	checkAppengineInstance(null, true);
 }
 
-function saveLabels(customLabelList: undefined | Array<LabelInterface> = undefined) {
-	let workingList: Array<LabelInterface>;
-	if (customLabelList) {
-		workingList = customLabelList;
-	} else {
-		workingList = labelList;
-	}
-	console.log("saveLabels", workingList);
-
-	workingList.sort(function (a: LabelInterface, b: LabelInterface) {
-		return a.title < b.title ? -1 : 1;
-	});
-
-	let labelIconRepository = settingsStorage.get("label_icon_repository");
-	if (!labelIconRepository) {
-		labelIconRepository = path.join(appPath, "label-icons");
-		settingsStorage.set("label_icon_repository", labelIconRepository);
-	}
-
-	if (!fs.existsSync(labelIconRepository)) {
-		fs.mkdirSync(labelIconRepository);
-	}
-
-	let resultList: Array<LabelInterface> = [];
-	for (let entry of workingList) {
-		let clone: LabelInterface = <LabelInterface> Object.assign({}, entry);
-		if (clone.path) {
-			if (clone.hasOwnProperty("id")) {
-				delete clone.id;
-			}
-			if (clone.path) {
-				clone.path = path.relative(labelIconRepository, clone.path);
-			}
-		}
-		resultList.push(clone);
-	}
-	labelStorage.set("allLabels", resultList);
-
-	if (customLabelList) {
-		labelList = resultList;
-		labelCache.clear();
-		for (let entry of labelList) {
-			if (entry.path) {
-				entry.path = path.join(labelIconRepository, entry.path);
-			}
-			labelCache.set(entry.title, entry);
-		}
-		if (currentInternalId) {
-			// TODO: a complete new recall of onProjectSelected for changed label?
-			onProjectSelected(null, currentInternalId);
-		}
-	}
-
-	console.log("labels should be saved");
-}
-
 function loadLabelCache(event?: Event) {
 	console.log("loadLabelCache");
 	labelCache.clear();
@@ -876,58 +808,17 @@ function loadLabelCache(event?: Event) {
 		return;
 	}
 
-	for (let entry of labelStorage.get("allLabels", [])) {
-		let clone = Object.assign({}, entry);
+	let storedLabels: Array<StoredLabelInterface> = labelStorage.get("allLabels", []);
+	for (let entry of storedLabels) {
+		let clone: LabelInternalInterface = {title: entry.title, path: entry.path, id: 0};
 		if (clone.path) {
 			clone.path = path.join(labelIconRepository, clone.path);
 		}
 		labelList.push(clone);
-		labelCache.set(entry.title, clone);
+		labelCache.set(clone.title, clone);
 	}
-	labelList.sort(function (a, b) {
-		return a.title < b.title ? -1 : 1;
-	});
+	labelList.sort(LabelInternalInterfaceSorter);
 	console.log("loadLabelCache end");
-}
-
-/**
- * Scans all applicationId entries for labels, find label icons, builds an internal cache map and saves to label storage of changed
- */
-function processApplicationIdLabels() {
-	console.log("processApplicationIdLabels");
-	gcloudProjectByApplicationId.clear();
-
-	let changed = false;
-
-	for (let applicationIdEntry of gcloudApplicationIds.gcloudProjectIds) {
-		gcloudProjectByApplicationId.set(applicationIdEntry.name, applicationIdEntry);
-		let gcloudProjectLabels = applicationIdEntry.labels;
-		if (gcloudProjectLabels) {
-			for (let labelKey in gcloudProjectLabels) {
-				let labelValue = gcloudProjectLabels[labelKey];
-				let cacheKey = `${labelKey}: ${labelValue}`;
-				if (!labelCache.has(cacheKey)) {
-					try {
-						let payload: LabelInterface = {
-							"path": null,
-							"title": cacheKey,
-							"id": null
-						};
-						labelCache.set(cacheKey, payload);
-						labelList.push(payload);
-						changed = true;
-						console.log("new label", payload);
-					} catch (err) {
-						console.error(err)
-					}
-				}
-			}
-		}
-	}
-	if (changed) {
-		saveLabels();
-	}
-	console.log("processApplicationIdLabels finished", gcloudProjectByApplicationId);
 }
 
 function amendLabelIcons(projectClone: ProjectInterface) {
@@ -1029,7 +920,7 @@ function requestProjectsScan(refresh: boolean = false) {
 	let win = new BrowserWindow(
 		{
 			title: `ViUR control - Projects Scanning`,
-			icon: path.join(frozenAppPath, 'assets/img/viur_control_icon_32.png'),
+			icon: path.join(frozenAppPath, 'assets/img/icon-vc-64.png'),
 			frame: false,
 			show: debug === true
 		}
@@ -1046,12 +937,12 @@ function requestProjectsScan(refresh: boolean = false) {
 	});
 }
 
-function requestLabelSettings(event: Event) {
-	console.log("requestLabelSettings");
+function requestDiscoverLabelIcons(event: Event) {
+	console.log("requestDiscoverLabelIcons");
 	let win = new BrowserWindow(
 		{
 			title: `ViUR control - Label Settings`,
-			icon: path.join(frozenAppPath, 'assets/img/viur_control_icon_32.png'),
+			icon: path.join(frozenAppPath, 'assets/img/icon-vc-64.png'),
 			show: false,
 			frame: false
 		}
@@ -1059,7 +950,7 @@ function requestLabelSettings(event: Event) {
 	win.loadURL(path.join('file://', frozenAppPath, 'assets/views/labelSettings.html'));
 	win.webContents.on('did-finish-load', function () {
 		win.show();
-		win.webContents.send('open-label-settings', thisWindowId, labelList, appPath);
+		win.webContents.send('request-discover-label-icons', thisWindowId, loggerWindowId, true);
 	})
 }
 
@@ -1068,7 +959,7 @@ function requestScanNewProject(event: Event, projectName: string) {
 	let win = new BrowserWindow(
 		{
 			title: `ViUR control - Projects Scanning`,
-			icon: path.join(frozenAppPath, 'assets/img/viur_control_icon_32.png'),
+			icon: path.join(frozenAppPath, 'assets/img/icon-vc-64.png'),
 			show: false
 		}
 	);
@@ -1082,7 +973,7 @@ function requestGcloudProjects(update: boolean = false) {
 	let win = new BrowserWindow(
 		{
 			title: `ViUR control - fetch gcloud projects`,
-			icon: path.join(frozenAppPath, 'assets/img/viur_control_icon_32.png'),
+			icon: path.join(frozenAppPath, 'assets/img/icon-vc-64.png'),
 			frame: false,
 			show: debug
 		}
@@ -1098,7 +989,7 @@ function requestGetAppengineRegions() {
 	let win = new BrowserWindow(
 		{
 			title: `ViUR control - fetch appengine regions`,
-			icon: path.join(frozenAppPath, 'assets/img/viur_control_icon_32.png'),
+			icon: path.join(frozenAppPath, 'assets/img/icon-vc-64.png'),
 			frame: false,
 			show: true
 		}
@@ -1146,7 +1037,7 @@ function onRequestDomainMappings(refresh: boolean = false) {
 	let win = new BrowserWindow(
 		{
 			title: `ViUR control - fetch appengine regions`,
-			icon: path.join(frozenAppPath, 'assets/img/viur_control_icon_32.png'),
+			icon: path.join(frozenAppPath, 'assets/img/icon-vc-64.png'),
 			frame: false,
 			show: debug === true
 		}
@@ -1195,7 +1086,7 @@ function onRequestSubprocessIdsResponse(event: Event, subprocessIdsFromMain: Arr
 function onInternalVerify(event: Event) {
 	console.log("onInternalVerify");
 	let verifyWindow = new BrowserWindow({
-		icon: path.join(frozenAppPath, 'assets/img/viur_control_icon_32.png'),
+		icon: path.join(frozenAppPath, 'assets/img/icon-vc-64.png'),
 		frame: false,
 		width: 600,
 		height: 300,
@@ -1310,7 +1201,7 @@ function onRemoveIcon() {
 	delete project.projectIcon;
 	$(".js-project-icon").val("");
 	projectStorage.set("projects", projects);
-	$(currentProjectListItem).find(".js-project-icon-display").css("background-image", "url('../img/viur_control_icon_32.png')");
+	$(currentProjectListItem).find(".js-project-icon-display").css("background-image", "url('../img/icon-vc-64.png')");
 	updateProjectSpecFile(internalId);
 }
 
@@ -1340,6 +1231,8 @@ function startVcLogger(event: Event) {
 		frame: false,
 		show: false
 	});
+
+	remote.getGlobal('process').env['loggerWindowId'] = loggerWindowId = loggerWindow.id;
 
 	let positioner = new electronPositioner(loggerWindow);
 	positioner.move('topLeft');
@@ -1436,7 +1329,7 @@ function onDeploymentDialogAnswer(event: Event, index: number, absolutePath: str
 	let win = new BrowserWindow({
 		frame: true,
 		title: `ViUR control - Deploying ${applicationId}`,
-		icon: path.join(frozenAppPath, 'assets/img/viur_control_icon_32.png')
+		icon: path.join(frozenAppPath, 'assets/img/icon-vc-64.png')
 	});
 	win.on('close', function () {
 		win = null
@@ -1447,6 +1340,84 @@ function onDeploymentDialogAnswer(event: Event, index: number, absolutePath: str
 		win.webContents.send('start-deploy', thisWindowId, absolutePath, applicationId, version, debug)
 	})
 }
+
+
+// function saveLabels(customLabelList: undefined | Array<LabelInternalInterface> = undefined) {
+// 	let workingList: Array<LabelInternalInterface>;
+// 	if (customLabelList) {
+// 		workingList = customLabelList;
+// 	} else {
+// 		workingList = labelList;
+// 	}
+// 	console.log("saveLabels", workingList);
+//
+// 	workingList.sort(LabelInternalInterfaceSorter);
+//
+// 	console.log("saveLabels", resultList);
+// 	labelStorage.set("allLabels", resultList);
+//
+// 	if (resultList) {
+// 		labelList = resultList;
+// 		labelCache.clear();
+// 		for (let entry of labelList) {
+// 			if (entry.path) {
+// 				entry.path = path.join(labelIconRepository, entry.path);
+// 			}
+// 			labelCache.set(entry.title, entry);
+// 		}
+// 		if (currentInternalId) {
+// 			// TODO: a complete new recall of onProjectSelected for changed label?
+// 			onProjectSelected(null, currentInternalId);
+// 		}
+// 	}
+//
+// 	console.log("labels should be saved");
+// }
+
+
+
+/**
+ * Scans all applicationId entries for labels, find label icons, builds an internal cache map and saves to label storage of changed
+ * FIXME: this is spooky - do we need this anymore?
+ */
+function processApplicationIdLabels() {
+	console.log("processApplicationIdLabels");
+	gcloudProjectByApplicationId.clear();
+
+	let changed = false;
+
+	for (let applicationIdEntry of gcloudApplicationIds.gcloudProjectIds) {
+		gcloudProjectByApplicationId.set(applicationIdEntry.name, applicationIdEntry);
+		let gcloudProjectLabels = applicationIdEntry.labels;
+		if (gcloudProjectLabels) {
+			for (let labelKey in gcloudProjectLabels) {
+				let labelValue = gcloudProjectLabels[labelKey];
+				let cacheKey = `${labelKey}: ${labelValue}`;
+				if (!labelCache.has(cacheKey)) {
+					try {
+						let payload: LabelInternalInterface = {
+							"path": null,
+							"title": cacheKey,
+							"id": null
+						};
+						labelCache.set(cacheKey, payload);
+						labelList.push(payload);
+						changed = true;
+						console.log("new label", payload);
+					} catch (err) {
+						console.error(err)
+					}
+				}
+			}
+		}
+	}
+	if (changed) {
+		// FIXME: this must be removed and improved
+		// saveLabels();
+	}
+	console.log("processApplicationIdLabels finished", gcloudProjectByApplicationId);
+}
+
 
 function onRequestGcloudProjectsResponse(event: Event, data: GcloudApplicationIdsInterface, update?: boolean) {
 	console.log("onRequestGcloudProjectsResponse", data);
@@ -1562,8 +1533,12 @@ function onProjectIconChanged(event: Event, internalId: string, iconPath: string
 	console.log("project?", project, currentProject);
 
 	if (!iconPath.startsWith(currentProject.absolutePath)) {
-		new Notification('Error', {
-			body: 'Only accepting icons from the current project directory!!!'
+		addLogEntry(<VcLogEntryInterface> {
+			creationdate: moment().format(`YYYY-MM-DD HH:mm`),
+			method: "Changing the the project icon",
+			command: "",
+			status: VcLogEntryStatus.ERROR,
+			msg: `You tried to use an icon outside of the project! This is not allowed`
 		});
 		return;
 	}
@@ -1631,13 +1606,13 @@ function onRefreshVersions() {
 	}, 2500);
 }
 
-function onRescanLabels() {
+function onRescanLabels(event: Event) {
 	loadLabelCache();
 	processApplicationIdLabels();
 }
 
 
-function onSaveLabels(event: Event, remoteLabels: Array<LabelInterface>) {
+function onSaveLabels(event: Event, remoteLabels: Array<LabelInternalInterface>) {
 	saveLabels(remoteLabels);
 }
 
@@ -1720,7 +1695,7 @@ ipc.on('scan-new-project', requestScanNewProject);
 ipc.on('project-icon-changed', onProjectIconChanged);
 ipc.on("rescan-projects-done", onRescanProjectsDone);
 ipc.on("request-subprocess-ids-response", onRequestSubprocessIdsResponse);
-ipc.on("open-label-settings", requestLabelSettings);
+ipc.on("open-refresh-labels", requestDiscoverLabelIcons);
 ipc.on("rescan-labels", onRescanLabels);
 ipc.on("save-labels", onSaveLabels);
 ipc.on("request-check-appengine-status-response", onRequestCheckAppengineStatusResponse);

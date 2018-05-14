@@ -52,10 +52,10 @@ let template = [
         }
       },
       {
-        label: 'Label Settings',
+        label: 'Refresh Labels',
         accelerator: 'Shift+CmdOrCtrl+L',
         click: function (menuItem, browserWindow, event) {
-          mainWindow.webContents.send("open-label-settings");
+          mainWindow.webContents.send("open-refresh-labels");
         }
       },
       {
@@ -193,7 +193,7 @@ function createWindow() {
       width: 1080,
       minWidth: 680,
       height: 840,
-      icon: path.join(frozenAppPath, 'assets', 'img', 'viur_control_icon_32.png')
+      icon: path.join(frozenAppPath, 'assets', 'img', 'icon-vc-64.png')
     }
   );
 
@@ -204,7 +204,7 @@ function createWindow() {
     slashes: true
   }));
 
-  const iconName = process.platform === 'win32' ? 'favicon.ico' : 'viur_control_icon_32.png';
+  const iconName = process.platform === 'win32' ? 'favicon.ico' : 'icon-vc-32.png';
   const iconPath = path.join(frozenAppPath, "assets", "img", iconName);
   appIcon = new Tray(iconPath);
   app.isQuitting = false;
@@ -299,7 +299,7 @@ function createWindow() {
 
 function startInstallWizard(event) {
   dependencyWizardWindow = new BrowserWindow({
-    icon: path.join(frozenAppPath, 'assets/img/viur_control_icon_32.png'),
+    icon: path.join(frozenAppPath, 'assets/img/icon-vc-64.png'),
     frame: false,
     width: 900,
     height: 800
@@ -324,7 +324,7 @@ function startInstallWizard(event) {
 function startFirstSteps(event) {
   dependencyWizardWindow = new BrowserWindow({
     title: `ViUR control - first steps`,
-    icon: path.join(frozenAppPath, 'assets/img/viur_control_icon_32.png'),
+    icon: path.join(frozenAppPath, 'assets/img/icon-vc-64.png'),
     frame: false
   });
   let positioner = new Positioner(dependencyWizardWindow);
@@ -347,7 +347,7 @@ function startFirstSteps(event) {
 
 function openSettings(event) {
   settingsWindow = new BrowserWindow({
-    icon: path.join(frozenAppPath, 'assets/img/viur_control_icon_32.png'),
+    icon: path.join(frozenAppPath, 'assets/img/icon-vc-64.png'),
     frame: false
   });
   settingsWindow.loadURL(url.format({
@@ -370,7 +370,7 @@ function openDocumentation(event, view) {
       contextIsolation: true,
       nodeIntegration: false,
       sandbox: true,
-      icon: path.join(frozenAppPath, 'assets/img/viur_control_icon_32.png'),
+      icon: path.join(frozenAppPath, 'assets/img/icon-vc-64.png'),
       frame: false,
       // parent: mainWindow,
       // modal: true,
@@ -402,7 +402,7 @@ function openDocumentation(event, view) {
 
 function openAbout(event) {
   let aboutWindow = new BrowserWindow({
-    icon: path.join(frozenAppPath, 'assets/img/viur_control_icon_32.png'),
+    icon: path.join(frozenAppPath, 'assets/img/icon-vc-64.png'),
     frame: false,
     width: 600,
     height: 450,
@@ -426,7 +426,7 @@ function openAbout(event) {
 
 function updateGcloud(event) {
   let updateWindow = new BrowserWindow({
-    icon: path.join(frozenAppPath, 'assets/img/viur_control_icon_32.png'),
+    icon: path.join(frozenAppPath, 'assets/img/icon-vc-64.png'),
     frame: false,
     width: 600,
     height: 450,

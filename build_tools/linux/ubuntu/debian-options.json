@@ -2,8 +2,12 @@
   "arch": "amd64",
   "dest": "out/installers/",
   "icon": {
-    "32x32": "out/viur-control-linux-x64/resources/app/assets/img/viur_control_icon_32.png",
-    "64x64": "out/viur-control-linux-x64/resources/app/assets/img/viur_control_icon_64.png"
+    "16x16": "build_tools/appIcons/icon-vc-16.png",
+    "32x32": "build_tools/appIcons/icon-vc-32.png",
+    "48x48": "build_tools/appIcons/icon-vc-48.png",
+    "64x64": "build_tools/appIcons/icon-vc-64.png",
+    "128x128": "build_tools/appIcons/icon-vc-128.png",
+    "256x256": "build_tools/appIcons/icon-vc-256.png"
   },
   "categories": [
     "Development"
@@ -17,6 +21,7 @@
   "depends": [
     "apt-transport-https",
     "build-essential",
+    "curl",
     "git",
     "libpython-dev",
     "python2.7",
