@@ -173,7 +173,7 @@ function getProjectVersions(event, refresh = false) {
     console.log("getProjectVersions", myApplicationId);
     if (!gcloudProjectByApplicationId.has(myApplicationId)) {
         addLogEntry({
-            creationdate: moment().format(`YYYY-MM-DD HH:mm`),
+            creationdate: moment().format(`YYYY-MM-DD | HH:mm h`),
             method: `Fetching versions for project with application id '${myApplicationId}'`,
             command: "",
             status: vcLogger_1.VcLogEntryStatus.ERROR,

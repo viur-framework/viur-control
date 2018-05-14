@@ -3073,6 +3073,28 @@ strong.project-loading-text {
   position: relative;
 }
 
+
+.vclog-entry-count {
+  position: absolute;
+  color: #777777;
+  z-index: 90;
+  width: 20px;
+  height: 20px;
+  font-weight: bold;
+  font-size: 1.4em;
+  left: 50%;
+  margin-left: -7px;
+  line-height: 20px;
+  text-align: center;
+  top: 12px;
+}
+
+.vclog-entry-count.is-error {
+  color: #cc0000;
+}
+
+
+
 .vclog-marker-Info {
 
 }
@@ -3084,18 +3106,7 @@ strong.project-loading-text {
 .vclog-marker-Error {
 }
 
-.vclog-entry-count {
-  position: absolute;
-  color: red;
-  z-index: 90;
-  padding: 10px;
-  width: 20px;
-  height: 20px;
-  font-weight: bold;
-  font-size: 1.6em;
-  top: -6px;
-  left: 33%;
-}
+
 
 .sidebar-hidden {
   width: 0;

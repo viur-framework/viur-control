@@ -1,7 +1,7 @@
 {
   "steps": [
     {
-      "name": "additional development tools",
+      "name": "Additional Development Tools",
       "step": 2,
       "checking": {
         "title": "Checking if node.js is installed",
