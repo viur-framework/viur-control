@@ -1,7 +1,5 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-/// <reference path="node_modules/@types/node/index.d.ts" />
-/// <reference path="node_modules/@types/electron-store/index.d.ts" />
 const $ = require('jquery');
 const fs = require('fs');
 const path = require('path');

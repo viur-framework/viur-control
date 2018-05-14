@@ -106,10 +106,20 @@ function discoverLabelIcons(event: Event, mainWindowId: number, logWindowId: num
 		labelStorage.set("allLabels", allLabels);
 	}
 
+	$(".js-refresh-label-mappings").on("click", function (event: Event) {
+		$(".label-settings-ul").empty();
+		doit(null, labelStorage.get("allLabels", []));
+	});
+
+	$(".js-collect-and-refresh-label-mappings").on("click", function (event: Event) {
+		$(".label-settings-ul").empty();
+		refreshAllLabels(doit);
+	});
+
 	if (refresh) {
 		refreshAllLabels(doit);
 	} else {
-		doit(null, labelStorage.get("allLabels"))
+		doit(null, labelStorage.get("allLabels", []))
 	}
 }
 

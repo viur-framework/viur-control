@@ -1,7 +1,5 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-/// <reference path="node_modules/@types/node/index.d.ts" />
-/// <reference path="node_modules/@types/electron-store/index.d.ts" />
 const vcLogger_1 = require("./vcLogger");
 const labelSettingsLib_1 = require("./labelSettingsLib");
 const $ = require('jquery');
@@ -33,7 +31,6 @@ function discoverLabelIcons(event, mainWindowId, logWindowId, refresh = false) {
                 msg: err.toString()
             });
             return;
-            // window.close();
         }
         let labelIconRepository = settingsStorage.get("label_icon_repository");
         if (!labelIconRepository) {
@@ -44,7 +41,6 @@ function discoverLabelIcons(event, mainWindowId, logWindowId, refresh = false) {
                 status: vcLogger_1.VcLogEntryStatus.ERROR,
                 msg: "Stopped: No label repository set in settings!"
             });
-            // window.close();
             return;
         }
         $(".js-open-documentation").on("click", function (event) {
@@ -78,7 +74,6 @@ function discoverLabelIcons(event, mainWindowId, logWindowId, refresh = false) {
                 status: vcLogger_1.VcLogEntryStatus.ERROR,
                 msg: err.toString()
             });
-            // window.close();
             return;
         }
         for (let labelItem of allLabels) {
@@ -94,11 +89,19 @@ function discoverLabelIcons(event, mainWindowId, logWindowId, refresh = false) {
         $(".label-settings-ul").append(renderer.render(exports.labelSettingsTemplate, { "allLabels": allLabels, "labelRepository": labelIconRepository }));
         labelStorage.set("allLabels", allLabels);
     }
+    $(".js-refresh-label-mappings").on("click", function (event) {
+        $(".label-settings-ul").empty();
+        doit(null, labelStorage.get("allLabels", []));
+    });
+    $(".js-collect-and-refresh-label-mappings").on("click", function (event) {
+        $(".label-settings-ul").empty();
+        labelSettingsLib_1.refreshAllLabels(doit);
+    });
     if (refresh) {
         labelSettingsLib_1.refreshAllLabels(doit);
     }
     else {
-        doit(null, labelStorage.get("allLabels"));
+        doit(null, labelStorage.get("allLabels", []));
     }
 }
 ipc.on("request-discover-label-icons", discoverLabelIcons);

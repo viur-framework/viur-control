@@ -1,6 +1,6 @@
 'use strict';
 Object.defineProperty(exports, "__esModule", { value: true });
-/// <reference path="node_modules/@types/electron-store/index.d.ts" />
+const projectSpecFile_1 = require("./projectSpecFile");
 const $ = require('jquery');
 const path = require('path');
 const fastGlob = require('globby');
@@ -13,7 +13,6 @@ const versionsStorage = new ElectronStorage({ "name": "versions" });
 const gcloudProjectStorage = new ElectronStorage({ "name": "gcloudProjects" });
 const { exec } = require('child_process');
 const moment = require('moment');
-const { scanProjectForSpec } = require('./projectSpecFile');
 const fs = require('fs');
 const ipc = require('electron').ipcRenderer;
 const directoryPath = settingsStorage.get("projects_directory");
@@ -78,7 +77,7 @@ function scanProject(directoryName, windowId, callback, oldProjectsByName = unde
                 let myOldProject = oldProjectsByName.get(absolutePath);
                 let spec;
                 try {
-                    spec = scanProjectForSpec(absolutePath);
+                    spec = projectSpecFile_1.scanProjectForSpec(absolutePath);
                 }
                 catch (err) {
                     console.error("error in getting project spec happened");
@@ -181,7 +180,6 @@ function getProjects(event, windowId, subprocessIds = undefined, debug = false) 
         $(".js-close").on("click", window.close);
     }
     const fromWindow = BrowserWindow.fromId(windowId);
-    // TODO: this is new - we'll test this for catching a strange error in project spec generation on macos
     window.onerror = function (error, url, line) {
         fromWindow.webContents.send('error-in-window', "getProjects()", error);
     };

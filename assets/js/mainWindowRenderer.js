@@ -1,7 +1,5 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-/// <reference path="node_modules/electron/electron.d.ts" />
-/// <reference path="node_modules/@types/electron-store/index.d.ts" />
 const vcLogger_1 = require("./vcLogger");
 const labelSettingsLib_1 = require("./labelSettingsLib");
 const fs = require('fs');
@@ -19,7 +17,7 @@ const url = require('url');
 const settingsStorage = new ElectronStorage({ "name": "settings" });
 const versionsStorage = new ElectronStorage({ "name": "versions" });
 const projectStorage = new ElectronStorage({ "name": "projects" });
-const labelStorage = new ElectronStorage({ "name": "labels" });
+const labelIconsStorage = new ElectronStorage({ "name": "labels" });
 const regionsStorage = new ElectronStorage({ "name": "regions" });
 const gcloudProjectStorage = new ElectronStorage({ "name": "gcloudProjects" });
 const electronPositioner = require('electron-positioner');
@@ -30,12 +28,11 @@ const projects = [];
 const versionsCache = new Map();
 const subprocessIds = new Map();
 const projectWindows = new Map();
-const gcloudProjectByApplicationId = new Map();
-const labelCache = new Map();
+const gcloudProjectCache = new Map();
+const labelIconCache = new Map();
 const usedServerPortMap = new Map();
 const usedAdminPortMap = new Map();
 let frozenAppPath = remote.getGlobal('process').env['frozenAppPath'];
-// needed templates
 const projectItemTemplate = fs.readFileSync(path.join(frozenAppPath, "assets/templates/project_list_item.mustache")).toString();
 const projectControlsTemplate = fs.readFileSync(path.join(frozenAppPath, "assets/templates/project_development.mustache")).toString();
 const projectConfigTemplate = fs.readFileSync(path.join(frozenAppPath, "assets/templates/project_configuration.mustache")).toString();
@@ -56,22 +53,14 @@ renderer.parse(projectApplicationTemplate);
 renderer.parse(projectCredentialsRow);
 renderer.parse(regionsTemplate);
 renderer.parse(domainMappingTemplate);
-// mutable data
 let thisWindowId;
-/** This will hold an array of existing gcloud app/project ids got either from gcloudProjectStorage or from gcloud itself
- *
- */
 let gcloudApplicationIds;
 let currentInternalId;
 let debug = false;
 let appPath;
-let labelList = [];
+let labelIconList = [];
 let isGcloudAuthorized = false;
 let loggerEntryCount = 0;
-/** this variable will hold a cloned instance of the project we're currently have active.
- *  Changes to that object will not survive a project change,
- *  so make your changes to the original project object found in projects or projectsByInternalId
- */
 let currentProject;
 let loggerWindow;
 let loggerWindowId;
@@ -105,7 +94,6 @@ function projectSorter(a, b) {
     return ($(b).data('name').toLowerCase()) < ($(a).data('name').toLowerCase()) ? 1 : -1;
 }
 function prepareProject(project, initials, isNew = false) {
-    // console.log("prepareProject", project, isNew);
     projectsByInternalId.set(project.internalId, project);
     projects.push(project);
     let projectClone = deepClone(project);
@@ -171,7 +159,7 @@ function getProjectVersions(event, refresh = false) {
     let myApplicationId = $(".js-project-remote-content .js-selectable-application-id:checked").data("value");
     $(".js-selected-application-id").text(myApplicationId);
     console.log("getProjectVersions", myApplicationId);
-    if (!gcloudProjectByApplicationId.has(myApplicationId)) {
+    if (!gcloudProjectCache.has(myApplicationId)) {
         addLogEntry({
             creationdate: moment().format(`YYYY-MM-DD HH:mm`),
             method: `Fetching versions for project with application id '${myApplicationId}'`,
@@ -408,13 +396,10 @@ function addApplicationIdToProject() {
     console.log("internal-id", internalId);
     let applicationId = $("#new-application-id").find("option:selected").val();
     if ($(`.js-selectable-application-id[data-value="${applicationId}"]`).length === 0) {
-        let newDataSet = { "value": applicationId, "checked": false };
+        let newDataSet = { "value": applicationId, "checked": true };
         console.log("newDataSet", newDataSet);
         let found = false;
-        if (myProject.applicationIds.length === 0) {
-            newDataSet.checked = true;
-        }
-        else {
+        if (myProject.applicationIds.length >= 0) {
             for (let existingApplicationId of myProject.applicationIds) {
                 if (existingApplicationId.value === applicationId) {
                     found = true;
@@ -483,7 +468,7 @@ function checkAppengineInstance(event, refresh = true) {
     let applicationId = $(".content.active").find(".js-selectable-application-id:checked").data("value");
     console.log("checkAppengineInstance", applicationId);
     let validApplicationId = false;
-    let projectToCheck = gcloudProjectByApplicationId.get(applicationId);
+    let projectToCheck = gcloudProjectCache.get(applicationId);
     if (projectToCheck) {
         validApplicationId = true;
     }
@@ -673,24 +658,24 @@ function setDefaultApplicationId(event) {
     getProjectVersions();
     checkAppengineInstance(null, true);
 }
-function loadLabelCache(event) {
-    console.log("loadLabelCache");
-    labelCache.clear();
-    labelList = [];
+function initLabelIconCache(event) {
+    console.log("initLabelIconCache");
+    labelIconCache.clear();
+    labelIconList = [];
     let labelIconRepository = settingsStorage.get("label_icon_repository");
     if (!labelIconRepository) {
         return;
     }
-    let storedLabels = labelStorage.get("allLabels", []);
+    let storedLabels = labelIconsStorage.get("allLabels", []);
     for (let entry of storedLabels) {
         let clone = { title: entry.title, path: entry.path, id: 0 };
         if (clone.path) {
             clone.path = path.join(labelIconRepository, clone.path);
         }
-        labelList.push(clone);
-        labelCache.set(clone.title, clone);
+        labelIconList.push(clone);
+        labelIconCache.set(clone.title, clone);
     }
-    labelList.sort(labelSettingsLib_1.LabelInternalInterfaceSorter);
+    labelIconList.sort(labelSettingsLib_1.LabelInternalInterfaceSorter);
     console.log("loadLabelCache end");
 }
 function amendLabelIcons(projectClone) {
@@ -699,7 +684,7 @@ function amendLabelIcons(projectClone) {
     for (let projectApplicationIdEntry of projectApplicationIds) {
         projectApplicationIdEntry.labels = [];
         console.log("projectApplicationIdEntry", projectApplicationIdEntry);
-        let applicationIdEntry = gcloudProjectByApplicationId.get(projectApplicationIdEntry.value);
+        let applicationIdEntry = gcloudProjectCache.get(projectApplicationIdEntry.value);
         if (applicationIdEntry) {
             console.log("applicationIdEntry", applicationIdEntry);
             if (applicationIdEntry) {
@@ -710,7 +695,7 @@ function amendLabelIcons(projectClone) {
                         let labelValue = gcloudProjectLabels[labelKey];
                         let cacheKey = `${labelKey}: ${labelValue}`;
                         console.log("label key, value", labelKey, labelValue, cacheKey);
-                        let icon = labelCache.get(cacheKey);
+                        let icon = labelIconCache.get(cacheKey);
                         if (icon) {
                             projectApplicationIdEntry.labels.push(icon);
                         }
@@ -744,11 +729,8 @@ function onProjectSelected(event, internalIdOverwrite = undefined) {
     console.log("onProjectSelected", event, currentProject);
     $(".js-welcome-pane").addClass("hidden");
     $(".js-project-pane").removeClass("hidden");
-    // config content
     $(".js-project-config-content").html(renderer.render(projectConfigTemplate, currentProject));
-    // local content
     $(".js-project-local-content").html(renderer.render(projectControlsTemplate, currentProject));
-    // remote content
     $(".js-project-remote-content").html(renderer.render(projectRemoteTemplate, currentProject));
     getProjectVersions();
     fillNextVersion();
@@ -813,7 +795,7 @@ function requestDiscoverLabelIcons(event) {
     win.loadURL(path.join('file://', frozenAppPath, 'assets/views/labelSettings.html'));
     win.webContents.on('did-finish-load', function () {
         win.show();
-        win.webContents.send('request-discover-label-icons', thisWindowId, loggerWindowId, true);
+        win.webContents.send('request-discover-label-icons', thisWindowId, loggerWindowId, false);
     });
 }
 function requestScanNewProject(event, projectName) {
@@ -855,11 +837,10 @@ function requestGetAppengineRegions() {
     });
 }
 function onRequestDomainMappings(refresh = false) {
-    // TODO: implement caching/refresh feature
     let applicationIds = [];
     let localAppIds = [];
     for (let item of currentProject.applicationIds) {
-        if (!gcloudProjectByApplicationId.has(item.value)) {
+        if (!gcloudProjectCache.has(item.value)) {
             localAppIds.push(item.value);
         }
         else {
@@ -876,14 +857,6 @@ function onRequestDomainMappings(refresh = false) {
         });
         return;
     }
-    //
-    //
-    // let domainMappings = domainMappingsStorage.get("data");
-    //
-    // let mustFetch = false;
-    // for (let applicationId of applicationIds){
-    // if (refresh || !applicationId)
-    // }
     let win = new BrowserWindow({
         title: `ViUR control - fetch appengine regions`,
         icon: path.join(frozenAppPath, 'assets/img/icon-vc-64.png'),
@@ -946,9 +919,7 @@ function onInternalVerify(event) {
         verifyWindow = null;
     });
     verifyWindow.webContents.on('did-finish-load', function () {
-        // if (debug) {
         verifyWindow.show();
-        // }
         verifyWindow.webContents.send("verify-all", thisWindowId, appPath, settingsStorage.get("projects_directory"), debug);
     });
 }
@@ -984,7 +955,6 @@ function onRequestTaskChecks() {
     });
 }
 function onServerPortChanged(event) {
-    // TODO: accept dialog needed here, what to do with former project port
     let portValue = parseInt($(event.currentTarget).val());
     console.log("onServerPortChanged", portValue);
     let myProject = projectsByInternalId.get(currentInternalId);
@@ -999,7 +969,6 @@ function onServerPortChanged(event) {
     projectStorage.set("projects", projects);
 }
 function onAdminPortChanged(event) {
-    // TODO: accept dialog needed here, what to do with former project port
     let portValue = parseInt($(event.currentTarget).val());
     console.log("onAdminPortChanged", portValue);
     let myProject = projectsByInternalId.get(currentInternalId);
@@ -1047,13 +1016,17 @@ function onOpenDocumentation(event) {
     ipc.send("request-documentation", view);
 }
 function toggleVcLogger(event) {
-    console.log("toggleVcLogger");
-    if (loggerWindow.isVisible()) {
+    let isLogVisible = loggerWindow.isVisible();
+    console.log("toggleVcLogger", isLogVisible);
+    if (isLogVisible) {
         loggerWindow.hide();
     }
     else {
         loggerWindow.show();
     }
+}
+function hideVcLogger(event) {
+    loggerWindow.hide();
 }
 function startVcLogger(event) {
     loggerWindow = new BrowserWindow({
@@ -1078,8 +1051,6 @@ function onWindowReady(event, mainWindowId, userDir, debugMode = false) {
     thisWindowId = mainWindowId;
     debug = debugMode;
     appPath = userDir;
-    // console.log("onWindowReady", mainWindowId, debugMode);
-    // console.log("user env:", process.env);
     let paneDiv = $(".pane");
     let windowContent = $(".window-content");
     let remoteContentDiv = $(".js-project-remote-content");
@@ -1137,7 +1108,7 @@ function onWindowReady(event, mainWindowId, userDir, debugMode = false) {
     $(windowContent).on("change", "#real-admin-port", onAdminPortChanged);
     checkGcloudAuthStatus();
     onRequestSubprocessIds();
-    loadLabelCache();
+    initLabelIconCache();
     requestGcloudProjects();
     loadVersions();
 }
@@ -1159,86 +1130,21 @@ function onDeploymentDialogAnswer(event, index, absolutePath, applicationId, ver
         win.webContents.send('start-deploy', thisWindowId, absolutePath, applicationId, version, debug);
     });
 }
-// function saveLabels(customLabelList: undefined | Array<LabelInternalInterface> = undefined) {
-// 	let workingList: Array<LabelInternalInterface>;
-// 	if (customLabelList) {
-// 		workingList = customLabelList;
-// 	} else {
-// 		workingList = labelList;
-// 	}
-// 	console.log("saveLabels", workingList);
-//
-// 	workingList.sort(LabelInternalInterfaceSorter);
-//
-// 	console.log("saveLabels", resultList);
-// 	labelStorage.set("allLabels", resultList);
-//
-// 	if (resultList) {
-// 		labelList = resultList;
-// 		labelCache.clear();
-// 		for (let entry of labelList) {
-// 			if (entry.path) {
-// 				entry.path = path.join(labelIconRepository, entry.path);
-// 			}
-// 			labelCache.set(entry.title, entry);
-// 		}
-// 		if (currentInternalId) {
-// 			// TODO: a complete new recall of onProjectSelected for changed label?
-// 			onProjectSelected(null, currentInternalId);
-// 		}
-// 	}
-//
-// 	console.log("labels should be saved");
-// }
-/**
- * Scans all applicationId entries for labels, find label icons, builds an internal cache map and saves to label storage of changed
- * FIXME: this is spooky - do we need this anymore?
- */
-function processApplicationIdLabels() {
-    console.log("processApplicationIdLabels");
-    gcloudProjectByApplicationId.clear();
-    let changed = false;
+function initGcloudProjectCache() {
+    console.log("initGcloudProjectCache");
+    gcloudProjectCache.clear();
     for (let applicationIdEntry of gcloudApplicationIds.gcloudProjectIds) {
-        gcloudProjectByApplicationId.set(applicationIdEntry.name, applicationIdEntry);
-        let gcloudProjectLabels = applicationIdEntry.labels;
-        if (gcloudProjectLabels) {
-            for (let labelKey in gcloudProjectLabels) {
-                let labelValue = gcloudProjectLabels[labelKey];
-                let cacheKey = `${labelKey}: ${labelValue}`;
-                if (!labelCache.has(cacheKey)) {
-                    try {
-                        let payload = {
-                            "path": null,
-                            "title": cacheKey,
-                            "id": null
-                        };
-                        labelCache.set(cacheKey, payload);
-                        labelList.push(payload);
-                        changed = true;
-                        console.log("new label", payload);
-                    }
-                    catch (err) {
-                        console.error(err);
-                    }
-                }
-            }
-        }
+        gcloudProjectCache.set(applicationIdEntry.name, applicationIdEntry);
     }
-    if (changed) {
-        // FIXME: this must be removed and improved
-        // saveLabels();
-    }
-    console.log("processApplicationIdLabels finished", gcloudProjectByApplicationId);
 }
 function onRequestGcloudProjectsResponse(event, data, update) {
     console.log("onRequestGcloudProjectsResponse", data);
     gcloudApplicationIds = data;
-    processApplicationIdLabels();
+    initGcloudProjectCache();
     let applicationIdList = $(".js-project-config-all-application-ids");
     console.log("applicationId selector", applicationIdList, data, gcloudApplicationIds.gcloudProjectIds.length);
     if (gcloudApplicationIds && gcloudApplicationIds.gcloudProjectIds.length > 0) {
         let renderedHtml = renderer.render(projectConfigApplicationsTemplate, data);
-        // console.log("renderedHtml from gcloud project list", renderedHtml);
         $(applicationIdList).html(renderedHtml);
     }
 }
@@ -1397,15 +1303,12 @@ function onRefreshVersions() {
     console.log("refresh-versions called");
     setTimeout(function () {
         console.log("refresh-versions timeout fired");
-        getProjectVersions(null, true); // refreshing after version migration
+        getProjectVersions(null, true);
     }, 2500);
 }
 function onRescanLabels(event) {
-    loadLabelCache();
-    processApplicationIdLabels();
-}
-function onSaveLabels(event, remoteLabels) {
-    // saveLabels(remoteLabels);
+    initLabelIconCache();
+    initGcloudProjectCache();
 }
 function onCatchErrors(event, taskName, error) {
     console.log("onCatchingErrors", taskName, error);
@@ -1486,7 +1389,6 @@ ipc.on("rescan-projects-done", onRescanProjectsDone);
 ipc.on("request-subprocess-ids-response", onRequestSubprocessIdsResponse);
 ipc.on("open-refresh-labels", requestDiscoverLabelIcons);
 ipc.on("rescan-labels", onRescanLabels);
-ipc.on("save-labels", onSaveLabels);
 ipc.on("request-check-appengine-status-response", onRequestCheckAppengineStatusResponse);
 ipc.on("request-app-regions-response", onRequestAppengineRegionsResponse);
 ipc.on("request-create-appengine-success", onRequestCreateAppengineResponse);
@@ -1495,6 +1397,6 @@ ipc.on("check-tasks-done", onRequestTaskChecksDone);
 ipc.on("verify-all", onInternalVerify);
 ipc.on("request-domain-mappings-response", onRequestDomainMappingsResponse);
 ipc.on("request-gcloud-auth-status-response", checkGcloudAuthStatusResponse);
-ipc.on("request-vclogger-hide", toggleVcLogger);
+ipc.on("request-vclogger-hide", hideVcLogger);
 ipc.on("vclog-entry-count", onVcLoggerEntryCount);
 //# sourceMappingURL=mainWindowRenderer.js.map

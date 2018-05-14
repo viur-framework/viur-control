@@ -24,7 +24,7 @@ const url = require('url');
 const settingsStorage = new ElectronStorage({"name": "settings"});
 const versionsStorage = new ElectronStorage({"name": "versions"});
 const projectStorage = new ElectronStorage({"name": "projects"});
-const labelStorage = new ElectronStorage({"name": "labels"});
+const labelIconsStorage = new ElectronStorage({"name": "labels"});
 const regionsStorage = new ElectronStorage({"name": "regions"});
 const gcloudProjectStorage = new ElectronStorage({"name": "gcloudProjects"});
 const electronPositioner = require('electron-positioner');
@@ -36,8 +36,8 @@ const projects: Array<ProjectInterface> = [];
 const versionsCache = new Map();
 const subprocessIds = new Map();
 const projectWindows = new Map();
-const gcloudProjectByApplicationId = new Map();
-const labelCache = new Map();
+const gcloudProjectCache = new Map();
+const labelIconCache = new Map();
 const usedServerPortMap = new Map();
 const usedAdminPortMap = new Map();
 
@@ -80,7 +80,7 @@ export interface AppengineDirectoryInterface {
 	checked: boolean;
 }
 
-export interface ApplictionIdInterface {
+export interface ApplicationIdInterface {
 	value: string;
 	checked: boolean;
 	labels?: null | Array<LabelInternalInterface>;
@@ -105,7 +105,7 @@ export interface ProjectInterface {
 	absolutePath: string;
 	directoryName: string;
 	appengineDirectories: Array<AppengineDirectoryInterface>;
-	applicationIds: Array<ApplictionIdInterface>;
+	applicationIds: Array<ApplicationIdInterface>;
 	credentials: Array<CredentialEntryInterface>;
 	internalId: string;
 	serverPort: number;
@@ -136,7 +136,7 @@ let gcloudApplicationIds: GcloudApplicationIdsInterface;
 let currentInternalId: string;
 let debug = false;
 let appPath: string;
-let labelList: Array<LabelInternalInterface> = [];
+let labelIconList: Array<LabelInternalInterface> = [];
 let isGcloudAuthorized: boolean = false;
 let loggerEntryCount: number = 0;
 
@@ -258,7 +258,7 @@ function getProjectVersions(event?: Event, refresh: boolean = false) {
 	let myApplicationId = $(".js-project-remote-content .js-selectable-application-id:checked").data("value");
 	$(".js-selected-application-id").text(myApplicationId);
 	console.log("getProjectVersions", myApplicationId);
-	if (!gcloudProjectByApplicationId.has(myApplicationId)) {
+	if (!gcloudProjectCache.has(myApplicationId)) {
 		addLogEntry(<VcLogEntryInterface> {
 			creationdate: moment().format(`YYYY-MM-DD HH:mm`),
 			method: `Fetching versions for project with application id '${myApplicationId}'`,
@@ -514,12 +514,10 @@ function addApplicationIdToProject() {
 	console.log("internal-id", internalId);
 	let applicationId = $("#new-application-id").find("option:selected").val();
 	if ($(`.js-selectable-application-id[data-value="${applicationId}"]`).length === 0) {
-		let newDataSet = {"value": applicationId, "checked": false};
+		let newDataSet = {"value": applicationId, "checked": true};
 		console.log("newDataSet", newDataSet);
 		let found = false;
-		if (myProject.applicationIds.length === 0) {
-			newDataSet.checked = true;
-		} else {
+		if (myProject.applicationIds.length >= 0) {
 			for (let existingApplicationId of myProject.applicationIds) {
 				if (existingApplicationId.value === applicationId) {
 					found = true;
@@ -555,6 +553,8 @@ function deployProject() {
 	let applicationId = $(".js-project-remote-content.active .js-selectable-application-id:checked").data("value");
 	let icon;
 	console.log("currentProject", currentProject);
+
+	// TODO: this search for icon part is really mb specific and should be discussed if really needed
 	for (let applicationId of currentProject.applicationIds) {
 		if (applicationId.checked) {
 			for (let label of applicationId.labels) {
@@ -592,7 +592,7 @@ function checkAppengineInstance(event: null | Event, refresh = true) {
 	let applicationId: string = $(".content.active").find(".js-selectable-application-id:checked").data("value");
 	console.log("checkAppengineInstance", applicationId);
 	let validApplicationId = false;
-	let projectToCheck = gcloudProjectByApplicationId.get(applicationId);
+	let projectToCheck = gcloudProjectCache.get(applicationId);
 	if (projectToCheck) {
 		validApplicationId = true;
 	}
@@ -799,25 +799,27 @@ function setDefaultApplicationId(event: Event) {
 	checkAppengineInstance(null, true);
 }
 
-function loadLabelCache(event?: Event) {
-	console.log("loadLabelCache");
-	labelCache.clear();
-	labelList = [];
+function initLabelIconCache(event?: Event) {
+	console.log("initLabelIconCache");
+	labelIconCache.clear();
+	labelIconList = [];
+
+	// TODO: do we really want to stop here or accept not initialized label icon repos?
 	let labelIconRepository = settingsStorage.get("label_icon_repository");
 	if (!labelIconRepository) {
 		return;
 	}
 
-	let storedLabels: Array<StoredLabelInterface> = labelStorage.get("allLabels", []);
+	let storedLabels: Array<StoredLabelInterface> = labelIconsStorage.get("allLabels", []);
 	for (let entry of storedLabels) {
 		let clone: LabelInternalInterface = {title: entry.title, path: entry.path, id: 0};
 		if (clone.path) {
 			clone.path = path.join(labelIconRepository, clone.path);
 		}
-		labelList.push(clone);
-		labelCache.set(clone.title, clone);
+		labelIconList.push(clone);
+		labelIconCache.set(clone.title, clone);
 	}
-	labelList.sort(LabelInternalInterfaceSorter);
+	labelIconList.sort(LabelInternalInterfaceSorter);
 	console.log("loadLabelCache end");
 }
 
@@ -827,7 +829,7 @@ function amendLabelIcons(projectClone: ProjectInterface) {
 	for (let projectApplicationIdEntry of projectApplicationIds) {
 		projectApplicationIdEntry.labels = [];
 		console.log("projectApplicationIdEntry", projectApplicationIdEntry);
-		let applicationIdEntry = gcloudProjectByApplicationId.get(projectApplicationIdEntry.value);
+		let applicationIdEntry = gcloudProjectCache.get(projectApplicationIdEntry.value);
 		if (applicationIdEntry) {
 			console.log("applicationIdEntry", applicationIdEntry);
 			if (applicationIdEntry) {
@@ -838,7 +840,7 @@ function amendLabelIcons(projectClone: ProjectInterface) {
 						let labelValue = gcloudProjectLabels[labelKey];
 						let cacheKey = `${labelKey}: ${labelValue}`;
 						console.log("label key, value", labelKey, labelValue, cacheKey);
-						let icon = labelCache.get(cacheKey);
+						let icon = labelIconCache.get(cacheKey);
 						if (icon) {
 							projectApplicationIdEntry.labels.push(icon);
 						}
@@ -950,7 +952,7 @@ function requestDiscoverLabelIcons(event: Event) {
 	win.loadURL(path.join('file://', frozenAppPath, 'assets/views/labelSettings.html'));
 	win.webContents.on('did-finish-load', function () {
 		win.show();
-		win.webContents.send('request-discover-label-icons', thisWindowId, loggerWindowId, true);
+		win.webContents.send('request-discover-label-icons', thisWindowId, loggerWindowId, false);
 	})
 }
 
@@ -1007,7 +1009,7 @@ function onRequestDomainMappings(refresh: boolean = false) {
 
 	let localAppIds = [];
 	for (let item of currentProject.applicationIds) {
-		if (!gcloudProjectByApplicationId.has(item.value)) {
+		if (!gcloudProjectCache.has(item.value)) {
 			localAppIds.push(item.value);
 		} else {
 			applicationIds.push(item.value)
@@ -1217,12 +1219,17 @@ function onOpenDocumentation(event: Event) {
 }
 
 function toggleVcLogger(event: Event) {
-	console.log("toggleVcLogger");
-	if (loggerWindow.isVisible()) {
+	let isLogVisible = loggerWindow.isVisible();
+	console.log("toggleVcLogger", isLogVisible);
+	if (isLogVisible) {
 		loggerWindow.hide();
 	} else {
 		loggerWindow.show();
 	}
+}
+
+function hideVcLogger(event: Event) {
+	loggerWindow.hide();
 }
 
 function startVcLogger(event: Event) {
@@ -1316,7 +1323,7 @@ function onWindowReady(event: Event, mainWindowId: number, userDir: string, debu
 
 	checkGcloudAuthStatus();
 	onRequestSubprocessIds();
-	loadLabelCache();
+	initLabelIconCache();
 	requestGcloudProjects();
 	loadVersions();
 }
@@ -1378,51 +1385,21 @@ function onDeploymentDialogAnswer(event: Event, index: number, absolutePath: str
 
 /**
  * Scans all applicationId entries for labels, find label icons, builds an internal cache map and saves to label storage of changed
- * FIXME: this is spooky - do we need this anymore?
  */
-function processApplicationIdLabels() {
-	console.log("processApplicationIdLabels");
-	gcloudProjectByApplicationId.clear();
-
-	let changed = false;
+function initGcloudProjectCache() {
+	console.log("initGcloudProjectCache");
+	gcloudProjectCache.clear();
 
 	for (let applicationIdEntry of gcloudApplicationIds.gcloudProjectIds) {
-		gcloudProjectByApplicationId.set(applicationIdEntry.name, applicationIdEntry);
-		let gcloudProjectLabels = applicationIdEntry.labels;
-		if (gcloudProjectLabels) {
-			for (let labelKey in gcloudProjectLabels) {
-				let labelValue = gcloudProjectLabels[labelKey];
-				let cacheKey = `${labelKey}: ${labelValue}`;
-				if (!labelCache.has(cacheKey)) {
-					try {
-						let payload: LabelInternalInterface = {
-							"path": null,
-							"title": cacheKey,
-							"id": null
-						};
-						labelCache.set(cacheKey, payload);
-						labelList.push(payload);
-						changed = true;
-						console.log("new label", payload);
-					} catch (err) {
-						console.error(err)
-					}
-				}
-			}
-		}
+		gcloudProjectCache.set(applicationIdEntry.name, applicationIdEntry);
 	}
-	if (changed) {
-		// FIXME: this must be removed and improved
-		// saveLabels();
-	}
-	console.log("processApplicationIdLabels finished", gcloudProjectByApplicationId);
 }
 
 
 function onRequestGcloudProjectsResponse(event: Event, data: GcloudApplicationIdsInterface, update?: boolean) {
 	console.log("onRequestGcloudProjectsResponse", data);
 	gcloudApplicationIds = data;
-	processApplicationIdLabels();
+	initGcloudProjectCache();
 	let applicationIdList = $(".js-project-config-all-application-ids");
 	console.log("applicationId selector", applicationIdList, data, gcloudApplicationIds.gcloudProjectIds.length);
 	if (gcloudApplicationIds && gcloudApplicationIds.gcloudProjectIds.length > 0) {
@@ -1611,13 +1588,8 @@ function onRefreshVersions() {
 }
 
 function onRescanLabels(event: Event) {
-	loadLabelCache();
-	processApplicationIdLabels();
-}
-
-
-function onSaveLabels(event: Event, remoteLabels: Array<LabelInternalInterface>) {
-	// saveLabels(remoteLabels);
+	initLabelIconCache();
+	initGcloudProjectCache();
 }
 
 
@@ -1646,6 +1618,8 @@ function onRequestCheckAppengineStatusResponse(event: Event, applicationId: stri
 		$(".js-appengine-created-section").removeClass("hidden");
 		$(".js-console-button").removeClass("hidden");
 	}
+
+	// TODO: can we optimize that with a map lookup and or only storing on success?
 	let applicationIdList = gcloudProjectStorage.get("data");
 	console.log("applicationIdList", applicationIdList);
 	for (let entry of applicationIdList.gcloudProjectIds) {
@@ -1705,7 +1679,6 @@ ipc.on("rescan-projects-done", onRescanProjectsDone);
 ipc.on("request-subprocess-ids-response", onRequestSubprocessIdsResponse);
 ipc.on("open-refresh-labels", requestDiscoverLabelIcons);
 ipc.on("rescan-labels", onRescanLabels);
-ipc.on("save-labels", onSaveLabels);
 ipc.on("request-check-appengine-status-response", onRequestCheckAppengineStatusResponse);
 ipc.on("request-app-regions-response", onRequestAppengineRegionsResponse);
 ipc.on("request-create-appengine-success", onRequestCreateAppengineResponse);
@@ -1714,5 +1687,5 @@ ipc.on("check-tasks-done", onRequestTaskChecksDone);
 ipc.on("verify-all", onInternalVerify);
 ipc.on("request-domain-mappings-response", onRequestDomainMappingsResponse);
 ipc.on("request-gcloud-auth-status-response", checkGcloudAuthStatusResponse);
-ipc.on("request-vclogger-hide", toggleVcLogger);
+ipc.on("request-vclogger-hide", hideVcLogger);
 ipc.on("vclog-entry-count", onVcLoggerEntryCount);

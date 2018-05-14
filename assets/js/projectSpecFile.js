@@ -168,6 +168,7 @@ function scanProjectForSpec(projectPath, refresh = false, applicationIds = []) {
     }
     return null;
 }
+exports.scanProjectForSpec = scanProjectForSpec;
 function checkTaskOk(task, currentApplicationDirectory) {
     let result = false;
     if (task.checking && task.checking.length > 0) {
@@ -188,6 +189,5 @@ function checkTaskOk(task, currentApplicationDirectory) {
         return null;
     }
 }
-module.exports["scanProjectForSpec"] = scanProjectForSpec;
-module.exports["checkTaskOk"] = checkTaskOk;
+exports.checkTaskOk = checkTaskOk;
 //# sourceMappingURL=projectSpecFile.js.map

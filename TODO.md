@@ -1,31 +1,49 @@
-* onApplicationIdAdded
-	* set default
-	* reevaluate appId status
-	* fetch project versions only for existing application ids 
+# TODOS for the next few weeks
 
-* first steps
-	* check if step is finished and display result
-	* add project send event to main window refresh projects
-	* only allow valid project id names (no camelCase or upper letters)
-	
-* check auth foo
-* freezed packages for linux
-	* debian package infra
-	* gentoo package infra
-	* fedora/redhat infra
-	* arsch linux infra
+## onApplicationIdAdded
 
-* config handling rewrite
-	* BIG!!!
+* reevaluate appId status
+
+## first steps window
+
+* check if step is finished and display result
+* only allow valid project id names (no camelCase or upper letters)
 	
-* gcloud components update
-  * when os == ubuntu linux -> update via apt-get!!!
+## gcloud auth
+
+* check if authenticated
+* ask for auth login
+
+## packaging the app
+
+### linux
+
+* arch
+* debian/ubuntu
+	* mostly done
+* fedora/redhat
+* gentoo
+
+
+### mac
+
+* started
+
+### M$
+
+* only windows 10 will be supported 
+
+## project config handling rewrite
+	
+## gcloud components update
+
+* when os == ubuntu linux -> update via apt-get!!!
+* update - mostly done
+* waiting for feature request being resolved by gcloud components team at google
   
-* label handling !!!
+## exists label repo -> label handling
 
-* exists label repo -> label handling
+## onProjectDeploy
 
-
-* on projects deploy: create version file with viur server git commit.
-
+* create version file with git commit ids for project, viur-server and vi
  

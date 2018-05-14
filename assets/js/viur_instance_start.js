@@ -32,8 +32,6 @@ function startLocalInstance(project, applicationId, fromWindowId) {
         if (findPassword) {
             let credentials = userPasswordRegex.exec(text);
             if (credentials && credentials.length > 0) {
-                // we have to go over main.js as a proxy.
-                // This context does not want to send ipc messages to its parent window :(
                 ipc.send("credentials-found", applicationId, credentials[1], credentials[2]);
             }
         }
