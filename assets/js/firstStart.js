@@ -98,4 +98,8 @@ ipc.on("first-start", startWindow);
 ipc.on('projects_directory', function (event, path) {
     $("#projects-directory").val(path);
 });
+ipc.on('scan-new-project', function (event, projectName) {
+    ipc.send("scan-new-project", projectName);
+    window.close();
+});
 //# sourceMappingURL=firstStart.js.map

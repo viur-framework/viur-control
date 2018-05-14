@@ -151,7 +151,7 @@ function createMakeTask(projectPath: string, taskPath: string) {
   );
 }
 
-function scanProjectForSpec(projectPath: string, refresh: boolean = false, applicationIds: Array<any> = []) {
+export function scanProjectForSpec(projectPath: string, refresh: boolean = false, applicationIds: Array<any> = []) {
   try {
     const specFilePath = path.join(projectPath, "project-spec.json");
     console.log("scanProject", projectPath, specFilePath, refresh);
@@ -223,7 +223,7 @@ function scanProjectForSpec(projectPath: string, refresh: boolean = false, appli
   return null;
 }
 
-function checkTaskOk(task: any, currentApplicationDirectory: string) {
+export function checkTaskOk(task: any, currentApplicationDirectory: string) {
   let result = false;
   if (task.checking && task.checking.length > 0) {
     console.log("task", task, task.checking, currentApplicationDirectory);
@@ -243,5 +243,5 @@ function checkTaskOk(task: any, currentApplicationDirectory: string) {
   }
 }
 
-module.exports["scanProjectForSpec"] = scanProjectForSpec;
-module.exports["checkTaskOk"] = checkTaskOk;
+// module.exports["scanProjectForSpec"] = scanProjectForSpec;
+// module.exports["checkTaskOk"] = checkTaskOk;

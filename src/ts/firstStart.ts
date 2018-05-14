@@ -119,3 +119,7 @@ ipc.on('projects_directory', function (event: Event, path: string) {
 	$("#projects-directory").val(path);
 });
 
+ipc.on('scan-new-project', function(event: Event, projectName: string) {
+		ipc.send("scan-new-project", projectName);
+		window.close();
+});

@@ -187,13 +187,16 @@ function createWindow() {
   app.setName("ViUR control");
   app.setAppUserModelId('com.mausbrand.viur_control');
 
+  const iconName = process.platform === 'win32' ? 'favicon.ico' : 'icon-vc-64.png';
+  const iconPath = path.join(frozenAppPath, "assets", "img", iconName);
+
   // Create the browser window.
   mainWindow = new BrowserWindow(
     {
       width: 1080,
       minWidth: 680,
       height: 840,
-      icon: path.join(frozenAppPath, 'assets', 'img', 'icon-vc-64.png')
+      icon: iconPath
     }
   );
 
@@ -204,15 +207,13 @@ function createWindow() {
     slashes: true
   }));
 
-  const iconName = process.platform === 'win32' ? 'favicon.ico' : 'icon-vc-32.png';
-  const iconPath = path.join(frozenAppPath, "assets", "img", iconName);
   appIcon = new Tray(iconPath);
   app.isQuitting = false;
 
   if (debug) {
     mainWindow.webContents.openDevTools();
     mainWindow.maximize();
-    // require('devtron').install()
+    require('devtron').install()
   }
 
   mainWindow.on('closed', function (event) {

@@ -1274,7 +1274,9 @@ function onProjectFound(event, project, isNew) {
         $(listGroupItems).remove();
         let listGroupElement = $(".list-group");
         $(listGroupElement).append(sortedData);
-        $(`.list-group-item[data-internal-id="${project.internalId}"]`).trigger("click");
+        let thisElement = $(`.list-group-item[data-internal-id="${project.internalId}"]`);
+        $(listGroupElement).scrollTop($(thisElement).offset().top - $(listGroupElement).offset().top + $(listGroupElement).scrollTop());
+        $(thisElement).trigger("click");
     }
 }
 function onCredentialsFound(event, applicationId, username, password) {

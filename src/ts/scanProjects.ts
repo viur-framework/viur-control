@@ -1,6 +1,8 @@
 'use strict';
 /// <reference path="node_modules/@types/electron-store/index.d.ts" />
 
+import {scanProjectForSpec} from "./projectSpecFile";
+
 const $ = require('jquery');
 
 const path = require('path');
@@ -14,7 +16,6 @@ const versionsStorage = new ElectronStorage({"name": "versions"});
 const gcloudProjectStorage = new ElectronStorage({"name": "gcloudProjects"});
 const {exec} = require('child_process');
 const moment = require('moment');
-const {scanProjectForSpec} = require('./projectSpecFile');
 
 const fs = require('fs');
 const ipc = require('electron').ipcRenderer;
