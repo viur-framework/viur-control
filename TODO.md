@@ -24,4 +24,8 @@
 * label handling !!!
 
 * exists label repo -> label handling
+
+
+* on projects deploy: create version file with viur server git commit.
+
  

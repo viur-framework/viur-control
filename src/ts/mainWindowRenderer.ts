@@ -1613,7 +1613,7 @@ function onRescanLabels(event: Event) {
 
 
 function onSaveLabels(event: Event, remoteLabels: Array<LabelInternalInterface>) {
-	saveLabels(remoteLabels);
+	// saveLabels(remoteLabels);
 }
 
 
@@ -1672,9 +1672,13 @@ function addLogEntry(logEntry: VcLogEntryInterface) {
 	loggerWindow.webContents.send("vclog-add-entry", logEntry);
 }
 
-function onVcLoggerEntryCount(event: Event, count: number) {
-	loggerEntryCount = count;
-	$(".js-vclog-entry-count").text(count.toString());
+function onVcLoggerEntryCount(event: Event, totalCount: number) {
+	loggerEntryCount = totalCount;
+	let element = $(".js-vclog-entry-count");
+	$(element).text(totalCount.toString());
+	if (totalCount > 0) {
+		$(element).addClass("is-error");
+	}
 }
 
 ipc.on('indexes-check-response', onIndexesDirtyCheckResponse);

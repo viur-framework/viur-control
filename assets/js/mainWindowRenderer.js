@@ -173,7 +173,7 @@ function getProjectVersions(event, refresh = false) {
     console.log("getProjectVersions", myApplicationId);
     if (!gcloudProjectByApplicationId.has(myApplicationId)) {
         addLogEntry({
-            creationdate: moment().format(`YYYY-MM-DD | HH:mm h`),
+            creationdate: moment().format(`YYYY-MM-DD HH:mm`),
             method: `Fetching versions for project with application id '${myApplicationId}'`,
             command: "",
             status: vcLogger_1.VcLogEntryStatus.ERROR,
@@ -1403,7 +1403,7 @@ function onRescanLabels(event) {
     processApplicationIdLabels();
 }
 function onSaveLabels(event, remoteLabels) {
-    saveLabels(remoteLabels);
+    // saveLabels(remoteLabels);
 }
 function onCatchErrors(event, taskName, error) {
     console.log("onCatchingErrors", taskName, error);
@@ -1456,9 +1456,13 @@ function addLogEntry(logEntry) {
     $(button).removeClass("class^='vclog-marker-']").addClass("vclog-marker-" + logEntry.status);
     loggerWindow.webContents.send("vclog-add-entry", logEntry);
 }
-function onVcLoggerEntryCount(event, count) {
-    loggerEntryCount = count;
-    $(".js-vclog-entry-count").text(count.toString());
+function onVcLoggerEntryCount(event, totalCount) {
+    loggerEntryCount = totalCount;
+    let element = $(".js-vclog-entry-count");
+    $(element).text(totalCount.toString());
+    if (totalCount > 0) {
+        $(element).addClass("is-error");
+    }
 }
 ipc.on('indexes-check-response', onIndexesDirtyCheckResponse);
 ipc.on('local-devserver-started', onLocalDevServerStarted);
