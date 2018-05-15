@@ -130,7 +130,7 @@ function scanProject(directoryName, windowId, callback, oldProjectsByName = unde
                     applicationIds = [];
                 }
                 if (applicationIds.length === 0) {
-                    applicationIds.push({ "value": `${directoryName}-viur`, "checked": true });
+                    applicationIds.push({ "value": `${directoryName.toLowerCase()}-viur`, "checked": true });
                 }
                 let tasks;
                 if (spec) {

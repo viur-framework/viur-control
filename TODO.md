@@ -7,8 +7,7 @@
 ## first steps window
 
 * check if step is finished and display result
-* only allow valid project id names (no camelCase or upper letters)
-	
+
 ## gcloud auth
 
 * check if authenticated

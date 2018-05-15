@@ -411,7 +411,7 @@ function onCheckAppengineStatus(event, parentWindowId, applicationId, debug = fa
         }
     });
 }
-function onGetDomainMappings(event, parentWindowId, applicationIds, debug = false) {
+function onGetDomainMappings(event, parentWindowId, applicationIds, refresh = false, debug = false) {
     $(".js-close").on("click", window.close);
     let foregroundColor = settingsStorage.get("terminal_foreground_color", "#00ff00");
     let backgroundColor = settingsStorage.get("terminal_background_color", "#000000");
@@ -421,13 +421,29 @@ function onGetDomainMappings(event, parentWindowId, applicationIds, debug = fals
         "color": foregroundColor,
         "background-color": backgroundColor
     });
-    console.log("onGetDomainMappings", applicationIds);
+    console.log("onGetDomainMappings", applicationIds, refresh, debug);
     const fromWindow = BrowserWindow.fromId(parentWindowId);
     let domainMappings = domainMappingsStorage.get("data");
     if (!domainMappings) {
         domainMappings = { "domainMappings": {}, "lastFetched": null };
     }
     let result = {};
+    if (!refresh) {
+        for (let applicationId of applicationIds) {
+            try {
+                result[applicationId] = domainMappings.domainMappings[applicationId];
+            }
+            catch (e) {
+                console.log("domainMappings not found for appId", applicationId);
+            }
+        }
+        console.log("domains taken from cache", result);
+        fromWindow.webContents.send("request-domain-mappings-response", result);
+        if (!debug) {
+            window.close();
+        }
+        return;
+    }
     for (let applicationId of applicationIds) {
         let cmdTemplate = `gcloud --format json app domain-mappings list --project ${applicationId}`;
         $(output).append(`<p class="output-line"><span class="loglevel info">used command: </span>${cmdTemplate}</p>`);
@@ -445,10 +461,8 @@ function onGetDomainMappings(event, parentWindowId, applicationIds, debug = fals
     fromWindow.webContents.send("request-domain-mappings-response", result);
     domainMappings.lastFetched = moment().format('YYYY-MM-DD HH:mm:ss');
     domainMappingsStorage.set("data", domainMappings);
-    if (debug) {
-        setTimeout(function () {
-            window.close();
-        }, 5000);
+    if (!debug) {
+        window.close();
     }
 }
 function onGcloudAuthStatus(event, parentWindowId, debug = false) {

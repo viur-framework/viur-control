@@ -732,10 +732,13 @@ function onProjectSelected(event, internalIdOverwrite = undefined) {
     $(".js-project-config-content").html(renderer.render(projectConfigTemplate, currentProject));
     $(".js-project-local-content").html(renderer.render(projectControlsTemplate, currentProject));
     $(".js-project-remote-content").html(renderer.render(projectRemoteTemplate, currentProject));
+    $(".js-reload-domain-mappings").on("click", function () {
+        onRequestDomainMappings(true);
+    });
     getProjectVersions();
     fillNextVersion();
     checkAppengineInstance(null, false);
-    onRequestDomainMappings(true);
+    onRequestDomainMappings(false);
     $(".js-project-config-all-application-ids").html(renderer.render(projectConfigApplicationsTemplate, gcloudApplicationIds));
     onIndexesDirtyCheck(projectsByInternalId.get(currentInternalId));
 }
@@ -853,23 +856,25 @@ function onRequestDomainMappings(refresh = false) {
             method: `fetching domain mapping for project`,
             command: "",
             status: vcLogger_1.VcLogEntryStatus.ERROR,
-            msg: `Stopped: The application/project Ids '${localAppIds}' do not (yet) exist.`
+            msg: `The application/project Ids '${localAppIds}' do not (yet) exist and were removed from fetching`
         });
-        return;
     }
     let win = new BrowserWindow({
         title: `ViUR control - fetch appengine regions`,
         icon: path.join(frozenAppPath, 'assets/img/icon-vc-64.png'),
         frame: false,
-        show: debug === true
+        show: false
     });
     win.on('close', function () {
         win = null;
     });
     win.loadURL(path.join('file://', frozenAppPath, 'assets/views/taskWindow.html'));
     win.webContents.on('did-finish-load', function () {
+        if (debug) {
+            win.show();
+        }
         console.log("requesting appengine regions", thisWindowId);
-        win.webContents.send('request-get-domain-mappings', thisWindowId, applicationIds, debug);
+        win.webContents.send('request-get-domain-mappings', thisWindowId, applicationIds, refresh, debug);
     });
 }
 function onRequestDomainMappingsResponse(event, result) {

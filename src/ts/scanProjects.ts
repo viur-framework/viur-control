@@ -173,7 +173,7 @@ function scanProject(directoryName: string, windowId: number, callback: any, old
       }
 
       if (applicationIds.length === 0) {
-        applicationIds.push({"value": `${directoryName}-viur`, "checked": true});
+        applicationIds.push({"value": `${directoryName.toLowerCase()}-viur`, "checked": true});
       }
 
       let tasks;
