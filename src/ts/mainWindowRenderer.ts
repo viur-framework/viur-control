@@ -1347,41 +1347,6 @@ function onDeploymentDialogAnswer(event: Event, index: number, absolutePath: str
 	})
 }
 
-
-// function saveLabels(customLabelList: undefined | Array<LabelInternalInterface> = undefined) {
-// 	let workingList: Array<LabelInternalInterface>;
-// 	if (customLabelList) {
-// 		workingList = customLabelList;
-// 	} else {
-// 		workingList = labelList;
-// 	}
-// 	console.log("saveLabels", workingList);
-//
-// 	workingList.sort(LabelInternalInterfaceSorter);
-//
-// 	console.log("saveLabels", resultList);
-// 	labelStorage.set("allLabels", resultList);
-//
-// 	if (resultList) {
-// 		labelList = resultList;
-// 		labelCache.clear();
-// 		for (let entry of labelList) {
-// 			if (entry.path) {
-// 				entry.path = path.join(labelIconRepository, entry.path);
-// 			}
-// 			labelCache.set(entry.title, entry);
-// 		}
-// 		if (currentInternalId) {
-// 			// TODO: a complete new recall of onProjectSelected for changed label?
-// 			onProjectSelected(null, currentInternalId);
-// 		}
-// 	}
-//
-// 	console.log("labels should be saved");
-// }
-
-
-
 /**
  * Scans all applicationId entries for labels, find label icons, builds an internal cache map and saves to label storage of changed
  */
