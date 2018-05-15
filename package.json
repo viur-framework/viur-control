@@ -1,6 +1,6 @@
 {
   "name": "viur-control",
-  "version": "0.30.6",
+  "version": "0.31.0",
   "description": "The better App Engine Launcher",
   "main": "main.js",
   "scripts": {

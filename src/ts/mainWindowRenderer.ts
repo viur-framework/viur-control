@@ -350,9 +350,10 @@ function addProject() {
 	$(projectAddButton).val("");
 	const modalPath = path.join('file://', frozenAppPath, 'assets/views/taskWindow.html');
 	let win = new BrowserWindow({
-		frame: true,
+		frame: false,
 		title: `ViUR control - Add Project ${newProjectName}`,
-		show: false
+		show: false,
+		icon: path.join(frozenAppPath, 'assets/img/icon-vc-64.png'),
 	});
 	let positioner = new electronPositioner(win);
 	positioner.move('bottomLeft');
@@ -407,7 +408,8 @@ function startTasks(event?: Event) {
 	let win = new BrowserWindow({
 		title: `ViUR control - Task Runner`,
 		frame: false,
-		show: false
+		show: false,
+		icon: path.join(frozenAppPath, 'assets/img/icon-vc-64.png')
 	});
 	let positioner = new electronPositioner(win);
 	positioner.move('bottomLeft');
@@ -1129,7 +1131,8 @@ function onRequestTaskChecks() {
 	let win = new BrowserWindow({
 		title: `ViUR control - Task Runner`,
 		frame: false,
-		show: debug === true
+		show: debug === true,
+		icon: path.join(frozenAppPath, 'assets/img/icon-vc-64.png')
 	});
 	let positioner = new electronPositioner(win);
 	positioner.move('bottomLeft');
@@ -1235,7 +1238,8 @@ function startVcLogger(event: Event) {
 	loggerWindow = new BrowserWindow({
 		title: `ViUR control - Logging`,
 		frame: false,
-		show: false
+		show: false,
+		icon: path.join(frozenAppPath, 'assets/img/icon-vc-64.png')
 	});
 
 	remote.getGlobal('process').env['loggerWindowId'] = loggerWindowId = loggerWindow.id;
