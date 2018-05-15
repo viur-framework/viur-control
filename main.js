@@ -472,7 +472,11 @@ function stopInstances(event) {
   }
   subprocessIds.clear();
   if (loggerWindowId) {
-    Br
+    try {
+      BrowserWindow.fromId(loggerWindowId).close();
+    } catch (e) {
+      console.log(e);
+    }
   }
 }
 
