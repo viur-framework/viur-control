@@ -187,7 +187,7 @@ function createWindow() {
   app.setName("ViUR control");
   app.setAppUserModelId('com.mausbrand.viur_control');
 
-  const iconName = process.platform === 'win32' ? 'favicon.ico' : 'icon-vc-64.png';
+  const iconName = process.platform === 'win32' ? 'favicon.ico' : 'icon-vc-16.png';
   const iconPath = path.join(frozenAppPath, "assets", "img", iconName);
 
   // Create the browser window.

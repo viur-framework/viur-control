@@ -449,6 +449,30 @@ ul.dependwizzard li {
   background-color: #cc0000;
 }
 
+.btn-action.minimize:hover {
+    color: #333;
+    background-color: orange;
+}
+
+.icon:before {
+    position: relative;
+    display: inline-block;
+    font-family: "photon-entypo";
+    speak: none;
+    font-size: 100%;
+    font-style: normal;
+    font-weight: normal;
+    font-variant: normal;
+    text-transform: none;
+    line-height: 1;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-cancel:before {
+    content: '\e813';
+}
+
 .startboxengrid {
   display: flex;
   flex-direction: row;
@@ -737,6 +761,13 @@ a.startbox h5 {
 .toolbar-header {
   border-bottom: 1px solid #c2c0c2;
   -webkit-app-region: drag;
+  border-bottom: 1px solid #c2c0c2;
+    background: #ffffff;
+    padding: 15px;
+    -webkit-box-shadow: 0 0 5px 2px rgba(50, 50, 50, 0.2);
+    box-shadow: 0 0 5px 2px rgba(50, 50, 50, 0.2);
+    -moz-box-shadow: 0 0 5px 2px rgba(50, 50, 50, 0.2);
+    z-index: 999;
 }
 
 .toolbar-header .title {
@@ -2627,21 +2658,13 @@ tr:last-child td {
   background: #cdcdcd;
 }
 
-.toolbar-header {
-  background: #fff;
-  padding: 10px;
-  -webkit-box-shadow: 0 0 5px 2px rgba(50, 50, 50, 0.2);
-  box-shadow: 0 0 5px 2px rgba(50, 50, 50, 0.2);
-  -moz-box-shadow: 0 0 5px 2px rgba(50, 50, 50, 0.2);
-  z-index: 999;
-}
+
 
 .logo-viur-control {
   display: inline-block;
   float: left;
   width: auto;
   height: 40px;
-  margin-top: 5px;
 }
 
 .logo-viur-control.about {
@@ -2659,7 +2682,7 @@ tr:last-child td {
   font-size: 24px;
   letter-spacing: 1px;
   color: #ccc;
-  margin-top: 0px;
+  margin-top: 5px;
   display: inline-block;
 }
 
@@ -2670,7 +2693,7 @@ tr:last-child td {
   margin-left: 10px;
   margin-right: 10px;
   display: inline-block;
-  height: 38px;
+  height: 36px;
 }
 
 .header-descr {
