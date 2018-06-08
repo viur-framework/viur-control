@@ -10,6 +10,90 @@ body {
   line-height: 1.2;
 }
 
+.output {
+  overflow-y: auto;
+  margin: 0;
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+  will-change: transform;
+}
+
+span.loglevel {
+  font-weight: bold;
+}
+
+span.info {
+  color: #a19fa1;
+}
+
+span.debug {
+  color: #4e46fc;
+  font-weight: bold;
+}
+
+span.warning {
+  color: #FF9800;
+}
+
+span.error {
+  color: #F44336;
+}
+
+@font-face {
+  font-family: "photon-entypo";
+  src: url("../fonts/photon-entypo.eot");
+  src: url("../fonts/photon-entypo.eot?#iefix") format("eot"), url("../fonts/photon-entypo.woff") format("woff"), url("../fonts/photon-entypo.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+}
+
+.viur-instance-close {
+  position: absolute;
+  top: 5px;
+  right: 25px;
+}
+
+.pull-right {
+  float: right;
+}
+
+p.output-line {
+  margin: 0;
+}
+
+.takeall {
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+h2, p {
+  margin-bottom: 5px;
+  margin-top: 5px;
+  font-size: 0.9em;
+}
+
+.vclog-entry {
+  background-color: #f7f7f7;
+  border-bottom: 1px solid #ccc;
+  padding: 15px 20px;
+}
+
+.vclog-entry:nth-child(even) {
+  background-color: #fff;
+}
+
+.vclog-status {
+  font-weight: bold;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+.vclog-status-Error {
+  color: #cc0000;
+}
+
 /*.btn-action {*/
   /*border: 1px solid #ccc;*/
   /*-webkit-border-radius: 50%;*/
@@ -100,14 +184,7 @@ body {
 
 /*}*/
 
-.output {
-  overflow-y: auto;
-  margin: 0;
-  width: 100%;
-  height: 100%;
-  box-sizing: border-box;
-  will-change: transform;
-}
+
 
 /*.logo-title {*/
   /*padding: 0;*/
@@ -128,34 +205,7 @@ body {
   /*height: 38px;*/
 /*}*/
 
-span.loglevel {
-  font-weight: bold;
-}
 
-span.info {
-  color: #a19fa1;
-}
-
-span.debug {
-  color: #4e46fc;
-  font-weight: bold;
-}
-
-span.warning {
-  color: #FF9800;
-}
-
-span.error {
-  color: #F44336;
-}
-
-@font-face {
-  font-family: "photon-entypo";
-  src: url("../fonts/photon-entypo.eot");
-  src: url("../fonts/photon-entypo.eot?#iefix") format("eot"), url("../fonts/photon-entypo.woff") format("woff"), url("../fonts/photon-entypo.ttf") format("truetype");
-  font-weight: normal;
-  font-style: normal;
-}
 
 /*.btn {*/
   /*display: inline-block;*/
@@ -202,62 +252,20 @@ span.error {
   /*display: none;*/
 /*}*/
 
-.viur-instance-close {
-  position: absolute;
-  top: 5px;
-  right: 25px;
-}
 
-.pull-right {
-  float: right;
-}
 
-p.output-line {
-  margin: 0;
-}
 
-.takeall {
-  margin: 0;
-  padding: 0;
-  overflow: hidden;
-}
+/*.frameless {*/
+  /*box-sizing: border-box;*/
+  /*position: absolute;*/
+  /*top: 0;*/
+  /*right: 0;*/
+  /*bottom: 0;*/
+  /*left: 0;*/
+  /*display: flex;*/
+  /*flex-direction: column;*/
+  /*border: 1px solid #ddd;*/
+  /*-webkit-box-shadow: 0 0 3px 1px rgba(50, 50, 50, .6);*/
+  /*box-shadow: 0 0 3px 1px rgba(50, 50, 50, .6);*/
+/*}*/
 
-.frameless {
-  box-sizing: border-box;
-  position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  display: flex;
-  flex-direction: column;
-  border: 1px solid #ddd;
-  -webkit-box-shadow: 0 0 3px 1px rgba(50, 50, 50, .6);
-  box-shadow: 0 0 3px 1px rgba(50, 50, 50, .6);
-}
-
-h2, p {
-  margin-bottom: 5px;
-  margin-top: 5px;
-  font-size: 0.9em;
-}
-
-.vclog-entry {
-  background-color: #f7f7f7;
-  border-bottom: 1px solid #ccc;
-  padding: 15px 20px;
-}
-
-.vclog-entry:nth-child(even) {
-  background-color: #fff;
-}
-
-.vclog-status {
-  font-weight: bold;
-  padding-left: 5px;
-  padding-right: 5px;
-}
-
-.vclog-status-Error {
-  color: #cc0000;
-}
