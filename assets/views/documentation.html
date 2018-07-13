@@ -54,7 +54,7 @@
 				<div class="content" id="depencency-wizard">
 					<div class="nice-section">
 						<h1>Dependency Wizard</h1>
-						<p>For be able to use all of ViUR Controls features you should have installed following tools
+						<p>For you to be able to use all of ViUR Controls features you should have installed the following tools
 							and software.</p>
 						<ul>
 							<li>Python 2.7.x</li>
@@ -65,8 +65,8 @@
 							<li>lessc</li>
 							<li>pyjs</li>
 						</ul>
-						<p>Feel free to install it by your own or use our installation wizard. We have to draft of that
-							tool linked in the Menu -> File -> Dependency Wizard</p>
+						<p>Feel free to install these on your own or use our installation wizard. You can find the tool
+                            in the Menu -> File -> Open Dependencies Wizard</p>
 						<img width="80%" src="../img/tour/dependency_wizard.png">
 					</div>
 				</div>
@@ -78,20 +78,20 @@
 				<div class="content" id="settings">
 					<div class="nice-section">
 						<h1>Settings</h1>
-						<p>For ViUR Control it's necessary to make some configuration to work properly.</p>
-						<p>To open the settings window, please go in the global menu to File -> Settings or use the
+						<p>For ViUR Control to work properly some configuration is necessary.</p>
+						<p>To open the settings window, please go into global menu to File -> Settings or use the
 							global shortcut shown in the Menu.</p>
-						<p>The <strong>Projects Directory</strong> should point to your directory where all of your ViUR
+						<p>The <strong>Projects Directory</strong> should point to the directory where all of your ViUR
 							projects are stored.
 							Usually you already have such a directory when you use an IDE like pyCharm, Atom etc.</p>
 						<p>Optionally you can point the <strong>Gcloud Tool Path</strong> to the custom directory of
-							google-cloud-sdk when not in your PATH.</p>
-						<p><strong>Initials as part of version string</strong> is just a help to supplement automatic
+							google-cloud-sdk if you do not want to use the on in your PATH, or have a custom setup.</p>
+						<p><strong>Initials as part of version string</strong> is just an aid to supplement automatic
 							version strings for deploying your ViUR instance later on.</p>
 						<p><strong>Background Color</strong> and <strong>Foreground Color</strong> selects the
 							appropriate colors for terminals/ output windows when a task is running.
 							Some developers are more used to white text on dark background - other prefer the opposite
-							or even more eh colorful outputs ;)</p>
+							or even more colorful outputs ;)</p>
 						<p>You will find all configuration data in your users' config directory <a href=""><strong
 								class="js-user-config-dir"></strong></a></p>
 					</div>
@@ -102,7 +102,7 @@
 						<h1>Projects</h1>
 						<h2>Introduction</h2>
 
-						<p>Projects are our basic resource we will work on. They are basically directories with one
+						<p>Projects are the basic resource we will work on. They are basically directories with one
 							or
 							more ViUR
 							subdirectories
@@ -118,7 +118,7 @@
 						<p>ViUR Control walks through your project directory and scans for valid ViUR projects,
 							which
 							basically
-							means to look for directories with an app.yaml file.</p>
+							means it looks for directories with an app.yaml file.</p>
 						<p>The list of projects will be stored in your user data directory as a json file called
 							"projects.json"</p>
 						<p>You can refresh/rescan your projects list calling the action in the File Menu. </p>
@@ -141,7 +141,7 @@
 					<div class="nice-section" id="project-server-port">
 						<h2>Local Server Port</h2>
 						<p>
-							The <strong>Local Server Port</strong> is the port this project is running on on the
+							The <strong>Local Server Port</strong> is the port this project is running on, on the
 							local development server.
 						</p>
 						<p>After starting your project, you can click on the &raquo;Open&laquo; button to open it in
@@ -171,7 +171,7 @@
 						<h2>Assigned Application-Ids</h2>
 						<p>The <strong>Assigned Application-Ids</strong> table holds all unique project
 							identifiers
-							used by google. They are globally unique and are both used for running local
+							used by google. They are globally unique and are used for running local
 							development
 							instances and also as
 							deployment targets to appengine.
@@ -189,30 +189,30 @@
 					<div class="nice-section" id="project-subdirectories">
 						<h2>Usable subdirectories</h2>
 						<p>
-							The entries in <strong>Usable subdirectories</strong> table represents relative
+							The entries in the <strong>Usable subdirectories</strong> table represent relative
 							paths to
 							(sub-)directories inside your project where an app.yaml resides.
 						</p>
 						<p>
-							We consider it as best practice, if your project directory has a deploy or appengine
-							subdirectory inside with your deployable ViUR instance, but it's also ok the the
+							We consider it best practice, if your project directory has a deploy or appengine
+							subdirectory inside, with your deployable ViUR instance. Regardless it's also ok to have the
 							project
-							directory itself contains the deployable code with a app.yaml file.
+							directory itself contain the deployable code with an app.yaml file.
 						</p>
 						<p>
-							e.g you have an directory named deploy where your production code lives.
+							In practice this means you should have a subdirectory named deploy where your production code lives.
 						</p>
 						<p>
-							But you also could have e.g a directory called 'download' where you fetched an
+							But you also could have a directory called 'download' for example, where you fetched an
 							already
 							deployed version with the appcfg.py
-							tool to inspect the code which is running on gooogle appengine.
+							tool to inspect the code which is already running on a google appengine instance.
 						</p>
 					</div>
 					<div class="nice-section" id="project-credentials">
 						<h2>Credentials</h2>
 						<p>
-							The <strong>Credentials</strong> table holds combinations of username and password
+							The <strong>Credentials</strong> table holds combinations of usernames and passwords
 							by
 							applicationIds. This credentials are just used for local instances.
 						</p>
@@ -225,13 +225,13 @@
 					<div class="nice-section" id="project-versions">
 						<h2>Deployed Versions</h2>
 						<p>
-							That table will display all versions which are present on google appengine deployed
-							on
+							This table will display all versions which are presently deployed on google appengine
+							of
 							the google project referenced with the activated applicationId.
 						</p>
 						<p>All versions by applicationId are globally cached in your config directory with a
 							timestamp.</p>
-						<p>The corresponding gcloud command:
+						<p>The corresponding gcloud command to receive this list of versions would be:
 						<pre><code>gcloud --format json --project ${applicationId} app versions list</code></pre>
 						</p>
 						<p>You can refresh this table as needed</p>
@@ -239,15 +239,15 @@
 					<div class="nice-section" id="project-indexes">
 						<h2>Indexes</h2>
 						<p>
-							Google appengine uses for queries on indexed properties in kinds resources called indexes.
-							The description of these indexes are
-							generated when you use your development instances and are stored in a file called
+							Google appengine uses resources called indexes for queries on indexed properties in kinds.
+							The description of these indexes is
+							generated when you use your development instance and is stored in a file called
 							index.yaml.
 						</p>
-						<p>ViUR Control will check via git if you already have commited and pushed this file. That does
+						<p>ViUR Control will check if you already have commited and pushed this file via git. That does
 							not mean the indexes are already up to date on your appengine project.</p>
 
-						<p>The corresponding gcloud command would be:
+						<p>The corresponding gcloud command to deploy this index schema would be:
 						<pre><code>gcloud --project ${applicationId} app deploy index.yaml</code></pre>
 						</p>
 					</div>
@@ -256,9 +256,9 @@
 						<p>
 							In the console on insert link here, you can tag your projects with custom key,value pairs.
 						</p>
-						<p>We tag our projects e.g with 'customer: name' or 'status: testing|production'</p>
+						<p>We tag our projects with 'customer: name' or 'status: testing|production' for example</p>
 
-						<p>In the label settings you can select your prefered icons by label. Don't forget to save the shit!
+						<p>In the label settings you can select your preffered icons by label. Don't forget to save your stuff!
 						</p>
 					</div>
 
@@ -266,8 +266,8 @@
 				<div class="content" id="the-end">
 					<div class="nice-section">
 						<h1>You made it!</h1>
-						<p>If you have questions or want to improve feel free to contact us or even better fork this
-							project at ... and make some pull requests.</p>
+						<p>If you have questions or want to improve the project, feel free to contact us or even better fork this
+							project at <a href="https://github.com/viur-framework/control">https://github.com/viur-framework/control</a> and make some pull requests.</p>
 					</div>
 				</div>
 			</div>
