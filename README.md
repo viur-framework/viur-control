@@ -8,7 +8,7 @@ The better GOOGLE APP ENGINE launcher
 
 - call "npm start" to start viur-control
 
-# Installation through your systems package manager
+# Installation via package managers
 - arch:
 there is a "viur-control" package in the AUR
 
