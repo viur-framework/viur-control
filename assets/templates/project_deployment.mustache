@@ -1,5 +1,5 @@
 <div class="headline-section">
-	<h1>{{directoryName}}</h1>
+	<h1 class="upper">{{directoryName}}</h1>
 </div>
 <div class="js-appengine-created-section nice-section">
 	<h3>Deployment Actions</h3>
@@ -18,9 +18,8 @@
 			<span class="icon icon-upload-cloud"></span>
 			Deploy this application
 		</button>
-		<button class="js-migrate-version btn btn-large btn-reload"
+		<button class="js-migrate-version btn btn-hint fright"
 		        title="Make selected Application-Id default">
-			<span class="icon icon-check"></span>
 			Make version default
 		</button>
 
@@ -43,41 +42,7 @@
 		</button>
 	</div>
 </div>
-<div class="nice-section">
-	<button class="js-open-documentation pull-right btn btn-hint icon icon-help" title="Explain this"
-	        data-view="#project-application-ids"></button>
-	<h3>Assigned Application-Id's</h3>
-	<table class="table-striped">
-		<thead>
-		<tr>
-			<th>Name</th>
-			<th>Labels</th>
-			<th>Active</th>
-			<th class="removecol">Remove</th>
-		</tr>
-		</thead>
-		<tbody class="js-application-ids">
-		{{#applicationIds}}
-			<tr class="js-applicationid-row">
-				<td>{{value}}</td>
-				<td class="js-labels" data-application-id="{{value}}">
-					{{#labels}}
-						<image class="icon labelicon"
-						       src="{{^path}}../img/icon-vc-64.png{{/path}}{{#path}}{{path}}{{/path}}"
-						       title="{{title}}"></image>
-					{{/labels}}
-				</td>
-				<td><input type="checkbox" class="js-selectable-application-id" data-value="{{value}}"
-				           {{#checked}}checked{{/checked}}></td>
-				<td class="removecol">
-					<button class="js-remove-application-id btn btn-negative icon icon-cancel"
-					        data-value="{{value}}" title="remove that applicationId from this project"></button>
-				</td>
-			</tr>
-		{{/applicationIds}}
-		</tbody>
-	</table>
-</div>
+
 
 <div class="js-appengine-created-section nice-section">
 	<button class="js-open-documentation pull-right btn btn-hint icon icon-help" title="Explain this"
@@ -187,6 +152,46 @@
 				</td>
 			</tr>
 		{{/appengineDirectories}}
+		</tbody>
+	</table>
+</div>
+
+<div class="nice-section">
+	<button class="js-open-documentation pull-right btn btn-hint icon icon-help" title="Explain this"
+	        data-view="#project-application-ids"></button>
+	<h3>Assigned Application-Id's</h3>
+	<table class="table-striped">
+		<thead>
+		<tr>
+			<th>Name</th>
+			<th>Labels</th>
+			<th>Domain Mappings</th>
+			<th>Active</th>
+			<th class="removecol">Remove</th>
+		</tr>
+		</thead>
+		<tbody class="js-application-ids">
+		{{#applicationIds}}
+			<tr class="js-applicationid-row">
+				<td>{{value}}</td>
+				<td class="js-labels" data-application-id="{{value}}">
+					{{#labels}}
+						<image class="icon labelicon"
+						       src="{{^path}}../img/icon-vc-64.png{{/path}}{{#path}}{{path}}{{/path}}"
+						       title="{{title}}"></image>
+					{{/labels}}
+				</td>
+				<td class="js-domain-mappings" data-application-id="{{value}}">
+
+				</td>
+				<td><input type="checkbox" class="js-selectable-application-id" data-value="{{value}}"
+				           {{#checked}}checked{{/checked}}></td>
+				<td class="removecol">
+					<button class="js-remove-application-id btn btn-negative icon icon-cancel"
+					        data-value="{{value}}" title="remove that applicationId from this project"></button>
+				</td>
+			</tr>
+		{{/applicationIds}}
 		</tbody>
 	</table>
 </div>

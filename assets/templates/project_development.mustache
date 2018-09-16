@@ -1,12 +1,12 @@
 <div class="headline-section">
-<h1>{{directoryName}}</h1>
+<h1 class="upper">{{directoryName}}</h1>
 </div>
 <div class="nice-section">
 	<div class="btn-group">
 		{{^running}}
 			<button
 					class="btn ctl-button ctl-server-toggle"
-					title="Start/Stop this application locally">&#9658;
+					title="Start/Stop this application locally">&#9658; Start Local Server
 			</button>
 		{{/running}}
 		{{#running}}
@@ -17,50 +17,18 @@
 		{{/running}}
 		<!--<button class="btn ctl-button ctl-button-buildvi" title="Build the Vi tool locally">Build Vi</button>-->
 		<button href="http://localhost:{{ serverPort }}/"
-		        class="js-devserver-running btn ctl-button server-open-toggle {{^running}}hidden{{/running}}">Open
+		        class="js-devserver-running btn ctl-button server-open-toggle btn-positive {{^running}}hidden{{/running}}">Open localhost:
 		</button>
 		<button href="http://localhost:{{ serverPort }}/vi"
-		        class="js-devserver-running btn ctl-button startvi-toggle {{^running}}hidden{{/running}}">Start Vi
+		        class="js-devserver-running btn ctl-button startvi-toggle btn-positive {{^running}}hidden{{/running}}">Open Vi
 		</button>
 		<button href="http://localhost:{{ adminPort }}"
-		        class="js-devserver-running btn ctl-button ctl-button-openadmin {{^running}}hidden{{/running}}">Server
+		        class="js-devserver-running btn ctl-button fright ctl-button-openadmin {{^running}}hidden{{/running}}">Local Server
 			Console
 		</button>
 	</div>
 </div>
-<div class="nice-section">
-	<button class="js-open-documentation pull-right btn btn-hint icon icon-help" title="Explain this"
-	        data-view="#project-application-ids"></button>
-	<h3>Assigned Application-Id's</h3>
-	<table class="table-striped">
-		<thead>
-		<tr>
-			<th>Name</th>
-			<th>Labels</th>
-			<th>Active</th>
-			<th class="removecol">Remove</th>
-		</tr>
-		</thead>
-		<tbody class="js-application-ids">
-		{{#applicationIds}}
-			<tr class="js-applicationid-row">
-				<td>{{value}}</td>
-				<td class="js-labels" data-application-id="{{value}}">
-					{{#labels}}
-						<image class="icon labelicon" src="{{^path}}../img/icon-vc-64.png{{/path}}{{#path}}{{path}}{{/path}}" title="{{title}}"></image>
-					{{/labels}}
-				</td>
-				<td><input type="checkbox" class="js-selectable-application-id"
-				           {{#checked}}checked{{/checked}} data-value="{{value}}"></td>
-				<td class="removecol">
-					<button class="js-remove-application-id btn btn-negative icon icon-cancel"
-					        data-value="{{value}}" title="remove that applicationId from this project"></button>
-				</td>
-			</tr>
-		{{/applicationIds}}
-		</tbody>
-	</table>
-</div>
+
 
 <div class="nice-section">
 	<button class="js-open-documentation pull-right btn btn-hint icon icon-help" title="Explain this"
@@ -132,7 +100,7 @@
 <div class="nice-section">
 	<button class="js-open-documentation pull-right btn btn-hint icon icon-help" title="Explain this"
 	        data-view="#project-subdirectories"></button>
-	<h3>Usable subdirectories</h3>
+	<h3>Usable Subdirectories</h3>
 	<table class="table-striped">
 		<thead>
 		<tr>
@@ -153,6 +121,44 @@
 				</td>
 			</tr>
 		{{/appengineDirectories}}
+		</tbody>
+	</table>
+</div>
+
+<div class="nice-section">
+	<button class="js-open-documentation pull-right btn btn-hint icon icon-help" title="Explain this"
+	        data-view="#project-application-ids"></button>
+	<h3>Assigned Application-Id's</h3>
+	<table class="table-striped">
+		<thead>
+		<tr>
+			<th>Name</th>
+			<th>Labels</th>
+			<th>Domain Mappings</th>
+			<th>Active</th>
+			<th class="removecol">Remove</th>
+		</tr>
+		</thead>
+		<tbody class="js-application-ids">
+		{{#applicationIds}}
+			<tr class="js-applicationid-row">
+				<td>{{value}}</td>
+				<td class="js-labels" data-application-id="{{value}}">
+					{{#labels}}
+						<image class="icon labelicon" src="{{^path}}../img/icon-vc-64.png{{/path}}{{#path}}{{path}}{{/path}}" title="{{title}}"></image>
+					{{/labels}}
+				</td>
+				<td class="js-domain-mappings" data-application-id="{{value}}">
+
+				</td>
+				<td><input type="checkbox" class="js-selectable-application-id"
+				           {{#checked}}checked{{/checked}} data-value="{{value}}"></td>
+				<td class="removecol">
+					<button class="js-remove-application-id btn btn-negative icon icon-cancel"
+					        data-value="{{value}}" title="remove that applicationId from this project"></button>
+				</td>
+			</tr>
+		{{/applicationIds}}
 		</tbody>
 	</table>
 </div>
