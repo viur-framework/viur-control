@@ -1,5 +1,5 @@
 <div class="headline-section">
-<h1>{{directoryName}}</h1>
+<h1 class="upper">{{directoryName}}</h1>
 </div>
 
 <div class="nice-section">
@@ -38,6 +38,38 @@
 		{{/applicationIds}}
 		</tbody>
 	</table>
+
+
+	<div class="btn-group">
+		<!--<button class="js-add-application-id btn btn-large btn-positive" title="Add App-Id"><span
+				class="icon icon-right-bold"></span>Add App-Id
+		</button>-->
+		<button class="js-reload-applications-ids btn btn-large btn-reload"
+		        title="Reload available Application-Id's"><span class="icon icon-arrows-ccw"></span>
+			Reload
+		</button>
+		<button class="js-reload-domain-mappings btn btn-large btn-reload"
+		        title="Refresh domain mappings"><span class="icon icon-arrows-ccw"></span>
+			Refresh Domain Mappings
+		</button>
+<button class="js-openaufklapp btn btn-large btn-reload"
+		        title="Add App-Id">
+			<span
+				class="icon icon-down-bold"></span> Add App-Id
+		</button>
+
+<script>
+  // Burger Toggle
+	$(".js-openaufklapp").click(function () {
+		$('.ausklappwrap').toggleClass("is-open");
+	});
+</script>
+
+
+	</div>
+
+	<div class="ausklappwrap">
+
 	<ul class="label-ul">
 		<li class="label-li">
 			<label for="new-application-id">Add Project App-Id</label>
@@ -46,17 +78,8 @@
 		</li>
 	</ul>
 
-	<div class="btn-group">
-		<button class="js-add-application-id btn btn-large btn-positive" title="Add App-Id"><span
+	<button class="js-add-application-id btn btn-large btn-positive" title="Add App-Id"><span
 				class="icon icon-right-bold"></span>Add App-Id
-		</button>
-		<button class="js-reload-applications-ids btn btn-large btn-reload"
-		        title="Reload available Application-Id's"><span class="icon icon-arrows-ccw"></span>
-			Reload
-		</button>
-		<button class="js-reload-domain-mappings btn btn-large btn-reload"
-		        title="Refresh domain mappings"><span class="icon icon-arrows-ccw"></span>
-			Refresh Domain Mappings
 		</button>
 	</div>
 
