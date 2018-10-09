@@ -582,7 +582,7 @@ function onOpenDeploymentConfirmationDialog(event, absolutePath, applicationId, 
   const options = {
     type: 'warning',
     title: 'Deployment Confirmation',
-    message: `You want to deploy the project ${absolutePath} to ${applicationId} with version ${version}. Is this correct?`,
+    message: "You want to deploy the project \n'" + absolutePath + "'\nto '" + applicationId + "'\nwith version '" + version + "'.\n\nIs this correct?",
     buttons: ['Yes', 'No']
   };
   if (labelIcon) {
