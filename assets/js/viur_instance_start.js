@@ -94,6 +94,7 @@ function startLocalInstance(project, applicationId, fromWindowId) {
     }
     else {
         cmdArgsTemplate = [
+            "--support_datastore_emulator",
             "--admin_port", adminPort.toString(),
             "--port", serverPort.toString(),
             "--log_level", "debug",
