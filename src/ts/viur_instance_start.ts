@@ -137,23 +137,16 @@ function startLocalInstance(project: ProjectInterface, applicationId: string, fr
 
 	// get username, uid and gid to pass through to docker
 	let envUSER = process.env.USER || ""; // fixme: check for win32 and point to USERNAME instead...
-	let myGID = process.getegid() || "";
+	let myGID = process.getegid() || ""; // fixme: how to handle gid and uid for win32?
 	let myUID = process.geteuid() || "";
-	let envHOME = process.env.HOME || "";
+	let envHOME = process.env.HOME || ""; // fixme: this path is used to make ssh and gcloud creds available in container... how to solve this on win32? %AppData%???
 
-	$(output).append(`<p class="output-line"><span class="loglevel info">projectpath: </span>`+ project.absolutePath +`</p>`);
-	$(output).on("scroll", scrollHandler);
-
-	// cmdArgsTemplate need to contain dev_appdocker.py and cmd needs to point to docker...
-	let proc = spawn("docker run --rm --name devappdocker -p 8080:8080 -p 8000:8000 \
-	-v " + envHOME + "/.config/gcloud:/home/dockeruser/.config/gcloud -v " + project.absolutePath.toString() + ":/home/dockeruser/workspace \
+	let proc = spawn("docker run --rm --name devappdocker -p "+ serverPort.toString() +":8080 -p "+ adminPort.toString() +":8000 \
+	-v " + envHOME + "/.config/gcloud:/home/dockeruser/.config/gcloud -v " + project.absolutePath + ":/home/dockeruser/workspace \
         gcloud-py3:latest /bin/bash -c \"userdel dockeruser; addgroup --gid " + myGID + " $USER; \
         useradd --no-create-home --home /home/dockeruser --gid " + myGID + " --uid " + myUID + " $USER; \
         su - $USER -s /bin/bash -c 'export PATH=$PATH:/home/dockeruser/google-cloud-sdk/bin; export CLOUDSDK_CORE_DISABLE_PROMPTS=1; cd /home/dockeruser/workspace; bash /home/dockeruser/workspace/local_run.sh \
         --admin_host=0.0.0.0 --admin_port=8000 --host=0.0.0.0 --port=8080'\"", {cwd: project.absolutePath, shell: true});
-
-	//$(output).append(`<p class="output-line"><span class="loglevel info">command output: </span>`+ proc.stdout +`</p>`);
-	//$(output).on("scroll", scrollHandler);
 
 	ipc.send('local-devserver-started', project.internalId, proc.pid);
 	let parentWindow = BrowserWindow.fromId(fromWindowId);

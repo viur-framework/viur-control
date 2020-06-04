@@ -109,10 +109,8 @@ function startLocalInstance(project, applicationId, fromWindowId) {
     let myGID = process.getegid() || "";
     let myUID = process.geteuid() || "";
     let envHOME = process.env.HOME || "";
-    $(output).append(`<p class="output-line"><span class="loglevel info">projectpath: </span>` + project.absolutePath + `</p>`);
-    $(output).on("scroll", scrollHandler);
-    let proc = spawn("docker run --rm --name devappdocker -p 8080:8080 -p 8000:8000 \
-	-v " + envHOME + "/.config/gcloud:/home/dockeruser/.config/gcloud -v " + project.absolutePath.toString() + ":/home/dockeruser/workspace \
+    let proc = spawn("docker run --rm --name devappdocker -p " + serverPort.toString() + ":8080 -p " + adminPort.toString() + ":8000 \
+	-v " + envHOME + "/.config/gcloud:/home/dockeruser/.config/gcloud -v " + project.absolutePath + ":/home/dockeruser/workspace \
         gcloud-py3:latest /bin/bash -c \"userdel dockeruser; addgroup --gid " + myGID + " $USER; \
         useradd --no-create-home --home /home/dockeruser --gid " + myGID + " --uid " + myUID + " $USER; \
         su - $USER -s /bin/bash -c 'export PATH=$PATH:/home/dockeruser/google-cloud-sdk/bin; export CLOUDSDK_CORE_DISABLE_PROMPTS=1; cd /home/dockeruser/workspace; bash /home/dockeruser/workspace/local_run.sh \
