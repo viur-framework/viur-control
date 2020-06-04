@@ -133,13 +133,25 @@ function startLocalInstance(project: ProjectInterface, applicationId: string, fr
 	$(output).append(`<p class="output-line"><span class="loglevel info">current working directory: </span>${projectPath}</p><p class="output-line"><span class="loglevel info">used command: </span>${cmdArgsTemplate}</p>`);
 	$(output).on("scroll", scrollHandler);
 
-	//let proc = spawn(devserverPath, cmdArgsTemplate, {"cwd": projectPath});
+	//let proc = spawn(devserverPath, cmdArgsTemplate, {"cwd": projectPath})
+	let osSig =  process.platform.toString();
+	let envUSER;
+	let myGID;
+	let myUID;
+	let envHOME;
 
-	// get username, uid and gid to pass through to docker
-	let envUSER = process.env.USER || ""; // fixme: check for win32 and point to USERNAME instead...
-	let myGID = process.getegid() || ""; // fixme: how to handle gid and uid for win32?
-	let myUID = process.geteuid() || "";
-	let envHOME = process.env.HOME || ""; // fixme: this path is used to make ssh and gcloud creds available in container... how to solve this on win32? %AppData%???
+	// get username, uid and gid depending on OS and pass through to docker
+	if (osSig !== "win32"){ // should work for aix, cygwin, darwin, freebsd, linux, openbsd, sunos
+	  envUSER = process.env.USER || "";
+	  myGID = process.getegid() || ""; // fixme: how to handle gid and uid for win32?
+	  myUID = process.geteuid() || "";
+	  envHOME = process.env.HOME || ""; // fixme: this path is used to make ssh and gcloud creds available in container... how to solve this on win32? %AppData%???
+    } else { // windows presumably... should I check more explicitly??? what about android?
+	  envUSER = process.env.USERNAME || "";
+	  myGID = process.getegid() || ""; // fixme: how to handle gid and uid for win32?
+	  myUID = process.geteuid() || "";
+	  envHOME = process.env.HOME || ""; // fixme: this path is used to make ssh and gcloud creds available in container... how to solve this on win32? %AppData%???
+	}
 
 	let proc = spawn("docker run --rm --name devappdocker -p "+ serverPort.toString() +":8080 -p "+ adminPort.toString() +":8000 \
 	-v " + envHOME + "/.config/gcloud:/home/dockeruser/.config/gcloud -v " + project.absolutePath + ":/home/dockeruser/workspace \

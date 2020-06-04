@@ -105,10 +105,23 @@ function startLocalInstance(project, applicationId, fromWindowId) {
     }
     $(output).append(`<p class="output-line"><span class="loglevel info">current working directory: </span>${projectPath}</p><p class="output-line"><span class="loglevel info">used command: </span>${cmdArgsTemplate}</p>`);
     $(output).on("scroll", scrollHandler);
-    let envUSER = process.env.USER || "";
-    let myGID = process.getegid() || "";
-    let myUID = process.geteuid() || "";
-    let envHOME = process.env.HOME || "";
+    let osSig = process.platform.toString();
+    let envUSER;
+    let myGID;
+    let myUID;
+    let envHOME;
+    if (osSig !== "win32") {
+        envUSER = process.env.USER || "";
+        myGID = process.getegid() || "";
+        myUID = process.geteuid() || "";
+        envHOME = process.env.HOME || "";
+    }
+    else {
+        envUSER = process.env.USERNAME || "";
+        myGID = process.getegid() || "";
+        myUID = process.geteuid() || "";
+        envHOME = process.env.HOME || "";
+    }
     let proc = spawn("docker run --rm --name devappdocker -p " + serverPort.toString() + ":8080 -p " + adminPort.toString() + ":8000 \
 	-v " + envHOME + "/.config/gcloud:/home/dockeruser/.config/gcloud -v " + project.absolutePath + ":/home/dockeruser/workspace \
         gcloud-py3:latest /bin/bash -c \"userdel dockeruser; addgroup --gid " + myGID + " $USER; \
