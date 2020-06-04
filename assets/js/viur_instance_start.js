@@ -74,13 +74,13 @@ function startLocalInstance(project, applicationId, fromWindowId) {
     }
     if (project.custom_devserver_cmd) {
         let customArgsString = project.custom_devserver_cmd;
-        let spliitedRawArgs = customArgsString.split(" ");
+        let splittedRawArgs = customArgsString.split(" ");
         let replacements = {
             "${adminPort}": adminPort.toString(),
             "${serverPort}": serverPort.toString(),
             "${applicationId}": applicationId
         };
-        for (let arg of spliitedRawArgs) {
+        for (let arg of splittedRawArgs) {
             if (!arg) {
                 continue;
             }
@@ -105,7 +105,18 @@ function startLocalInstance(project, applicationId, fromWindowId) {
     }
     $(output).append(`<p class="output-line"><span class="loglevel info">current working directory: </span>${projectPath}</p><p class="output-line"><span class="loglevel info">used command: </span>${cmdArgsTemplate}</p>`);
     $(output).on("scroll", scrollHandler);
-    let proc = spawn(devserverPath, cmdArgsTemplate, { "cwd": projectPath });
+    let envUSER = process.env.USER || "";
+    let myGID = process.getegid() || "";
+    let myUID = process.geteuid() || "";
+    let envHOME = process.env.HOME || "";
+    $(output).append(`<p class="output-line"><span class="loglevel info">projectpath: </span>` + project.absolutePath + `</p>`);
+    $(output).on("scroll", scrollHandler);
+    let proc = spawn("docker run --rm --name devappdocker -p 8080:8080 -p 8000:8000 \
+	-v " + envHOME + "/.config/gcloud:/home/dockeruser/.config/gcloud -v " + project.absolutePath.toString() + ":/home/dockeruser/workspace \
+        gcloud-py3:latest /bin/bash -c \"userdel dockeruser; addgroup --gid " + myGID + " $USER; \
+        useradd --no-create-home --home /home/dockeruser --gid " + myGID + " --uid " + myUID + " $USER; \
+        su - $USER -s /bin/bash -c 'export PATH=$PATH:/home/dockeruser/google-cloud-sdk/bin; export CLOUDSDK_CORE_DISABLE_PROMPTS=1; cd /home/dockeruser/workspace; bash /home/dockeruser/workspace/local_run.sh \
+        --admin_host=0.0.0.0 --admin_port=8000 --host=0.0.0.0 --port=8080'\"", { cwd: project.absolutePath, shell: true });
     ipc.send('local-devserver-started', project.internalId, proc.pid);
     let parentWindow = BrowserWindow.fromId(fromWindowId);
     parentWindow.webContents.send("local-devserver-started", project.internalId, proc.pid);
