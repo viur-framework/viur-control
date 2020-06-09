@@ -532,6 +532,10 @@ a.startbox h5 {
     background-image: url("../img/icon-setting.svg");
 }
 
+.starbox-icon.icon-docker {
+    background-image: url("../img/icon-docker.svg");
+}
+
 .starbox-icon.icon-documentation {
     background-image: url("../img/icon-documentation.svg");
 }
