@@ -51,7 +51,7 @@
   "dependencies": {
     "ajv": "^6.12.6",
     "async": "^2.6.3",
-    "class-transformer": "^0.1.10",
+    "class-transformer": "^0.3.1",
     "deep-extend": "^0.5.1",
     "electron-localshortcut": "^2.0.2",
     "electron-positioner": "^3.0.1",
