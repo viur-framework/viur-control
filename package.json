@@ -38,7 +38,7 @@
     "electron-installer-redhat": "^2.0.0",
     "electron-installer-windows": "^2.0.0",
     "electron-ipc-log": "^3.0.1",
-    "electron-packager": "^10.1.2",
+    "electron-packager": "^17.1.1",
     "gulp": "^4.0.2",
     "gulp-concat": "^2.6.1",
     "gulp-notify": "^3.2.0",
