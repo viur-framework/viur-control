@@ -63,7 +63,7 @@
     "lodash": "^4.17.20",
     "moment": "^2.29.2",
     "mustache": "^2.3.2",
-    "npm": "^6.14.11",
+    "npm": "^9.4.1",
     "ps-node": "^0.1.6",
     "request": "^2.88.2",
     "request-progress": "^3.0.0",
